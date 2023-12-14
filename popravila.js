@@ -9,9 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (distance <= 0) {
             // If the maintenance period is over, redirect to your main site
-            window.location.href = 'https://razrednicasopis.github.io/index.html';
+            document.getElementById('obvestilo').innerHTML = `Trenutno ne poteka vzdrzevanje. Dostop do strani bo kmalu omogocen.<p> Prosimo osvezite stran.`;
         }
-
         // Calculate remaining time
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
