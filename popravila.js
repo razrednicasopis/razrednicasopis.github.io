@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Set the end date and time for the maintenance period
-    const endDate = new Date('2023-12-14T9:35:00').getTime();
+    const endDate = new Date('2023-12-14T09:35:00').getTime();
 
     // Update the countdown every second
     const countdown = setInterval(function () {
