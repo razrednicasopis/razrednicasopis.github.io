@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (distance <= 0) {
             // If the maintenance period is over, redirect to your main site
-            window.location.href = 'https://razrednicasopis.github.io';
+            window.location.href = 'https://razrednicasopis.github.io/index.html';
         }
 
         // Calculate remaining time
