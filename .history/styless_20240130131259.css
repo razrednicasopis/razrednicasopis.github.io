@@ -1,0 +1,113 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Globalni slogi */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+
+.container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.border-box {
+    display: inline-block;
+    padding: 200px;
+    width: 550px;
+    height: 500px;
+    border: 5px solid #333; /* Set your desired border color */
+    border-radius: 30px; /* Set the border radius for slightly curved corners */
+    background-color: #333; /* Set your desired background color inside the border */
+}
+
+header {
+  background: #333;
+  color: #fff;
+  padding: 20px;
+}
+
+header h1 {
+  margin-bottom: 10px;
+  font-size: 36px;
+}
+
+nav ul {
+  list-style: none;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+main {
+  padding: 20px;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+section h2 {
+  margin-bottom: 15px;
+}
+
+article {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+article h3 {
+  margin-bottom: 10px;
+}
+
+article p {
+  color: #666;
+}
+
+article a {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 1px solid #333;
+  padding-bottom: 2px;
+}
+
+article a:hover {
+  color: #000;
+  border-color: #000;
+}
+
+.wrapper {
+  flex: 1;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  background-color: #333;
+  color: #fff;
+  position: absolute;
+  bottom: 
+  width: 100%;
+  text-align: center;
+}
+
