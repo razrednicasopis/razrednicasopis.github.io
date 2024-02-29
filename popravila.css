@@ -9,6 +9,7 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
+    margin-top: 85px;
     transform: translate(-50%, -50%);
     color: #333;
 }
@@ -28,4 +29,11 @@ p {
 
 #maintenanceobvestilo {
     font-size: 15px;
+}
+
+img {
+    position: relative;
+    padding: 100px;
+    margin-left: 450px;
+    margin-top: 50px;
 }
