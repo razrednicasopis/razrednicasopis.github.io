@@ -343,7 +343,7 @@ height: 120px;
 
 @supports (filter: url("#goo")) {
   .blob-btn:hover .blob-btn__blob {
-    transform: translateZ(0) scale(1.4);
+    transform: translateZ(0) scale(1.5);
   }
 }
 
@@ -410,5 +410,23 @@ height: 120px;
 }
 
 /* Random CSS */
+
+/* CSS for the admin credits list */
+
+.creditscontainer {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.creditslist {
+  flex: 1;
+  margin: 10px;
+  padding: 0;
+  list-style-type: none;
+}
+
+.creditslist li {
+  margin-bottom: 5px;
+}
 
 
