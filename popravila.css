@@ -7,8 +7,6 @@ body {
 .maintenance-container {
     text-align: center;
     position: absolute;
-    top: 60%; /* Move the container further down */
-    left: 50%;
     transform: translate(-50%, -50%);
     color: #333;
     margin-top: 150px;
@@ -34,8 +32,6 @@ p {
 
 img {
     position: absolute;
-    top: 70%; /* Move the image further down */
-    left: 50%;
     transform: translateX(-50%);
     margin-top: 30px;
 }
