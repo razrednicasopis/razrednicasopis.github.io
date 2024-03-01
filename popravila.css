@@ -7,10 +7,12 @@ body {
 .maintenance-container {
     text-align: center;
     position: absolute;
+    top: 40%; /* Adjust the vertical position of the container */
+    left: 50%;
     transform: translate(-50%, -50%);
     color: #333;
-    margin-top: 150px;
 }
+
 
 
 h1 {
@@ -32,6 +34,8 @@ p {
 
 img {
     position: absolute;
+    top: 20%; /* Adjust the vertical position of the image */
+    left: 50%;
     transform: translateX(-50%);
-    margin-top: 30px;
+    padding: 0; /* Remove excessive padding */
 }
