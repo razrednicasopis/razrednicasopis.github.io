@@ -9,7 +9,6 @@ body {
     position: absolute;
     top: 45%; /* Adjust the vertical position slightly upwards */
     left: 50%;
-    transform: translate(-50%, -50%);
     color: #333;
     margin-bottom: 40px; /* Add margin to create space between text and image */
 }
