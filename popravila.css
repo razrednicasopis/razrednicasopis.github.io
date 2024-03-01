@@ -8,6 +8,7 @@ body {
     text-align: center;
     position: absolute;
     left: 50%;
+    bottom: 10%;
     color: #333;
     margin-bottom: 40px; /* Add margin to create space between text and image */
 }
