@@ -7,12 +7,12 @@ body {
 .maintenance-container {
     text-align: center;
     position: absolute;
-    top: 50%;
+    top: 50%; /* Align to the vertical center */
     left: 50%;
-    margin-top: 85px;
     transform: translate(-50%, -50%);
     color: #333;
 }
+
 
 h1 {
     font-size: 1cm;
@@ -32,8 +32,8 @@ p {
 }
 
 img {
-    position: relative;
-    padding: 100px;
-    margin-left: 450px;
-    margin-top: 50px;
+    position: absolute; /* Change position to absolute */
+    top: 50px; /* Adjust top position */
+    left: 50%; /* Align to the center horizontally */
+    transform: translateX(-50%); /* Center horizontally */
 }
