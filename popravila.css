@@ -6,17 +6,19 @@ body {
 
 .maintenance-container {
     text-align: center;
-    position: relative;
+    position: absolute;
+    top: 45%; /* Adjust the vertical position slightly upwards */
     left: 50%;
-    bottom: 10%;
+    transform: translate(-50%, -50%);
     color: #333;
-    margin-bottom: 150px; /* Add margin to create space between text and image */
+    margin-top: 95px; /* Add margin to create space between text and image */
 }
 
 img {
-    position: absolute;
-    top: 40%; /* Adjust the vertical position slightly upwards */
-    left: 50%;
+    position: relative;
+    margin-top: 17%;
+    padding: 10px;
+    left: 49%;
     transform: translate(-50%, -50%);
 }
 
