@@ -11,6 +11,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     color: #333;
+    margin-top: 450px;
 }
 
 
@@ -36,5 +37,5 @@ img {
     top: 70%; /* Move the image further down */
     left: 50%;
     transform: translateX(-50%);
-    padding: 0; /* Remove excessive padding */
+    margin-top: 30px;
 }
