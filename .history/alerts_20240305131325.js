@@ -13,6 +13,4 @@
         });
     });
 
-    //Maintenance mode pop-up
-
     

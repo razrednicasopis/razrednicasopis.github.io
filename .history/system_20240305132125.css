@@ -1,6 +1,4 @@
-/* Koda za "Coming Soon" pop-up */
-
-#popupContainer {
+.popupContainer {
     display: none;
     position: fixed;
     top: 50%;
@@ -11,41 +9,27 @@
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    z-index: top;
-  }
+    z-index: 999; /* Ensure it's on top of other content */
+}
 
 
-  #popupContent {
+#popupContent {
     max-width: 400px;
     margin: 0 auto;
-  }
+}
   
-  #closePopupBtn {
+.closePopupBtn {
     background-color: #3498db;
     color: #ffffff;
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  #closePopupBtn:hover {
-      background-color: #4da8e1;
-  }
-
-  #showPopupLink {
-    display: inline-block;
-    padding: 10px 15px; 
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-body.popup-open {
-   overflow: hidden;
 }
 
+.closePopupBtn:hover {
+    background-color: #4da8e1;
+}
 .popup-open .blur-container {
   filter: blur(5px); /* Apply blur effect only when popup is open */
   pointer-events: none;
