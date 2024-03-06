@@ -24,21 +24,6 @@
                 console.log(Error);
             }
         }
-  
+    })
 
-    function checkMaintenanceStatus() {
-        setInterval(function () {
-            
-            var maintenanceMode = true;
-
-            toggleMaintenancePopup(maintenanceMode);
-
-        }, 1000);
-    }
-
-    document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function ()  {
-        toggleMaintenancePopup(false);
-    });
-
-    checkMaintenanceStatus();
-});
+    function checkMaintenanceStatus(    )

@@ -33,7 +33,7 @@
 
             toggleMaintenancePopup(maintenanceMode);
 
-        }, 1000);
+        }, 5000);
     }
 
     document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function ()  {

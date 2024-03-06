@@ -24,12 +24,12 @@
                 console.log(Error);
             }
         }
-  
+    })
 
     function checkMaintenanceStatus() {
         setInterval(function () {
             
-            var maintenanceMode = true;
+            var maintenanceMode = false;
 
             toggleMaintenancePopup(maintenanceMode);
 
@@ -38,7 +38,4 @@
 
     document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function ()  {
         toggleMaintenancePopup(false);
-    });
-
-    checkMaintenanceStatus();
-});
+    })

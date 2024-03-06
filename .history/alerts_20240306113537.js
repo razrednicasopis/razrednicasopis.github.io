@@ -24,21 +24,12 @@
                 console.log(Error);
             }
         }
-  
+    })
 
     function checkMaintenanceStatus() {
         setInterval(function () {
             
-            var maintenanceMode = true;
+            var main
 
-            toggleMaintenancePopup(maintenanceMode);
-
-        }, 1000);
+        })
     }
-
-    document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function ()  {
-        toggleMaintenancePopup(false);
-    });
-
-    checkMaintenanceStatus();
-});

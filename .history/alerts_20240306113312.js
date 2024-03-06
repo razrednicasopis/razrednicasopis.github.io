@@ -21,24 +21,6 @@
             if (maintenancePopup) {
                 maintenancePopup.style.display = show ? 'block' : 'none';
                 document.body.classList.toggle('popup-open', show);
-                console.log(Error);
             }
         }
-  
-
-    function checkMaintenanceStatus() {
-        setInterval(function () {
-            
-            var maintenanceMode = true;
-
-            toggleMaintenancePopup(maintenanceMode);
-
-        }, 1000);
-    }
-
-    document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function ()  {
-        toggleMaintenancePopup(false);
-    });
-
-    checkMaintenanceStatus();
-});
+    })

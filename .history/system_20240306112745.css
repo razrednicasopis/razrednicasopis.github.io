@@ -77,12 +77,9 @@ body.popup-open {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 20px;
 }
 
-#closeMaintenancePopupBtn:hover {
-  background-color: #4da8e1;
-}
+#closem
 
 /* Koda za "Kontakt" obrazec */
 

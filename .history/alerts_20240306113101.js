@@ -18,27 +18,6 @@
     document.addEventListener('DOMContentLoaded', function ()  {
         function toggleMaintenancePopup(show) {
             var maintenancePopup = document.getElementById('maintenancePopup');
-            if (maintenancePopup) {
-                maintenancePopup.style.display = show ? 'block' : 'none';
-                document.body.classList.toggle('popup-open', show);
-                console.log(Error);
-            }
+            if ()
         }
-  
-
-    function checkMaintenanceStatus() {
-        setInterval(function () {
-            
-            var maintenanceMode = true;
-
-            toggleMaintenancePopup(maintenanceMode);
-
-        }, 1000);
-    }
-
-    document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function ()  {
-        toggleMaintenancePopup(false);
-    });
-
-    checkMaintenanceStatus();
-});
+    })

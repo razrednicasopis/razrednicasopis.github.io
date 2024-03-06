@@ -70,20 +70,6 @@ body.popup-open {
   margin: 0 auto;
 }
 
-#closeMaintenancePopupBtn {
-  background-color: #3498db;
-  color: #ffffff;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-}
-
-#closeMaintenancePopupBtn:hover {
-  background-color: #4da8e1;
-}
-
 /* Koda za "Kontakt" obrazec */
 
 #contactform {
