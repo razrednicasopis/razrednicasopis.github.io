@@ -36,7 +36,7 @@
     }
 
     document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function ()  {
-        location.reload();
+        location.reload;
     });
 
     checkMaintenanceStatus();
