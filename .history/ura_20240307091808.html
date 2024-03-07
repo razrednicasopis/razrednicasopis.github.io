@@ -3,15 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>Digitalna ura</title>
-  <link rel="stylesheet" href="styless.css">
-  <link rel="stylesheet" href="system.css">
-</head>
-<body>
   
-  <div class="blur-container">
-    <div class="clock" id="clock" align="middle"></div>
-  </div>
 
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 76vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    .clock {
+      display: flex;
+      font-size: 3em;
+    }
+    body
+    {background-image: gozd.png}
+  </style>
+
+</head>
+<body background="gozd.png">
+  
+  <div class="clock" id="clock"></div>
 
   <div id="maintenancePopup">
     <div id="maintenancePopupContent">
@@ -20,11 +36,9 @@
       <button id="closeMaintenancePopupBtn">Osveži</button>
     </div>  
 </div>
-  
 
 
   <script src="alerts.js"></script>
-  <script src="maintenancemode.js"></script>
   <script>
     function updateClock() {
       const now = new Date();
