@@ -379,8 +379,8 @@ height: 120px;
 /* CSS za uro */
 
 .clock {
-  margin-top: 6cm;
-  text-align: center;
+  align-self: center;
+  justif
   font-size: 3em;
 }
 
