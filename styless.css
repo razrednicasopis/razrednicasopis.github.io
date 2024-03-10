@@ -101,6 +101,10 @@ article a:hover {
   border-color: #000;
 }
 
+#najnovejsenovice {
+  height: 250px;
+}
+
 footer {
   text-align: center;
   padding: 30px;

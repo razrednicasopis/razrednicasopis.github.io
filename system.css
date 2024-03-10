@@ -435,6 +435,17 @@ height: 120px;
   margin-bottom: 20px;
 }
 
+#dynamicText {
+  float: right; /* Align to the right */
+  width: calc(89% - 250px); /* Adjusted width */
+  box-sizing: border-box;
+  margin-top: 90px;
+}
+
+#dynamicText article {
+  width: 99%;
+}
+
 /* Pravila Obrazca CSS */
 
 .pravilaobrazca {
@@ -466,4 +477,60 @@ height: 120px;
   margin-bottom: 5px;
 }
 
+/* Članki CSS */
 
+.člankimargin {
+  margin-top: 20px;
+}
+
+.člankimargin article {
+  width: 99%;
+  margin-left: 10px;
+  height: 18.5cm;
+}
+
+.člankitext {
+  margin-bottom: 75px;
+  font-size: 25px;
+}
+
+.člankitext2 {
+  font-size: 14.5px;
+}
+
+.člankitext3 {
+  font-size: 18px;
+}
+
+#vitin_spis {
+  font-size: 20px;
+}
+
+#grinchtext {
+  font-size: 20px;
+}
+
+#grinchimg img {
+  width: 20%;
+  height: 20%
+}
+
+/* CSS za mediji.html */
+
+.shrambaslik {
+  float: right; /* Align to the right */
+  width: calc(89% - 250px); /* Adjusted width */
+  box-sizing: border-box;
+  margin-top: 90px;
+}
+
+.shrambaslik img[id="1"] {
+  width: 25%;
+  height: 25%;
+}
+
+.shrambaslik img[id="2"] {
+  width: 10%;
+  height: 5%;
+  margin-left: 2%;
+}
