@@ -477,6 +477,10 @@ height: 120px;
   margin-bottom: 5px;
 }
 
+.adminlist article {
+  min-height: 225px;
+}
+
 /* Članki CSS */
 
 .člankimargin {
