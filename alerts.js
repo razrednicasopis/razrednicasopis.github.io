@@ -26,7 +26,7 @@
         }
   
     
-        var maintenanceMode = false;
+   
 
     function checkMaintenanceStatus() {
         setInterval(function () {
