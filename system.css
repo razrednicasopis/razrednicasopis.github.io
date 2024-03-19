@@ -188,7 +188,7 @@ pointer-events: none;
 z-index: 1;
 }
 
-/* Koda za "Kontakt" obrazec */
+/* Koda za obrazce */
 
 #contactform {
   align-self: center;
@@ -234,6 +234,30 @@ font-size: 16px; /* Font size */
 
 form textarea {
 height: 120px;
+display: inline-block
+}
+
+
+#loginformnaslov {
+  margin-bottom: 25px;
+}
+
+#login-form  {
+  text-align: center;
+  margin-top: 250px;
+  justify-content: center;
+}
+
+#login-form input {
+  width: 15cm; /* Adjusted width with a bit of padding on each side */
+  padding: 20px; /* Increased padding for better readability */
+  margin-bottom: 10px; /* Increased spacing between input areas */
+  margin-top: 15px; /* Move input areas slightly lower */
+  height: 40px; /* Increased height to make input areas bigger */
+}
+
+#prijavaBtn {
+  margin-top: 15px;
 }
 
 /* Combined CSS for Blob Button */
