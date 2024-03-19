@@ -15,6 +15,7 @@
 
     //Maintenance mode pop-up
 
+
     document.addEventListener('DOMContentLoaded', function ()  {
         function toggleMaintenancePopup(show) {
             var maintenancePopup = document.getElementById('maintenancePopup');
@@ -24,7 +25,8 @@
                 console.log(Error);
             }
         }
-  
+   
+   
 
     function checkMaintenanceStatus() {
         setInterval(function () {
