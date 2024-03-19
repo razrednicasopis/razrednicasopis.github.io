@@ -59,7 +59,8 @@ nav ul li a {
 
 #prijavaLink {
   float: right;
-  margin-right: 35px;
+  margin-right: 50px;
+  line-break: 0;
 }
 
 main {
