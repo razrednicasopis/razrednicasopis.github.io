@@ -26,8 +26,7 @@ const loginEmailPassword = async () => {
   const loginEmail = login_email.value;
   const loginPassword = login_password.value;
 
-  const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
-  console.log(userCredential.user)
+  const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
 }
 
 btnLogin.addEventListener("click", loginEmailPassword);
