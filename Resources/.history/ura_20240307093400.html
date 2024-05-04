@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Digitalna ura</title>
+  <link rel="stylesheet" href="styless.css">
+  <link rel="stylesheet" href="system.css">
+</head>
+<body>
+  
+  <div class="blur-container">
+  <div class="clock" id="clock" align></div>
+  </div>
+
+
+  <div id="maintenancePopup">
+    <div id="maintenancePopupContent">
+      <h1>POVEZAVA IZGUBLJENA</h1>
+      <p>Povezava z strežnikom izgubljena zaradi vzdrževanja strani. Prosimo osvežite stran.</p>
+      <button id="closeMaintenancePopupBtn">Osveži</button>
+    </div>  
+</div>
+  
+
+
+  <script src="alerts.js"></script>
+  <script src="maintenancemode.js"></script>
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+
+      const time = `${hours}:${minutes}:${seconds}`;
+      document.getElementById('clock').innerText = time;
+    }
+
+    // Update every second
+    setInterval(updateClock, 1000);
+
+    // Initial call to set the initial time
+    updateClock();
+  </script>
+</body>
+</html>

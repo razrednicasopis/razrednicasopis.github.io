@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f8f8;
+}
+
+.maintenance-container {
+    text-align: center;
+    position: absolute;
+    top: 45%; /* Adjust the vertical position slightly upwards */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #333;
+    margin-top: 95px; /* Add margin to create space between text and image */
+}
+
+img {
+    position: relative;
+    margin-top: 17%;
+    padding: 10px;
+    left: 49%;
+    transform: translate(-50%, -50%);
+}
+
+h1 {
+    font-size: 1cm;
+}
+
+p {
+    font-size: 1.2em;
+}
+
+#countdown {
+    font-size: 1.5em;
+    margin-top: 20px;
+}
+
+#maintenanceobvestilo {
+    font-size: 15px;
+}

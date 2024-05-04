@@ -1,0 +1,100 @@
+/* Koda za "Coming Soon" pop-up */
+
+#popupContainer {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: top;
+  }
+
+
+  #popupContent {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  #closePopupBtn {
+    background-color: #3498db;
+    color: #ffffff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #closePopupBtn:hover {
+      background-color: #4da8e1;
+  }
+
+  #showPopupLink {
+    display: inline-block;
+    padding: 10px 15px; 
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+body.popup-open {
+   overflow: hidden;
+}
+
+body.blur {
+  filter: blur(5px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Koda za "Kontakt" obrazec */
+
+#contactform {
+    align-self: center;
+    }
+
+    form textarea {
+      width: 100%;
+      padding: 8px;
+      justify-content: left;
+      margin-left: auto;
+    
+      margin-bottom: 10px;
+    }  
+
+/*CSS za vse stranske nav skupine razen za glavno */
+
+.seznamvsebin nav {
+    justify-content: center;
+    padding: 150px;
+    border-radius: 200px;
+} 
+
+
+.seznamvsebin nav a {
+      size: 50px;
+      display: inline-block;
+      padding: 10px 20px;
+      color: #000000;
+      text-align: center;
+      text-decoration: none;
+      margin-bottom: 10px;
+      border: 2px, transparent;
+      border-radius: 5px; 
+      transition: ease, border 0.3s ease; 
+}
+
+
+.seznamvsebin nav a:hover {
+    background-color: #e0e0e0;
+    border: 2px solid #000000
+}
+
+/* Random CSS */
+
+

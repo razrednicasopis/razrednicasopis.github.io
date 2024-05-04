@@ -1,0 +1,44 @@
+/* Koda za "Coming Soon" pop-up */
+
+#popupContainer {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    backdrop-filter: blur(5px); /* Adjust the blur amount as needed */
+  }
+  
+  #popupContent {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  #closePopupBtn {
+    background-color: #3498db;
+    color: #ffffff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #showPopupLink {
+    padding: 10px 15px;
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+/* Koda za "Kontakt" obrazec */
+
+#contactform {
+    align-self: center;
+    }
+
+

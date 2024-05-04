@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024 Januarska izdaja - Razredni Časopis</title>
+    <link rel="stylesheet" href="styless.css">
+    <link rel="stylesheet" href="system.css">
+</head>
+<body>
+  
+  <div class="blur-container">
+    <header>
+        <h1>2024 Februarska izdaja - Članki</h1>
+        <nav>
+          <ul>
+            <li><a href="index.html">Domov</a></li>
+            <li><a href="vsebine.html">Nazaj</a></li>
+          </ul>
+        </nav>
+      </header>
+
+  
+      <div class="seznamvsebin">
+        <nav>
+            <h2><i>Seznam vsebin</i></h2>
+            <a href="vsebine.html">Časopis</a><br>
+            <a href="#">Išči</a>
+        </nav>
+    </div>
+
+
+    <div id="dynamicText">
+      <div class="searchArea">
+        <input type="text" id="searchInput" placeholder="Vnesi ime članka...">
+        <button onclick="searchArticles()" class="searchButton">Išči</button>
+      </div>
+      <div class="searchResults"></div>
+    </div>
+
+  
+
+      <footer>
+        <p>&copy; 2024 Razredni Časopis 1KAB. All rights reserved.
+        </footer>
+  
+    </div>
+      
+
+      <div id="popupContainer">
+        <div id="overlay"></div>
+        <div id="popupContent">
+            <h1><b>____ Namig ____</b></h1>
+            <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+            <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+            <button id="closePopupBtn">V redu</button>
+        </div>
+      </div>
+
+      <div id="maintenancePopup">
+        <div id="maintenancePopupContent">
+          <h1>POVEZAVA IZGUBLJENA</h1>
+          <p>Povezava z strežnikom izgubljena zaradi vzdrževanja strani. Prosimo osvežite stran.</p>
+          <button id="closeMaintenancePopupBtn">Osveži</button>
+        </div>  
+      </div>
+    
+
+      <script src="system.js"></script>
+      <script src="alerts.js"></script>
+      <script src="maintenancemode.js"></script>
+
+</body>
+</html>
