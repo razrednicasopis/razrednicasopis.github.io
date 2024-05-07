@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="module" src="./auth/firebaseauth.js"></script>
+    <script type="module" src="./a"
     <title>Prijava - Razredni Časopis</title>
     <link rel="stylesheet" href="system.css">
     <link rel="stylesheet" href="styless.css">
@@ -22,18 +22,19 @@
                 <li><a href="vsebine.html">Vsebine </a></li>
                 <li><a href="obvestila.html">Obvestila</a></li>
                 <li><a href="#" class="showPopupLink">Kontakt</a></li>
-                <li id="prijavaLink"><a href="#">Prijava</a></li>
-                <li id="prijavaLink"><a href="registracija.html">Registracija</a></li>
+                <li id="prijavaLink"><a href="prijava.html">Prijava</a></li>
+                <li id="prijavaLink"><a href="#">Registracija</a></li>
               </ul>
             </nav>
           </header>
           
 
     <div id="login-form" class="form-container">
-        <h2><div id="loginformnaslov">PRIJAVA V RAZREDNI ČASOPIS</div></h2>
+        <h2><div id="loginformnaslov">REGISTRACIJA V RAZREDNI ČASOPIS</div></h2>
+        <input type="text" id="login-username" placeholder="Uporabniško ime" required><br>
         <input type="email" id="login-email" placeholder="E-mail" required><br>
         <input type="password" id="login-password" placeholder="Geslo" required><br>
-        <button class="blob-btn" id="prijavaBtn">Prijava
+        <button class="blob-btn" onclick="handleRegistration()" id="registracijaBtn">Registracija
           <span class="blob-btn__inner">
             <span class="blob-btn__blobs">
               <span class="blob-btn__blob"></span>
@@ -53,7 +54,7 @@
 
 
 
-    <script src="login.js" type="module"></script>
+    <script src="register.js" type="module"></script>
     <script src="alerts.js"></script>
     <script src="maintenancemode.js"></script>
 </body>
