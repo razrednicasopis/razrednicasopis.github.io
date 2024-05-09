@@ -31,7 +31,7 @@ signUp.addEventListener('click', (event) => {
   createUserWithEmailAndPassword( auth, email, password)
   .then((userCredential) => {
     const user = userCredential.user;
-    const userData = {
+    const userData = {  
       Username: username,
       Email: email
     };

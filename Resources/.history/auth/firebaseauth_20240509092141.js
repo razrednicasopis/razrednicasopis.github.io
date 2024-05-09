@@ -28,10 +28,10 @@ signUp.addEventListener('click', (event) => {
   const auth = getAuth();
   const db = getFirestore();
 
-  createUserWithEmailAndPassword( auth, email, password)
+  createUserWithEmailAndPassword( auth, username, email, password)
   .then((userCredential) => {
     const user = userCredential.user;
-    const userData = {
+    const userData = {  
       Username: username,
       Email: email
     };
@@ -51,7 +51,7 @@ signUp.addEventListener('click', (event) => {
       alert('Ta e-mail račun je že v uporabi. Prosimo poskusite drug račun.');
     }
     else {
-      console.error("Prišlo je do napake pri ustvarjanju računa:", error);
+      console.error("Prišlo je do napake pri ustvarjanju računa:", error)
       alert('Napaka pri ustvarjanju računa. Prosimo kontaktirajte našo pomoč.');
     }
   })

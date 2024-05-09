@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { getAuth, createUserWIthEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { sign } from "jsonwebtoken";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -28,10 +29,10 @@ signUp.addEventListener('click', (event) => {
   const auth = getAuth();
   const db = getFirestore();
 
-  createUserWithEmailAndPassword( auth, email, password)
+  createUserWIthEmailAndPassword( auth, username, email, password)
   .then((userCredential) => {
     const user = userCredential.user;
-    const userData = {
+    const userData = {  
       Username: username,
       Email: email
     };
@@ -51,7 +52,6 @@ signUp.addEventListener('click', (event) => {
       alert('Ta e-mail račun je že v uporabi. Prosimo poskusite drug račun.');
     }
     else {
-      console.error("Prišlo je do napake pri ustvarjanju računa:", error);
       alert('Napaka pri ustvarjanju računa. Prosimo kontaktirajte našo pomoč.');
     }
   })
