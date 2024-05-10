@@ -28,17 +28,6 @@ signUp.addEventListener('click', async (event) => {
   const auth = getAuth();
   const db = getFirestore();
 
-
-  // Check if username already exists
-  const usersRef = collection(db, 'users');
-  const usernameQuery = query(usersRef, where('Username', '==', username));
-  const usernameSnapshot = await getDoc(usernameQuery);
-
-  if (usernameSnapshot.exists()) {
-    alert('Uporabniško ime je že v uporabi. Prosimo izberite drugo.');
-    return; // Stop further execution
-  }
-
   createUserWithEmailAndPassword( auth, email, password)
   .then((userCredential) => {
     const user = userCredential.user;
