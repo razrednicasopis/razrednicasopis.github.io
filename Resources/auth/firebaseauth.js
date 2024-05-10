@@ -19,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 
 
 const signUp = document.getElementById('registracijaBtn');
-signUp.addEventListener('click', (event) => {
+signUp.addEventListener('click', async (event) => {
   event.preventDefault();
   const username = document.getElementById('register-username').value;
   const email = document.getElementById('register-email').value;
@@ -27,6 +27,17 @@ signUp.addEventListener('click', (event) => {
 
   const auth = getAuth();
   const db = getFirestore();
+
+
+  // Check if username already exists
+  const usersRef = collection(db, 'users');
+  const usernameQuery = query(usersRef, where('Username', '==', username));
+  const usernameSnapshot = await getDoc(usernameQuery);
+
+  if (usernameSnapshot.exists()) {
+    alert('Uporabniško ime je že v uporabi. Prosimo izberite drugo.');
+    return; // Stop further execution
+  }
 
   createUserWithEmailAndPassword( auth, email, password)
   .then((userCredential) => {
