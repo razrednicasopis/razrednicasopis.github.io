@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { sign } from "jsonwebtoken";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,7 +24,7 @@ signUp.addEventListener('click', async (event) => {
   event.preventDefault();
   const username = document.getElementById('register-username').value;
   const email = document.getElementById('register-email').value;
-  const password = document.getElementById('register-password').value
+  const password = document.getElementById('register-password').value;
 
   const auth = getAuth();
   const db = getFirestore();
@@ -56,3 +57,29 @@ signUp.addEventListener('click', async (event) => {
     }
   })
 });
+
+
+
+    const signIn = document.getElementById('prijavaBtn');
+  signIn.addEventListener('click',  (event) => {
+    event.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const auth = getAuth();
+
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      alert('Prijava uspešna.');
+      const user = userCredential.user;
+      localStorage.setItem('loggedInUserId', user.uid);
+      window.location.href = 'index.html';
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      if(errorCode === 'auth/invalid-credential'){
+        alert('E-mail ali geslo je nepravilno.');
+      } else {
+        alert('Račun s tem e-mailom ne obstaja. Prosimo ustvarite nov račun.');
+      }
+    })
+})
