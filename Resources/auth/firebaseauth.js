@@ -58,27 +58,27 @@ signUp.addEventListener('click', async (event) => {
 });
 
 
-
-    const signIn = document.getElementById('prijavaBtn');
-  signIn.addEventListener('click',  (event) => {
+const signIn=document.getElementById('prijavaBtn');
+ signIn.addEventListener('click', (event)=>{
     event.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const auth = getAuth();
+    const email=document.getElementById('email').value;
+    const password=document.getElementById('password').value;
+    const auth=getAuth();
 
-    signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      alert('Prijava uspešna.');
-      const user = userCredential.user;
-      localStorage.setItem('loggedInUserId', user.uid);
-      window.location.href = 'index.html';
+    signInWithEmailAndPassword(auth, email,password)
+    .then((userCredential)=>{
+        alert('Prijava uspešna.')
+        const user=userCredential.user;
+        localStorage.setItem('loggedInUserId', user.uid);
+        window.location.href='prijava.html';
     })
-    .catch((error) => {
-      const errorCode = error.code;
-      if(errorCode === 'auth/invalid-credential'){
-        alert('E-mail ali geslo je nepravilno.');
-      } else {
-        alert('Račun s tem e-mailom ne obstaja. Prosimo ustvarite nov račun.');
-      }
+    .catch((error)=>{
+        const errorCode=error.code;
+        if(errorCode==='auth/invalid-credential'){
+            alert('Nepravili geslo ali e-mail račun.');
+        }
+        else{
+            alert('Račun s tem e-mailom ne obstaja.');
+        }
     })
-})
+ })
