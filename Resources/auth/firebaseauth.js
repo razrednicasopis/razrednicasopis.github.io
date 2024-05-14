@@ -71,7 +71,7 @@ const signIn=document.getElementById('prijavaBtn')
         alert('Prijava uspešna.')
         const user = userCredential.user;
         localStorage.setItem('loggedInUserId', user.uid);
-        window.location.href='../index.html';
+        window.location.href='index.html';
     })
     .catch((error)=>{
         const errorCode=error.code;
