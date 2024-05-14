@@ -59,25 +59,26 @@ signUp.addEventListener('click', async (event) => {
 
 
 const signIn=document.getElementById('prijavaBtn')
- signIn.addEventListener('click', (event)=>{
+ signIn.addEventListener('click', (event) => {
     event.preventDefault();
     const email=document.getElementById('email').value;
     const password=document.getElementById('password').value;
     const auth=getAuth();
+    const db = getFirestore();
 
-    signInWithEmailAndPassword(auth, email,password)
-    .then((userCredential)=>{
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
         alert('Prijava uspešna.')
-        const user=userCredential.user;
+        const user = userCredential.user;
         localStorage.setItem('loggedInUserId', user.uid);
-        window.location.href='../prijava.html';
+        window.location.href='../index.html';
     })
     .catch((error)=>{
         const errorCode=error.code;
         if(errorCode==='auth/invalid-credential'){
-            alert('Nepravili geslo ali e-mail račun.');
+            alert('Nepravilno geslo ali e-mail račun.');
         }
-        else{
+        else {
             alert('Račun s tem e-mailom ne obstaja.');
         }
     })
