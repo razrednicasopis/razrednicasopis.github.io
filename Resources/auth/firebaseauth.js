@@ -58,7 +58,7 @@ signUp.addEventListener('click', async (event) => {
 });
 
 
-const signIn=document.getElementById('prijavaBtn');
+const signIn=document.getElementById('prijavaBtn')
  signIn.addEventListener('click', (event)=>{
     event.preventDefault();
     const email=document.getElementById('email').value;
@@ -70,7 +70,7 @@ const signIn=document.getElementById('prijavaBtn');
         alert('Prijava uspešna.')
         const user=userCredential.user;
         localStorage.setItem('loggedInUserId', user.uid);
-        window.location.href='prijava.html';
+        window.location.href='../prijava.html';
     })
     .catch((error)=>{
         const errorCode=error.code;
