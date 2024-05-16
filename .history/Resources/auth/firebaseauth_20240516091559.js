@@ -58,41 +58,30 @@ signUp.addEventListener('click', async (event) => {
 });
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  console.log("DOM fully loaded and parsed");
-  
-  const loginBtn = document.getElementById('prijavaBtn');
-  if (!loginBtn) {
-    console.error('Login button not found.');
-    return;
-  }
+const loginBtn = document.getElementById('prijavaBtn');
+loginBtn.addEventListener('click', async (event) => {
+  event.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
 
-  loginBtn.addEventListener('click', async (event) => {
-    event.preventDefault();
-    console.log('Login button clicked');
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    console.log(`Email: ${email}, Password: ${password}`);
+  const auth = getAuth();
 
-    const auth = getAuth();
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // Successfully logged in
-      const user = userCredential.user;
-      alert('Prijava uspešna!');
-      window.location.href = 'index.html'; // Redirect to the dashboard or desired page
-    } catch (error) {
-      const errorCode = error.code;
-      if (errorCode === 'auth/wrong-password') {
-        alert('Napačno geslo. Prosimo, poskusite znova.');
-      } else if (errorCode === 'auth/user-not-found') {
-        alert('Uporabnik s tem e-mail naslovom ne obstaja. Prosimo, preverite e-mail ali se registrirajte.');
-      } else {
-        console.error("Prišlo je do napake pri prijavi:", error);
-        alert('Napaka pri prijavi. Prosimo kontaktirajte našo pomoč.');
-      }
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Successfully logged in
+    const user = userCredential.user;
+    alert('Prijava uspešna!');
+    window.location.href = '.html'; // Redirect to the dashboard or desired page
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    if (errorCode === 'auth/wrong-password') {
+      alert('Napačno geslo. Prosimo, poskusite znova.');
+    } else if (errorCode === 'auth/user-not-found') {
+      alert('Uporabnik s tem e-mail naslovom ne obstaja. Prosimo, preverite e-mail ali se registrirajte.');
+    } else {
+      console.error("Prišlo je do napake pri prijavi:", error);
+      alert('Napaka pri prijavi. Prosimo kontaktirajte našo pomoč.');
     }
   });
 });
