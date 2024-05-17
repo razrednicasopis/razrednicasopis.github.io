@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+
     const auth = getAuth();
 
     try {
