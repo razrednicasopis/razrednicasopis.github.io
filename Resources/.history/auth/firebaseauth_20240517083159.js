@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  loginBtn.addEventListener('submit', async (event) => {
+  loginBtn.addEventListener(, async (event) => {
     event.preventDefault();
     console.log('Login button clicked');
     

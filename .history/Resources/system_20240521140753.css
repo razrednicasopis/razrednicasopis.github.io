@@ -1,5 +1,7 @@
 .hidden {
   display: none;
+  text-size-adjust: 0;
+  opacity: 9+;
 }
 
 #hidden {

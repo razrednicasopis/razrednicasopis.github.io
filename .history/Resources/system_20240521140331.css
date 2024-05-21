@@ -1,9 +1,11 @@
 .hidden {
-  display: none;
+  visibility: hidden;
 }
 
 #hidden {
   display: none;
+  margin: 0;
+  
 }
 
 /* Koda za "Coming Soon" pop-up */
