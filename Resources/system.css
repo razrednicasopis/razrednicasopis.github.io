@@ -8,7 +8,7 @@
 
 /* Koda za "Coming Soon" pop-up */
 
-#popupContainer {
+#popupContainer, #usernamePopup {
     display: none;
     position: fixed;
     top: 50%;
@@ -22,12 +22,13 @@
     z-index: top;
   }
 
-  #popupContent {
+  #popupContent, #betaCodePopup, #usernamePopup {
     max-width: 400px;
     margin: 0 auto;
   }
+
   
-  #closePopupBtn {
+  #closePopupBtn, #submitBetaCodeBtn, #submitUsernameBtn {
     background-color: #3498db;
     color: #ffffff;
     padding: 10px 15px;
@@ -35,8 +36,38 @@
     border-radius: 5px;
     cursor: pointer;
   }
+
+  #usernamePopupContent {
+    font-size: 90%;
+  }
+
+  #betaCodeInput {
+    width: 8cm;
+    height: 1cm;
+    
+  }
+
+  #betaCodePopup {
+    width: 50cm;
+    height: 15cm;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: top;
+  }
+
+  #betaCodePopupContent {
+      font-size: small;
+  }
   
-  #closePopupBtn:hover {
+  #closePopupBtn:hover, #submitBetaCodeBtn:hover, #submitUsernameBtn:hover {
       background-color: #4da8e1;
   }
 
@@ -89,6 +120,11 @@ body.popup-open {
 
 #closeMaintenancePopupBtn:hover {
   background-color: #4da8e1;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
 }
 
 /* Koda za "Kontakt" obrazec */
