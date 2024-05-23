@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+
+        document.getElementById('closePopupBtn').addEventListener('click', function () {
+            document.getElementById('popupContainer').style.display = 'none';
+            document.body.classList.remove('popup-open');
+        });
+    });
+
     //Maintenance mode pop-up
 
 
