@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
    
-
+});
 
 //Maintenance Warning
 

@@ -16,8 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //Maintenance mode pop-up
 
 
-   
-
+    
 
 //Maintenance Warning
 

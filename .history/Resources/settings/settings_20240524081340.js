@@ -16,19 +16,12 @@ const db = getFirestore(app);
 document.addEventListener('DOMContentLoaded', function () {
     function toggleMaintenancePopup(show) {
         const maintenancePopup = document.getElementById('maintenancePopup');
-        const blurContainer = document.querySelector('.blur-container');
         if (maintenancePopup) {
             console.log('Toggling maintenance popup:', show);
             maintenancePopup.style.display = show ? 'block' : 'none';
             document.body.classList.toggle('popup-open', show);
         } else {
             console.error('maintenancePopup element not found');
-        }
-
-        if (blurContainer) {
-            blurContainer.style.filter = show ? 'blur(5px)' : 'none';
-        } else {
-            console.error('blur-container element not found');
         }
     }
 
@@ -39,9 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (docSnap.exists()) {
                 console.log('Maintenance document data:', docSnap.data());
                 const data = docSnap.data();
-                if (data.maintenanceMode) {
+                if (data.maintenance) {
                     console.log('Redirecting to maintenance page');
-                    window.location.href = '/Resources/maintenance/popravila.html';
+                    window.location.href = '../';
                 } else {
                     console.log('Starting to listen for maintenance status changes');
                     listenForMaintenanceStatus();
@@ -59,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                const maintenanceMode = data.maintenanceMode;
+                const maintenanceMode = data.maintenance;
                 console.log('Maintenance status changed:', maintenanceMode);
                 toggleMaintenancePopup(maintenanceMode);
             } else {
@@ -71,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function () {
-        window.location.href = '/Resources/maintenance/popravila.html';
+        location.reload();
     });
 
     checkInitialMaintenanceStatus();

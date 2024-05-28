@@ -16,19 +16,12 @@ const db = getFirestore(app);
 document.addEventListener('DOMContentLoaded', function () {
     function toggleMaintenancePopup(show) {
         const maintenancePopup = document.getElementById('maintenancePopup');
-        const blurContainer = document.querySelector('.blur-container');
         if (maintenancePopup) {
             console.log('Toggling maintenance popup:', show);
             maintenancePopup.style.display = show ? 'block' : 'none';
             document.body.classList.toggle('popup-open', show);
         } else {
             console.error('maintenancePopup element not found');
-        }
-
-        if (blurContainer) {
-            blurContainer.style.filter = show ? 'blur(5px)' : 'none';
-        } else {
-            console.error('blur-container element not found');
         }
     }
 
@@ -48,6 +41,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             } else {
                 console.log('No such document!');
+                maintenancePopup.style.display = show ? 'block' : 'none';
+                document.body.classList.toggle('popup-open', show ?);
             }
         } catch (error) {
             console.error('Error getting document:', error);
@@ -59,11 +54,13 @@ document.addEventListener('DOMContentLoaded', function () {
         onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                const maintenanceMode = data.maintenanceMode;
+                const maintenanceMode = data.maintenance;
                 console.log('Maintenance status changed:', maintenanceMode);
                 toggleMaintenancePopup(maintenanceMode);
             } else {
                 console.log('No such document!');
+                
+
             }
         }, (error) => {
             console.error('Error getting document:', error);
