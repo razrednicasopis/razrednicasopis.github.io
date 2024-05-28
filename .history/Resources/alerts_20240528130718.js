@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Popup functionality
   document.querySelectorAll('.showPopupLink').forEach(function (link) {
       link.addEventListener('click', function (event) {
           event.preventDefault();
@@ -12,15 +11,23 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('popupContainer').style.display = 'none';
       document.body.classList.remove('popup-open');
   });
+});
 
-  // Maintenance Warning
+    //Maintenance mode pop-up
+
+
+   
+
+
+//Maintenance Warning
+
+document.addEventListener('DOMContentLoaded', function () {
   const banner = document.getElementById('maintenanceWarningMessage');
   const scrollingText = document.getElementById('scrollingText');
-  const maintenanceStartTime = new Date("2024-05-28T13:52:00Z").getTime(); // Set the maintenance start time
+  const maintenanceStartTime = new Date("Tue 28.5.2024 14:00:00").getTime(); // Set the maintenance start time
   let notificationDisplayedThisMinute = false;
 
   function toggleMaintenancePopup(show, message = "") {
-      console.log('Toggle Maintenance Popup:', show, message);
       if (show) {
           scrollingText.textContent = message;
           banner.classList.remove('hidden');
@@ -48,13 +55,8 @@ document.addEventListener('DOMContentLoaded', function () {
       const currentTime = new Date().getTime();
       const timeDifference = maintenanceStartTime - currentTime;
 
-      console.log('Current time:', new Date(currentTime).toISOString());
-      console.log('Maintenance start time:', new Date(maintenanceStartTime).toISOString());
-      console.log('Time difference (ms):', timeDifference);
-
       if (timeDifference > 0 && !notificationDisplayedThisMinute) {
           const minutesLeft = Math.floor(timeDifference / (1000 * 60));
-          console.log('Minutes left before maintenance:', minutesLeft);
 
           if (intervals.includes(minutesLeft)) {
               const timeLeftFormatted = getFormattedTimeLeft(timeDifference);
@@ -78,3 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   setInterval(checkMaintenanceStatus, 1000);
 });
+
+
+

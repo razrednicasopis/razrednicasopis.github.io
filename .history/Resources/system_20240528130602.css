@@ -264,6 +264,10 @@ z-index: 1;
   }
 }
 
+.hidden {
+  display: none;
+}
+
 /* Koda za obrazce */
 
 #contactform {

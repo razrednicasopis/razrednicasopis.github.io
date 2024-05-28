@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Maintenance Warning
   const banner = document.getElementById('maintenanceWarningMessage');
   const scrollingText = document.getElementById('scrollingText');
-  const maintenanceStartTime = new Date("2024-05-28T13:52:00Z").getTime(); // Set the maintenance start time
+  const maintenanceStartTime = new Date("2024-05-28T13:10:00Z").getTime(); // Set the maintenance start time
   let notificationDisplayedThisMinute = false;
 
   function toggleMaintenancePopup(show, message = "") {
