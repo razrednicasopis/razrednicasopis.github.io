@@ -486,22 +486,7 @@ display: inline-block
 
 /*CSS za vse stranske nav skupine razen za glavno */
 
-.countdown-selector {
-  display: inline-block;
-  margin-top: 70px;
-  margin-left: 50px;
-}
 
-.countdown-selector a {
-  font-size: 25px;
-  margin: 20px;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-#selected {
-  text-decoration: underline;
-}
 
 .seznamvsebin {
   display: inline-block;

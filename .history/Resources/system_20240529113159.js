@@ -45,7 +45,7 @@ function updateClock() {
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         // Display the countdown
-        document.getElementById('nextMaintenance').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        document.getElementById('countdown').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }, 1000);
 });
 

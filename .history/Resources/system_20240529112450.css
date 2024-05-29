@@ -496,11 +496,11 @@ display: inline-block
   font-size: 25px;
   margin: 20px;
   font-weight: bold;
-  text-decoration: none;
+  text-decoration: ;
 }
 
 #selected {
-  text-decoration: underline;
+  un
 }
 
 .seznamvsebin {

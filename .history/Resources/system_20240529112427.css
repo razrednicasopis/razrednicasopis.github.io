@@ -496,12 +496,9 @@ display: inline-block
   font-size: 25px;
   margin: 20px;
   font-weight: bold;
-  text-decoration: none;
 }
 
-#selected {
-  text-decoration: underline;
-}
+
 
 .seznamvsebin {
   display: inline-block;

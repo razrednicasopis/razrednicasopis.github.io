@@ -35,7 +35,7 @@ function updateClock() {
         if (distance <= 0) {
             // If the maintenance period is over, redirect to your main site
             clearInterval(countdown);
-            document.getElementById("nextMaintenance").innerHTML = "Trenutno ni določeno prihajajoče vzdževanje! Prosimo poskusite kasneje."
+            document.getElementById("nextMaintenance").innerHTML = "Trenutno ni določeno priha"
         }
 
         // Calculate remaining time
@@ -45,7 +45,7 @@ function updateClock() {
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         // Display the countdown
-        document.getElementById('nextMaintenance').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        document.getElementById('countdown').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }, 1000);
 });
 
