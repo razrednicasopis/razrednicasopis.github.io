@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import axios from 'https://cdn.skypack.dev/axios'; // Import Axios for making HTTP requests
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -28,12 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById('register-password').value;
 
       try {
+        // Fetch client's IP address
+        const ipResponse = await axios.get('https://api.ipify.org?format=json');
+        const ipAddress = ipResponse.data.ip;
+
+        // Create user in Firebase Auth
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        const userData = { Username: username, Email: email };
+        const userData = { Username: username, Email: email, IP_Address: ipAddress };
 
+        // Store user data in Firestore
         await setDoc(doc(db, "users", user.uid), userData);
-        alert('Račun uspešno ustvarjen! Sedaj se lahko prijavite.');
+
+        await sendEmailVerification(userCredential.user);
+
+        alert('Račun uspešno ustvarjen! Prosimo preverite svoj e-mail račun za potrditev.');
         window.location.href = 'prijava.html';
       } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
@@ -62,11 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        if (!user.emailVerified) {
+          alert('E-mail ni potrjen. Preverite vaš e-poštni predal za potrditveno e-sporočilo.');
+          return;
+        }
         alert('Prijava uspešna!');
         window.location.href = 'index.html'; // Redirect to the dashboard or desired page
       } catch (error) {
-        if (error.code === 'auth/wrong-password') {
-          alert('Napačno geslo ali e-mail račun. Prosimo poskusite znova.');
+        if (error.code === 'auth/invalid-credential') {
+          alert('Napačno geslo ali e-mail račun. Prosimo, poskusite znova.');
         } else if (error.code === 'auth/user-not-found') {
           alert('Uporabnik s tem e-mail naslovom ne obstaja. Prosimo, preverite e-mail ali se registrirajte.');
         } else if (error.code === 'auth/invalid-email') {
