@@ -86,7 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('Uporabnik s tem e-mail naslovom ne obstaja. Prosimo, preverite e-mail ali se registrirajte.');
         } else if (error.code === 'auth/invalid-email') {
           alert('Napačno geslo ali e-mail račun. Prosimo poskusite znova.');
-        } else {
+        } else if (error.code === 'auth/user-disabled') {
+          alert('Vaš račun je bil blokiran. Prosimo kontaktirajte našo pomoč.');
+        } else  {
           console.error("Prišlo je do napake pri prijavi:", error);
           alert('Napaka pri prijavi. Prosimo kontaktirajte našo pomoč.');
         }
