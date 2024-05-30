@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import axios from 'https://cdn.skypack.dev/axios'; // Import Axios for making HTTP requests
 
@@ -17,6 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
+
 
 // Registration
 document.addEventListener('DOMContentLoaded', () => {
@@ -95,4 +96,34 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Logout
+  const loginHref = document.getElementById('loginHref');
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        alert('Odjava uspešna.');
+        window.location.href = 'prijava.html'; // Redirect to the login page after logout
+      } catch (error) {
+        console.error('Error logging out')
+        alert('Napaka pri odjavi:', error);
+      }
+    });
+  }
+
+  // Monitor authentication state changes
+  onAuthStateChanged(auth, (user) => {
+    const logoutBtn = document.getElementById('logoutBtn'); // Moved this inside onAuthStateChanged to ensure access to logoutBtn
+    if (user) {
+      // User is signed in, show the logout button
+      if (logoutBtn) logoutBtn.style.display = 'block';
+      if (loginHref) loginHref.style.display = 'none';
+    } else {
+      // No user is signed in, hide the logout button
+      if (logoutBtn) logoutBtn.style.display = 'none';
+      if (loginHref) loginHref.style.display = 'block';
+    }
+  });
 });
