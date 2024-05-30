@@ -1,3 +1,7 @@
+//This is a JS code for the switching of the newspaper page content
+
+
+
 //Code for the clock
 
 function updateClock() {
@@ -16,7 +20,12 @@ function updateClock() {
   // Initial call to set the initial time
   updateClock();
 
-  
+
+  // Maintenance clock
+
+ 
+
+
 // Search Bar FEB 2024
 
 // Mock data - replace with your actual article data

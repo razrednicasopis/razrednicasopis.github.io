@@ -489,7 +489,7 @@ display: inline-block
 
 .clock { 
   text-align: center;
-  font-size: 3em;
+  font-size: 3px;
   font-weight: bold;
   margin-top: 250px;
 }

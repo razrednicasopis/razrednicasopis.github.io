@@ -479,10 +479,8 @@ display: inline-block
 /* Alignments */
 
 .align1 {
-  margin-top: 35px;
-  margin-left: 70px;
-  font-size: 20px;
-  font-style: italic;
+  margin-top: 25px;
+  margin-left: 10px:
 }
 
 /* CSS za ure */
@@ -490,14 +488,12 @@ display: inline-block
 .clock { 
   text-align: center;
   font-size: 3em;
-  font-weight: bold;
-  margin-top: 250px;
 }
 
 .nextMaintenance {
   font-size: 30px;
   font-weight: bold;
-  margin-top: 220px;
+  margin-top: 275px;
   text-align: center;
 }
 

@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         const now = new Date().getTime();
         if (nextMaintenanceDate.getTime() <= now) {
-            countdownElement.innerHTML = "Trenutno ni podatkov o naslednjem načrtovanem vzdrževanju!";
+            countdownElement.innerHTML = "Trenutno so podatkui podatkov načrtovanega vzdrževanja.";
         } else {
             startCountdown(nextMaintenanceDate.getTime());
         }

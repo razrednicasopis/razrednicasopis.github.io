@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         const now = new Date().getTime();
         if (nextMaintenanceDate.getTime() <= now) {
-            countdownElement.innerHTML = "Trenutno ni podatkov o naslednjem načrtovanem vzdrževanju!";
+            countdownElement.innerHTML = "Ni načrtovanega vzdrževanja ali je datum pretekel.";
         } else {
             startCountdown(nextMaintenanceDate.getTime());
         }
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-// Maintenance Popup
+//
 
 document.addEventListener('DOMContentLoaded', function () {
     function toggleMaintenancePopup(show) {

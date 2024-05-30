@@ -1,3 +1,4 @@
+
 //Code for the clock
 
 function updateClock() {

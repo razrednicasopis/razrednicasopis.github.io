@@ -13,69 +13,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Maintenance clock
-
-async function getNextMaintenanceDate() {
-    try {
-        const docRef = doc(db, 'settings', 'nextMaintenanceDate');
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            return data.date.toDate(); // assuming date is stored as a Firestore Timestamp
-        } else {
-            console.error('No such document!');
-            return null;
-        }
-    } catch (error) {
-        console.error('Error getting document:', error);
-        return null;
-    }
-}
-
-function startCountdown(targetDate) {
-    const countdownElement = document.getElementById('nextMaintenance');
-
-    function updateCountdown() {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        if (distance < 0) {
-            countdownElement.innerHTML = "Vzdrževanje je v teku!";
-            clearInterval(interval);
-            return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        countdownElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-    const nextMaintenanceDate = await getNextMaintenanceDate();
-    const countdownElement = document.getElementById('nextMaintenance');
-
-    if (!nextMaintenanceDate) {
-        countdownElement.innerHTML = "Ni podatkov o naslednjem vzdrževanju.";
-    } else {
-        const now = new Date().getTime();
-        if (nextMaintenanceDate.getTime() <= now) {
-            countdownElement.innerHTML = "Trenutno ni podatkov o naslednjem načrtovanem vzdrževanju!";
-        } else {
-            startCountdown(nextMaintenanceDate.getTime());
-        }
-    }
-});
-
-
-// Maintenance Popup
-
 document.addEventListener('DOMContentLoaded', function () {
     function toggleMaintenancePopup(show) {
         const maintenancePopup = document.getElementById('maintenancePopup');
@@ -89,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (blurContainer) {
-            blurContainer.style.filter = show ? 'blur(5px)' : 'none';
         } else {
             console.error('blur-container element not found');
         }

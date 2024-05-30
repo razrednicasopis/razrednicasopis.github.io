@@ -476,31 +476,13 @@ display: inline-block
   }
 }
 
-/* Alignments */
+/* CSS za uro */
 
-.align1 {
-  margin-top: 35px;
-  margin-left: 70px;
-  font-size: 20px;
-  font-style: italic;
-}
-
-/* CSS za ure */
-
-.clock { 
+.clock {
+  margin-top: 6cm;
   text-align: center;
   font-size: 3em;
-  font-weight: bold;
-  margin-top: 250px;
 }
-
-.nextMaintenance {
-  font-size: 30px;
-  font-weight: bold;
-  margin-top: 220px;
-  text-align: center;
-}
-
 
 /*CSS za vse stranske nav skupine razen za glavno */
 
@@ -511,7 +493,7 @@ display: inline-block
 }
 
 .countdown-selector a {
-  font-size: 20px;
+  font-size: 20 px;
   margin: 20px;
   font-weight: bold;
   text-decoration: none;
