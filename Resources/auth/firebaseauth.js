@@ -23,30 +23,35 @@ function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
 }
-
 document.addEventListener('DOMContentLoaded', () => {
   const signUpBtn = document.getElementById('registracijaBtn');
   if (signUpBtn) {
-    signUpBtn.addEventListener('click', async (event) => {
-      event.preventDefault();
-      const username = document.getElementById('register-username').value;
-      const email = document.getElementById('register-email').value;
-      const password = document.getElementById('register-password').value;
+      signUpBtn.addEventListener('click', async (event) => {
+          event.preventDefault();
+          const username = document.getElementById('register-username').value;
+          const email = document.getElementById('register-email').value;
+          const password = document.getElementById('register-password').value;
 
-      try {
-        const ipResponse = await axios.get('https://api.ipify.org?format=json');
-        const ipAddress = ipResponse.data.ip;
+          try {
+              const ipResponse = await axios.get('https://api.ipify.org?format=json');
+              const ipAddress = ipResponse.data.ip;
 
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const userData = { Username: username, Email: email, IP_Address: ipAddress };
+              const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+              const user = userCredential.user;
+              const userData = {
+                  Username: username,
+                  Email: email,
+                  IP_Address: ipAddress,
+                  isAdmin: false, // Initially set to false
+                  role: 'member' // Set role to "member" initially
+              };
 
-        await setDoc(doc(db, "users", user.uid), userData);
+              await setDoc(doc(db, "users", user.uid), userData);
 
-        await sendEmailVerification(userCredential.user);
+              await sendEmailVerification(userCredential.user);
 
-        alert('Račun uspešno ustvarjen! Prosimo preverite svoj e-mail račun za potrditev.');
-        window.location.href = 'prijava.html';
+              alert('Račun uspešno ustvarjen! Prosimo preverite svoj e-mail račun za potrditev.');
+              window.location.href = 'prijava.html';
       } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
           alert('Ta e-mail račun je že v uporabi. Prosimo poskusite drug račun.');

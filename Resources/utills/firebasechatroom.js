@@ -109,41 +109,55 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadMessages() {
         const messagesRef = collection(db, 'messages');
         const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
-
+    
         onSnapshot(messagesQuery, (snapshot) => {
             const messagesDiv = document.getElementById('messages');
             messagesDiv.innerHTML = ''; // Clear existing messages
-
+    
             snapshot.forEach((doc) => {
                 const message = doc.data();
-                displayMessage(message.username, message.text, message.timestamp.toDate());
+                displayMessage(message.username, message.text, message.timestamp.toDate(), message.role);
             });
         });
     }
 
     // Function to display a message in the chat box
-    function displayMessage(username, text, timestamp) {
+    function displayMessage(username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
-
+    
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
-
+    
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
         timestampElement.textContent = new Date(timestamp).toLocaleTimeString();
-
+    
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
         usernameElement.textContent = username + ': ';
-
+    
+        if (role === 'owner') {
+            const ownerTag = document.createElement('span');
+            ownerTag.textContent = '[Lastnik] ';
+            ownerTag.classList.add('owner-tag');
+            usernameElement.appendChild(ownerTag);
+            usernameElement.classList.add('owner');
+        } else if (role === 'admin') {
+            const adminTag = document.createElement('span');
+            adminTag.textContent = '[Administrator] ';
+            adminTag.classList.add('admin-tag');
+            usernameElement.appendChild(adminTag);
+            usernameElement.classList.add('admin');
+        }
+    
         const textElement = document.createElement('span');
         textElement.classList.add('text');
         textElement.textContent = text;
-
+    
         messageElement.appendChild(timestampElement);
         messageElement.appendChild(usernameElement);
         messageElement.appendChild(textElement);
-
+    
         messagesDiv.appendChild(messageElement);
         messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
     }

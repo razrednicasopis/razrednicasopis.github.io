@@ -6,6 +6,14 @@
   display: none;
 }
 
+.username.admin {
+  color: red;
+}
+
+.username.owner {
+  color: red;
+}
+
 /* Koda za "Coming Soon" pop-up */
 
 #popupContainer, #loginPopup {
