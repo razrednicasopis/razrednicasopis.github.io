@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, addDoc, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 // Firebase configuration
@@ -16,6 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
+
 
 document.addEventListener('DOMContentLoaded', function () {
     // Function to show a popup
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (betaCodeDoc.exists() && betaCodeDoc.data().valid) {
                 betaCodeError.style.display = 'none';
                 hidePopup('betaCodePopup');
-                showPopup('usernamePopup');
+                checkLoginState();
             } else {
                 betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo in poskusite znova!';
                 betaCodeError.style.display = 'block';
@@ -75,33 +76,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    document.getElementById('submitUsernameBtn').addEventListener('click', function (event) {
-        event.preventDefault();
-
-        const usernameInput = document.getElementById('usernameInput');
-        const usernameError = document.getElementById('usernameError');
-        const username = usernameInput.value.trim();
-
-        if (!username) {
-            usernameError.textContent = 'Please enter a username.';
-            usernameError.style.display = 'block';
-            return;
-        }
-
-        // Save username to local storage or proceed with login
-        localStorage.setItem('username', username);
-        hidePopup('usernamePopup');
-
-        // Show the chatroom
-        document.getElementById('chatroom').classList.remove('hidden');
-
-        // Start anonymous authentication
-        signInAnonymously(auth).then(() => {
-            loadMessages();
-        }).catch((error) => {
-            console.error('Authentication failed:', error);
-        });
+    document.getElementById('loginRedirectBtn').addEventListener('click', function () {
+        window.location.href = '../prijava.html?source=chatroom'; // Redirect with source parameter
     });
+
+    // Check login state
+    function checkLoginState() {
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                hidePopup('loginPopup');
+                document.getElementById('chatroom').classList.remove('hidden');
+                loadMessages();
+            } else {
+                showPopup('loginPopup');
+            }
+        });
+    }
 
     // Get user's IP address
     async function getUserIp() {
@@ -162,13 +152,16 @@ document.addEventListener('DOMContentLoaded', function () {
     async function handleMessageSend() {
         const messageInput = document.getElementById('messageInput');
         const text = messageInput.value.trim();
-        const username = localStorage.getItem('username');
+        const user = auth.currentUser;
 
-        if (!text) {
+        if (!text || !user) {
             return;
         }
 
         try {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const username = userDoc.exists() ? userDoc.data().Username : 'Unknown';
+
             const userIp = await getUserIp();
             await addDoc(collection(db, 'messages'), {
                 username: username,
@@ -190,4 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
             handleMessageSend();
         }
     });
+
+    // Initial login state check will now be triggered after beta code verification
 });

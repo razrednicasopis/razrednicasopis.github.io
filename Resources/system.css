@@ -8,7 +8,7 @@
 
 /* Koda za "Coming Soon" pop-up */
 
-#popupContainer, #usernamePopup {
+#popupContainer, #loginPopup {
     display: none;
     position: fixed;
     top: 50%;
@@ -22,13 +22,13 @@
     z-index: top;
   }
 
-  #popupContent, #betaCodePopup, #usernamePopup {
+  #popupContent, #betaCodePopup, #loginPopup {
     max-width: 400px;
     margin: 0 auto;
   }
 
   
-  #closePopupBtn, #submitBetaCodeBtn, #submitUsernameBtn {
+  #closePopupBtn, #submitBetaCodeBtn, #loginRedirectBtn {
     background-color: #3498db;
     color: #ffffff;
     padding: 10px 15px;
@@ -37,7 +37,7 @@
     cursor: pointer;
   }
 
-  #usernamePopupContent {
+  #loginPopupContent {
     font-size: 90%;
   }
 
@@ -67,7 +67,7 @@
       font-size: small;
   }
   
-  #closePopupBtn:hover, #submitBetaCodeBtn:hover, #submitUsernameBtn:hover {
+  #closePopupBtn:hover, #submitBetaCodeBtn:hover, #loginRedirectBtn:hover {
       background-color: #4da8e1;
   }
 

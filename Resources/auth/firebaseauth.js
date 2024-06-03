@@ -18,8 +18,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
+// Helper function to get URL parameter
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
 
-// Registration
 document.addEventListener('DOMContentLoaded', () => {
   const signUpBtn = document.getElementById('registracijaBtn');
   if (signUpBtn) {
@@ -30,16 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById('register-password').value;
 
       try {
-        // Fetch client's IP address
         const ipResponse = await axios.get('https://api.ipify.org?format=json');
         const ipAddress = ipResponse.data.ip;
 
-        // Create user in Firebase Auth
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         const userData = { Username: username, Email: email, IP_Address: ipAddress };
 
-        // Store user data in Firestore
         await setDoc(doc(db, "users", user.uid), userData);
 
         await sendEmailVerification(userCredential.user);
@@ -63,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Login
   const loginBtn = document.getElementById('prijavaBtn');
   if (loginBtn) {
     loginBtn.addEventListener('click', async (event) => {
@@ -79,7 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         alert('Prijava uspešna!');
-        window.location.href = 'index.html'; // Redirect to the dashboard or desired page
+        
+        // Redirect based on the source parameter
+        const source = getQueryParam('source');
+        if (source === 'chatroom') {
+          window.location.href = 'utills/klepet.html'; // Redirect to chatroom
+        } else {
+          window.location.href = 'index.html'; // Default redirect to index
+        }
       } catch (error) {
         if (error.code === 'auth/invalid-credential') {
           alert('Napačno geslo ali e-mail račun. Prosimo, poskusite znova.');
@@ -97,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Logout
   const loginHref = document.getElementById('loginHref');
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
@@ -113,15 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Monitor authentication state changes
   onAuthStateChanged(auth, (user) => {
-    const logoutBtn = document.getElementById('logoutBtn'); // Moved this inside onAuthStateChanged to ensure access to logoutBtn
     if (user) {
-      // User is signed in, show the logout button
       if (logoutBtn) logoutBtn.style.display = 'block';
       if (loginHref) loginHref.style.display = 'none';
     } else {
-      // No user is signed in, hide the logout button
       if (logoutBtn) logoutBtn.style.display = 'none';
       if (loginHref) loginHref.style.display = 'block';
     }
