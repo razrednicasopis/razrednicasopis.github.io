@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, collection, getDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, getDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
@@ -140,85 +140,4 @@ document.addEventListener('DOMContentLoaded', function () {
     checkInitialMaintenanceStatus();
 });
 
-// Maintenance Warning
 
-const warningIntervals = [
-    120, 90, 60, 45, 30, 15, 10, 5, 4, 3, 2, 1 // in minutes
-];
-
-let warningsShown = new Set();
-
-function showMaintenanceWarning(minutesLeft) {
-    const warningDiv = document.getElementById('maintenance-warning');
-    const messageP = document.getElementById('maintenance-message');
-
-    let timeText;
-    if (minutesLeft >= 60) {
-        timeText = `${Math.floor(minutesLeft / 60)}h ${minutesLeft % 60}m`;
-    } else {
-        timeText = `${minutesLeft}m`;
-    }
-
-    messageP.textContent = `OBVESTILO: Strežniki Razrednega Časopisa bodo čez ${timeText} nedosegljivi zaradi vzdrževanja. Prosimo načrtujte uporabo strani v skladu s tem. `;
-    warningDiv.style.display = 'block';
-
-    setTimeout(() => {
-        warningDiv.style.display = 'none';
-    }, 60000); // Hide after 1 minute
-
-    // Additional logic to hide the warning when the text runs all the way through the left side of the screen
-    const animationDuration = 10 * 1200; // 10s animation duration
-    setTimeout(() => {
-        warningDiv.style.display = 'none';
-    }, animationDuration);
-}
-
-async function checkMaintenance() {
-    const maintenanceRef = doc(collection(db, "settings"), "nextMaintenance");
-
-    try {
-        const docSnap = await getDoc(maintenanceRef);
-        if (docSnap.exists()) {
-            const maintenanceTimestamp = docSnap.data().maintenanceStartTime;
-            console.log("Maintenance start time:", maintenanceTimestamp);
-
-            // Check if maintenanceTimestamp is null or undefined
-            if (!maintenanceTimestamp) {
-                console.error("Maintenance start time is null or undefined.");
-                return;
-            }
-
-            const maintenanceTime = maintenanceTimestamp.toDate().getTime();
-            console.log("Maintenance time (milliseconds):", maintenanceTime);
-            const currentTime = new Date().getTime();
-            console.log("Current time (milliseconds):", currentTime);
-
-            // Check if maintenanceTime is a valid number
-            if (isNaN(maintenanceTime)) {
-                console.error("Maintenance time is not a valid number.");
-                return;
-            }
-
-            const timeDiff = (maintenanceTime - currentTime) / 60000; // in minutes
-            console.log("Time difference (minutes):", timeDiff);
-
-            for (const interval of warningIntervals) {
-                if (timeDiff <= interval && !warningsShown.has(interval)) {
-                    showMaintenanceWarning(interval);
-                    warningsShown.add(interval);
-                }
-            }
-        } else {
-            console.error("No such document!");
-        }
-    } catch (error) {
-        console.error("Error getting maintenance settings:", error);
-    }
-}
-
-
-// Check every minute
-setInterval(checkMaintenance, 60000);
-
-// Initial check to ensure it runs immediately on page load
-checkMaintenance();

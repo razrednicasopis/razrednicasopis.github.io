@@ -246,13 +246,12 @@ z-index: 1;
 #maintenance-warning {
   display: none;
   position: fixed;
-  top: 0;
+  bottom: 0;
   width: 100%;
-  background: white; /* Change background to white */
+  background: yellow;
   text-align: center;
-  padding: 5px; /* Slightly reduce the height */
+  padding: 10px;
   overflow: hidden;
-  font-weight: bold; /* Make the text bold */
 }
 #maintenance-message {
   display: inline-block;

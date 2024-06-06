@@ -159,18 +159,12 @@ function showMaintenanceWarning(minutesLeft) {
         timeText = `${minutesLeft}m`;
     }
 
-    messageP.textContent = `OBVESTILO: Strežniki Razrednega Časopisa bodo čez ${timeText} nedosegljivi zaradi vzdrževanja. Prosimo načrtujte uporabo strani v skladu s tem. `;
+    messageP.textContent = `Maintenance Alert: Website will be undergoing maintenance in ${timeText}.`;
     warningDiv.style.display = 'block';
 
     setTimeout(() => {
         warningDiv.style.display = 'none';
     }, 60000); // Hide after 1 minute
-
-    // Additional logic to hide the warning when the text runs all the way through the left side of the screen
-    const animationDuration = 10 * 1200; // 10s animation duration
-    setTimeout(() => {
-        warningDiv.style.display = 'none';
-    }, animationDuration);
 }
 
 async function checkMaintenance() {
@@ -179,28 +173,11 @@ async function checkMaintenance() {
     try {
         const docSnap = await getDoc(maintenanceRef);
         if (docSnap.exists()) {
-            const maintenanceTimestamp = docSnap.data().maintenanceStartTime;
-            console.log("Maintenance start time:", maintenanceTimestamp);
-
-            // Check if maintenanceTimestamp is null or undefined
-            if (!maintenanceTimestamp) {
-                console.error("Maintenance start time is null or undefined.");
-                return;
-            }
-
-            const maintenanceTime = maintenanceTimestamp.toDate().getTime();
-            console.log("Maintenance time (milliseconds):", maintenanceTime);
+            const maintenanceTime = new Date(docSnap.data().maintenanceStartTime).getTime(); // Assuming the field is named "maintenanceStartTime"
             const currentTime = new Date().getTime();
-            console.log("Current time (milliseconds):", currentTime);
-
-            // Check if maintenanceTime is a valid number
-            if (isNaN(maintenanceTime)) {
-                console.error("Maintenance time is not a valid number.");
-                return;
-            }
-
             const timeDiff = (maintenanceTime - currentTime) / 60000; // in minutes
-            console.log("Time difference (minutes):", timeDiff);
+
+            console.log(`Maintenance starts in ${timeDiff} minutes`);
 
             for (const interval of warningIntervals) {
                 if (timeDiff <= interval && !warningsShown.has(interval)) {
@@ -215,7 +192,6 @@ async function checkMaintenance() {
         console.error("Error getting maintenance settings:", error);
     }
 }
-
 
 // Check every minute
 setInterval(checkMaintenance, 60000);

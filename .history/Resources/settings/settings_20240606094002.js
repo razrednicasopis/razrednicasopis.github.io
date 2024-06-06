@@ -159,7 +159,7 @@ function showMaintenanceWarning(minutesLeft) {
         timeText = `${minutesLeft}m`;
     }
 
-    messageP.textContent = `OBVESTILO: Strežniki Razrednega Časopisa bodo čez ${timeText} nedosegljivi zaradi vzdrževanja. Prosimo načrtujte uporabo strani v skladu s tem. `;
+    messageP.textContent = `Maintenance Alert: Website will be undergoing maintenance in ${timeText}.`;
     warningDiv.style.display = 'block';
 
     setTimeout(() => {
@@ -167,7 +167,7 @@ function showMaintenanceWarning(minutesLeft) {
     }, 60000); // Hide after 1 minute
 
     // Additional logic to hide the warning when the text runs all the way through the left side of the screen
-    const animationDuration = 10 * 1200; // 10s animation duration
+    const animationDuration = 10 * 1000; // 10s animation duration
     setTimeout(() => {
         warningDiv.style.display = 'none';
     }, animationDuration);

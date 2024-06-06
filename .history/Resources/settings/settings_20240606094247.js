@@ -167,7 +167,7 @@ function showMaintenanceWarning(minutesLeft) {
     }, 60000); // Hide after 1 minute
 
     // Additional logic to hide the warning when the text runs all the way through the left side of the screen
-    const animationDuration = 10 * 1200; // 10s animation duration
+    const animationDuration = 10 * 1500; // 10s animation duration
     setTimeout(() => {
         warningDiv.style.display = 'none';
     }, animationDuration);
