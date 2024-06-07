@@ -243,33 +243,26 @@ z-index: 1;
 
 /* Koda za Maintenance Warning */
 
-#maintenance-warning {
-  display: none;
+.maintenance-warning {
   position: fixed;
-  top: 0;
-  width: 100%;
-  background: white;
-  text-align: center;
-  padding: 5px;
-  overflow: hidden;
-  font-weight: bold;
-}
-
-#maintenance-message {
-  display: inline-block;
+  top: 10px;
+  left: 100%;
   white-space: nowrap;
-  animation: scroll-left 15s linear;
+  background-color: yellow;
+  padding: 10px;
+  border: 1px solid black;
+  animation: slide-in 10s linear infinite;
+  display: none; /* Initially hidden */
 }
 
-@keyframes scroll-left {
-  from {
-      transform: translateX(150%);
+@keyframes slide-in {
+  0% {
+      left: 100%;
   }
-  to {
-      transform: translateX(-150%);
+  100% {
+      left: -100%;
   }
 }
-
 
 /* Koda za obrazce */
 

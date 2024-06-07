@@ -263,10 +263,10 @@ z-index: 1;
 
 @keyframes scroll-left {
   from {
-      transform: translateX(150%);
+      transform: translateX(100%);
   }
   to {
-      transform: translateX(-150%);
+      transform: translateX(-100%);
   }
 }
 

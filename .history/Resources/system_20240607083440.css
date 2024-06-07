@@ -258,7 +258,7 @@ z-index: 1;
 #maintenance-message {
   display: inline-block;
   white-space: nowrap;
-  animation: scroll-left 15s linear;
+  animation: scroll-left 10s linear;
 }
 
 @keyframes scroll-left {

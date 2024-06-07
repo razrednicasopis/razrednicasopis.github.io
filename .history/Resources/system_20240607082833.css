@@ -258,15 +258,15 @@ z-index: 1;
 #maintenance-message {
   display: inline-block;
   white-space: nowrap;
-  animation: scroll-left 15s linear;
+  animation: scroll-left 12s linear;
 }
 
 @keyframes scroll-left {
   from {
-      transform: translateX(150%);
+      transform: translateX(100%);
   }
   to {
-      transform: translateX(-150%);
+      transform: translateX(-100%);
   }
 }
 

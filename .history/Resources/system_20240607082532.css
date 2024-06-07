@@ -248,28 +248,25 @@ z-index: 1;
   position: fixed;
   top: 0;
   width: 100%;
-  background: white;
+  background: white; /* Change background to white */
   text-align: center;
-  padding: 5px;
+  padding: 5px; /* Slightly reduce the height */
   overflow: hidden;
-  font-weight: bold;
+  font-weight: bold; /* Make the text bold */
 }
-
 #maintenance-message {
   display: inline-block;
   white-space: nowrap;
-  animation: scroll-left 15s linear;
+  animation: scroll-left 10s linear infinite;
 }
-
 @keyframes scroll-left {
   from {
-      transform: translateX(150%);
+      transform: translateX(100%);
   }
   to {
-      transform: translateX(-150%);
+      transform: translateX(-100%);
   }
 }
-
 
 /* Koda za obrazce */
 
