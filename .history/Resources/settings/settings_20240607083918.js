@@ -77,17 +77,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Maintenance Popup
 
 document.addEventListener('DOMContentLoaded', function () {
-    function toggleMaintenancePopup(show, endTime) {
+    function toggleMaintenancePopup(show) {
         const maintenancePopup = document.getElementById('maintenancePopup');
         const blurContainer = document.querySelector('.blur-container');
-        const endTimeP = document.getElementById('maintenanceEndTime'); // New element for end time
         if (maintenancePopup) {
             console.log('Toggling maintenance popup:', show);
             maintenancePopup.style.display = show ? 'block' : 'none';
             document.body.classList.toggle('popup-open', show);
-            if (show && endTime && endTimeP) {
-                endTimeP.textContent = `Maintenance ends at: ${endTime}`;
-            }
         } else {
             console.error('maintenancePopup element not found');
         }
@@ -107,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Maintenance document data:', docSnap.data());
                 const data = docSnap.data();
                 if (data.maintenanceMode) {
-                    const formattedEndTime = formatEndTime(data.maintenanceEndTime);
                     console.log('Redirecting to maintenance page');
                     window.location.href = '/Resources/maintenance/popravila.html';
                 } else {
@@ -128,27 +123,13 @@ document.addEventListener('DOMContentLoaded', function () {
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 const maintenanceMode = data.maintenanceMode;
-                const formattedEndTime = formatEndTime(data.maintenanceEndTime);
                 console.log('Maintenance status changed:', maintenanceMode);
-                toggleMaintenancePopup(maintenanceMode, formattedEndTime);
+                toggleMaintenancePopup(maintenanceMode);
             } else {
                 console.log('No such document!');
             }
         }, (error) => {
             console.error('Error getting document:', error);
-        });
-    }
-
-    function formatEndTime(endTime) {
-        if (!endTime) return '';
-        const date = new Date(endTime);
-        return date.toLocaleString('sl-SI', { 
-            year: 'numeric', 
-            month: '2-digit', 
-            day: '2-digit', 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            hour12: true 
         });
     }
 
@@ -158,7 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     checkInitialMaintenanceStatus();
 });
-
 
 // Maintenance Warning
 
@@ -183,7 +163,7 @@ function showMaintenanceWarning(minutesLeft) {
     warningDiv.style.display = 'block';
 
     // Set a timeout to hide the warning once the text has fully scrolled through the left side of the screen
-    const animationDuration = 10 * 1500; // 10 seconds
+    const animationDuration = 10 * 1000; // 10 seconds
     setTimeout(() => {
         warningDiv.style.display = 'none';
     }, animationDuration);
