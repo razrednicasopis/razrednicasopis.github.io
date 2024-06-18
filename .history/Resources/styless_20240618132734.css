@@ -1,12 +1,10 @@
-/* CSS code for the chatroom */
-
-/* General styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Globalni slogi */
 body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
@@ -18,19 +16,20 @@ body {
   overflow: auto;
 }
 
+
 .container {
-  text-align: center;
-  margin-top: 50px;
+    text-align: center;
+    margin-top: 50px; 
 }
 
 .border-box {
-  display: inline-block;
-  padding: 200px;
-  width: 550px;
-  height: 500px;
-  border: 5px solid #333;
-  border-radius: 30px;
-  background-color: #333;
+    display: inline-block;
+    padding: 200px;
+    width: 550px;
+    height: 500px;
+    border: 5px solid #333; /* Set your desired border color */
+    border-radius: 30px; /* Set the border radius for slightly curved corners */
+    background-color: #333; /* Set your desired background color inside the border */
 }
 
 header {
@@ -121,7 +120,12 @@ footer {
   width: 100%;
 }
 
-/* Chatroom specific styles */
+
+
+/* CSS code for the chatroom */
+
+
+/* Chatroom input and button styling */
 #messageInputWrapper {
   position: relative;
   display: flex;
@@ -133,26 +137,26 @@ footer {
   padding: 10px;
   border-radius: 4px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
-  padding-right: 60px;
+  box-sizing: border-box; /* Ensure padding is included in the width */
+  padding-right: 60px; /* Make space for the button inside the input */
 }
 
 #sendMessage {
   position: absolute;
-  right: 5px;
+  right: 5px; /* Adjust as needed to fit neatly inside the input */
   top: 50%;
   transform: translateY(-50%);
   padding: 5px 10px;
   border: none;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #4CAF50; /* Button background color */
+  color: white; /* Button text color */
   border-radius: 4px;
-  cursor: pointer;
-  height: 30px;
+  cursor: pointer; /* Pointer cursor on hover */
+  height: 30px; /* Match height of the input field */
 }
 
 #sendMessage:hover {
-  background-color: #45a049;
+  background-color: #45a049; /* Darken button on hover */
 }
 
 #chatroom {
@@ -183,27 +187,12 @@ footer {
 .username {
   color: blue;
   font-weight: bold;
-  margin-right: 5px;
-}
-
-.username.admin {
-  color: red;
-}
-
-.username.owner {
-  color: green;
-}
-
-.admin-tag {
-  color: red;
-  font-weight: bold;
-  margin-right: 5px;
+  margin-right: 5px; /* Adding spacing between username and message */
 }
 
 .owner-tag {
   color: green;
-  font-weight: bold;
-  margin-right: 5px;
+  
 }
 
 .text {

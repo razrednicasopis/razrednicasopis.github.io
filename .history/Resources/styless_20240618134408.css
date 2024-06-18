@@ -181,29 +181,25 @@ footer {
 }
 
 .username {
-  color: blue;
   font-weight: bold;
   margin-right: 5px;
+  color: blue; /* Default color for regular members */
 }
 
 .username.admin {
-  color: red;
+  color: red; /* Color for admin usernames */
 }
 
 .username.owner {
-  color: green;
-}
-
-.admin-tag {
-  color: red;
-  font-weight: bold;
-  margin-right: 5px;
+  color: green; /* Color for owner usernames */
 }
 
 .owner-tag {
-  color: green;
-  font-weight: bold;
-  margin-right: 5px;
+  color: green; /* Color for owner tag */
+}
+
+.admin-tag {
+  color: red; /* Color for admin tag */
 }
 
 .text {

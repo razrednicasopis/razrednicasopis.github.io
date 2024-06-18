@@ -181,9 +181,9 @@ footer {
 }
 
 .username {
-  color: blue;
   font-weight: bold;
   margin-right: 5px;
+  color: blue; /* Set member usernames to blue */
 }
 
 .username.admin {
@@ -191,19 +191,19 @@ footer {
 }
 
 .username.owner {
-  color: green;
-}
-
-.admin-tag {
-  color: red;
-  font-weight: bold;
-  margin-right: 5px;
+  color: green; /* Set owner's username to green */
 }
 
 .owner-tag {
-  color: green;
+  color: green; /* Set owner tag to green */
   font-weight: bold;
-  margin-right: 5px;
+  margin-right: 5px; /* Adjust spacing between tag and username */
+}
+
+.admin-tag {
+  color: red; /* Set admin tag to red */
+  font-weight: bold;
+  margin-right: 5px; /* Adjust spacing between tag and username */
 }
 
 .text {

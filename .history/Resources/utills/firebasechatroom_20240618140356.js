@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const betaCode = betaCodeInput.value.trim();
 
         if (!betaCode) {
-            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
+            betaCodeError.textContent = 'Please enter a beta code.';
             betaCodeError.style.display = 'block';
             return;
         }
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 hidePopup('betaCodePopup');
                 checkLoginState();
             } else {
-                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
+                betaCodeError.textContent = 'Please enter a valid beta code and try again!';
                 betaCodeError.style.display = 'block';
             }
         } catch (error) {
@@ -119,105 +119,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function displayMessage(username, text, timestamp, role, isAdmin) {
+    function displayMessage(username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
-    
+
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
-    
+
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
         timestampElement.textContent = new Date(timestamp).toLocaleTimeString();
-    
+
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
-    
-        // Check role first for owner
-        if (role === 'owner') {
-            usernameElement.textContent = '[Owner] ' + username + ': ';
-            usernameElement.classList.add('owner');
-        } else if (isAdmin) {
+
+        // Add admin or owner tag before username
+        if (role === 'admin') {
             usernameElement.textContent = '[Admin] ' + username + ': ';
             usernameElement.classList.add('admin');
+        } else if (role === 'owner') {
+            usernameElement.textContent = '[Owner] ' + username + ': ';
+            usernameElement.classList.add('owner');
         } else {
             usernameElement.textContent = username + ': ';
         }
-    
+
         const textElement = document.createElement('span');
         textElement.classList.add('text');
         textElement.textContent = text;
-    
+
         messageElement.appendChild(timestampElement);
         messageElement.appendChild(usernameElement);
-        messageElement.appendChild(textElement);
-    
-        messagesDiv.appendChild(messageElement);
-    }
-
-    async function handleMessageSend() {
-        const messageInput = document.getElementById('messageInput');
-        const text = messageInput.value.trim();
-        const user = auth.currentUser;
-
-        if (!text || !user) {
-            return;
-        }
-
-        try {
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            const username = userDoc.exists ? userDoc.data().Username : 'Unknown';
-            const role = userDoc.exists ? userDoc.data().role : 'member';
-
-            const userIp = await getUserIp();
-            await addDoc(collection(db, 'messages'), {
-                username: username,
-                text: text,
-                timestamp: new Date(),
-                ip: userIp,
-                role: role
-            });
-            messageInput.value = '';
-        } catch (error) {
-            console.error('Error sending message:', error);
-        }
-    }
-
-    document.getElementById('sendMessage').addEventListener('click', handleMessageSend);
-
-    document.getElementById('messageInput').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-            handleMessageSend();
-        }
-    });
-
-    async function deleteOldMessages() {
-        const messagesRef = collection(db, 'messages');
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        const midnightTimestamp = Timestamp.fromDate(now);
-
-        const messagesQuery = query(messagesRef, where('timestamp', '<=', midnightTimestamp));
-        const querySnapshot = await getDocs(messagesQuery);
-
-        querySnapshot.forEach(async (doc) => {
-            await deleteDoc(doc.ref);
-        });
-
-        console.log('Deleted messages older than midnight');
-    }
-
-    function scheduleDeletion() {
-        const now = new Date();
-        const midnight = new Date();
-        midnight.setHours(24, 0, 0, 0);
-
-        const timeToMidnight = midnight.getTime() - now.getTime();
-
-        setTimeout(() => {
-            deleteOldMessages();
-            scheduleDeletion();
-        }, timeToMidnight);
-    }
-
-    scheduleDeletion();
-});
+       

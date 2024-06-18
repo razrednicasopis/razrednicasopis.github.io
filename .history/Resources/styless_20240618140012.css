@@ -194,18 +194,6 @@ footer {
   color: green;
 }
 
-.admin-tag {
-  color: red;
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.owner-tag {
-  color: green;
-  font-weight: bold;
-  margin-right: 5px;
-}
-
 .text {
   word-wrap: break-word;
 }

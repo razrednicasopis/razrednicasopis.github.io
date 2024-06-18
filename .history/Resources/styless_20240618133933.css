@@ -181,7 +181,6 @@ footer {
 }
 
 .username {
-  color: blue;
   font-weight: bold;
   margin-right: 5px;
 }
@@ -192,18 +191,6 @@ footer {
 
 .username.owner {
   color: green;
-}
-
-.admin-tag {
-  color: red;
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.owner-tag {
-  color: green;
-  font-weight: bold;
-  margin-right: 5px;
 }
 
 .text {

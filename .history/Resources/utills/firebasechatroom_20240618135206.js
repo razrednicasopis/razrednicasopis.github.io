@@ -4,12 +4,12 @@ import { getFirestore, doc, getDoc, addDoc, collection, query, orderBy, onSnapsh
 
 // Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
-    authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
-    projectId: "razrednicasopisdatabase-29bad",
-    storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
-    messagingSenderId: "294018128318",
-    appId: "1:294018128318:web:31df9ea055eec5798e81ef"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
 // Initialize Firebase
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const betaCode = betaCodeInput.value.trim();
 
         if (!betaCode) {
-            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
+            betaCodeError.textContent = 'Please enter a beta code.';
             betaCodeError.style.display = 'block';
             return;
         }
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 hidePopup('betaCodePopup');
                 checkLoginState();
             } else {
-                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
+                betaCodeError.textContent = 'Please enter a valid beta code and try again!';
                 betaCodeError.style.display = 'block';
             }
         } catch (error) {
@@ -99,58 +99,56 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    let lastLoadedMessageTimestamp = null;
-
     function loadMessages() {
         const messagesRef = collection(db, 'messages');
         const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
 
         onSnapshot(messagesQuery, (snapshot) => {
             const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = ''; // Clear previous messages
 
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const message = change.doc.data();
-                    displayMessage(message.username, message.text, message.timestamp.toDate(), message.role);
-                }
+            snapshot.forEach((doc) => {
+                const message = doc.data();
+                displayMessage(message.username, message.text, message.timestamp.toDate(), message.role);
             });
 
             messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
         });
     }
 
-    function displayMessage(username, text, timestamp, role, isAdmin) {
+    function displayMessage(username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
-    
+
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
-    
+
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
         timestampElement.textContent = new Date(timestamp).toLocaleTimeString();
-    
+
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
-    
-        // Check role first for owner
+        usernameElement.textContent = username + ': ';
+
+        const roleTagElement = document.createElement('span');
+        roleTagElement.classList.add(role + '-tag');
+        roleTagElement.textContent = role.charAt(0).toUpperCase() + role.slice(1);
+
         if (role === 'owner') {
-            usernameElement.textContent = '[Owner] ' + username + ': ';
             usernameElement.classList.add('owner');
-        } else if (isAdmin) {
-            usernameElement.textContent = '[Admin] ' + username + ': ';
+        } else if (role === 'admin') {
             usernameElement.classList.add('admin');
-        } else {
-            usernameElement.textContent = username + ': ';
         }
-    
+
         const textElement = document.createElement('span');
         textElement.classList.add('text');
         textElement.textContent = text;
-    
-        messageElement.appendChild(timestampElement);
+
+        messageElement.appendChild(roleTagElement); // Display role tag first
         messageElement.appendChild(usernameElement);
         messageElement.appendChild(textElement);
-    
+        messageElement.appendChild(timestampElement);
+
         messagesDiv.appendChild(messageElement);
     }
 
@@ -165,8 +163,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
-            const username = userDoc.exists ? userDoc.data().Username : 'Unknown';
-            const role = userDoc.exists ? userDoc.data().role : 'member';
+            const username = userDoc.exists() ? userDoc.data().username : 'Unknown';
+            const role = userDoc.exists() ? userDoc.data().role : 'member';
 
             const userIp = await getUserIp();
             await addDoc(collection(db, 'messages'), {
@@ -221,3 +219,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     scheduleDeletion();
 });
+

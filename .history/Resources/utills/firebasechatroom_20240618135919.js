@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const betaCode = betaCodeInput.value.trim();
 
         if (!betaCode) {
-            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
+            betaCodeError.textContent = 'Prosimo vnesite kodo za beta testiranje.';
             betaCodeError.style.display = 'block';
             return;
         }
@@ -62,18 +62,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 hidePopup('betaCodePopup');
                 checkLoginState();
             } else {
-                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
+                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo in poskusite znova!';
                 betaCodeError.style.display = 'block';
             }
         } catch (error) {
             console.error(error);
-            betaCodeError.textContent = 'An error occurred. Please try again later.';
+            betaCodeError.textContent = 'Prišlo je do napake. Prosimo poskusite kasneje.';
             betaCodeError.style.display = 'block';
         }
     });
 
     document.getElementById('loginRedirectBtn').addEventListener('click', function () {
-        window.location.href = '../login.html?source=chatroom';
+        window.location.href = '../prijava.html?source=chatroom';
     });
 
     function checkLoginState() {
@@ -104,22 +104,22 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadMessages() {
         const messagesRef = collection(db, 'messages');
         const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
-
+    
         onSnapshot(messagesQuery, (snapshot) => {
             const messagesDiv = document.getElementById('messages');
-
+    
             snapshot.docChanges().forEach((change) => {
                 if (change.type === 'added') {
                     const message = change.doc.data();
                     displayMessage(message.username, message.text, message.timestamp.toDate(), message.role);
                 }
             });
-
+    
             messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
         });
     }
-
-    function displayMessage(username, text, timestamp, role, isAdmin) {
+    
+    function displayMessage(username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
     
         const messageElement = document.createElement('div');
@@ -132,13 +132,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
     
-        // Check role first for owner
-        if (role === 'owner') {
-            usernameElement.textContent = '[Owner] ' + username + ': ';
-            usernameElement.classList.add('owner');
-        } else if (isAdmin) {
+        // Add admin or owner tag before username
+        if (role === 'admin') {
             usernameElement.textContent = '[Admin] ' + username + ': ';
             usernameElement.classList.add('admin');
+        } else if (role === 'owner') {
+            usernameElement.textContent = '[Owner] ' + username + ': ';
+            usernameElement.classList.add('owner');
         } else {
             usernameElement.textContent = username + ': ';
         }
@@ -153,21 +153,21 @@ document.addEventListener('DOMContentLoaded', function () {
     
         messagesDiv.appendChild(messageElement);
     }
-
+    
     async function handleMessageSend() {
         const messageInput = document.getElementById('messageInput');
         const text = messageInput.value.trim();
         const user = auth.currentUser;
-
+    
         if (!text || !user) {
             return;
         }
-
+    
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
             const username = userDoc.exists ? userDoc.data().Username : 'Unknown';
             const role = userDoc.exists ? userDoc.data().role : 'member';
-
+    
             const userIp = await getUserIp();
             await addDoc(collection(db, 'messages'), {
                 username: username,
@@ -181,43 +181,43 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error sending message:', error);
         }
     }
-
+    
     document.getElementById('sendMessage').addEventListener('click', handleMessageSend);
-
+    
     document.getElementById('messageInput').addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             handleMessageSend();
         }
     });
-
+    
     async function deleteOldMessages() {
         const messagesRef = collection(db, 'messages');
         const now = new Date();
         now.setHours(0, 0, 0, 0);
         const midnightTimestamp = Timestamp.fromDate(now);
-
+    
         const messagesQuery = query(messagesRef, where('timestamp', '<=', midnightTimestamp));
         const querySnapshot = await getDocs(messagesQuery);
-
+    
         querySnapshot.forEach(async (doc) => {
             await deleteDoc(doc.ref);
         });
-
+    
         console.log('Deleted messages older than midnight');
     }
-
+    
     function scheduleDeletion() {
         const now = new Date();
         const midnight = new Date();
         midnight.setHours(24, 0, 0, 0);
-
+    
         const timeToMidnight = midnight.getTime() - now.getTime();
-
+    
         setTimeout(() => {
             deleteOldMessages();
             scheduleDeletion();
         }, timeToMidnight);
     }
-
+    
     scheduleDeletion();
-});
+    

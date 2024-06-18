@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const betaCode = betaCodeInput.value.trim();
 
         if (!betaCode) {
-            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
+            betaCodeError.textContent = 'Please enter a beta code.';
             betaCodeError.style.display = 'block';
             return;
         }
@@ -119,38 +119,38 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function displayMessage(username, text, timestamp, role, isAdmin) {
+    function displayMessage(username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
-    
+
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
-    
+
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
         timestampElement.textContent = new Date(timestamp).toLocaleTimeString();
-    
+
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
-    
-        // Check role first for owner
-        if (role === 'owner') {
-            usernameElement.textContent = '[Owner] ' + username + ': ';
-            usernameElement.classList.add('owner');
-        } else if (isAdmin) {
+
+        // Add admin or owner tag before username
+        if (role === 'admin') {
             usernameElement.textContent = '[Admin] ' + username + ': ';
             usernameElement.classList.add('admin');
+        } else if (role === 'owner') {
+            usernameElement.textContent = '[Owner] ' + username + ': ';
+            usernameElement.classList.add('owner');
         } else {
             usernameElement.textContent = username + ': ';
         }
-    
+
         const textElement = document.createElement('span');
         textElement.classList.add('text');
         textElement.textContent = text;
-    
+
         messageElement.appendChild(timestampElement);
         messageElement.appendChild(usernameElement);
         messageElement.appendChild(textElement);
-    
+
         messagesDiv.appendChild(messageElement);
     }
 

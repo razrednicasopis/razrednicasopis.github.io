@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const betaCode = betaCodeInput.value.trim();
 
         if (!betaCode) {
-            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
+            betaCodeError.textContent = 'Prosimo vnesite kodo za beta testiranje.';
             betaCodeError.style.display = 'block';
             return;
         }
@@ -62,18 +62,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 hidePopup('betaCodePopup');
                 checkLoginState();
             } else {
-                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
+                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo in poskusite znova!';
                 betaCodeError.style.display = 'block';
             }
         } catch (error) {
             console.error(error);
-            betaCodeError.textContent = 'An error occurred. Please try again later.';
+            betaCodeError.textContent = 'Prišlo je do napake. Prosimo poskusite kasneje.';
             betaCodeError.style.display = 'block';
         }
     });
 
     document.getElementById('loginRedirectBtn').addEventListener('click', function () {
-        window.location.href = '../login.html?source=chatroom';
+        window.location.href = '../prijava.html?source=chatroom';
     });
 
     function checkLoginState() {
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function displayMessage(username, text, timestamp, role, isAdmin) {
+    function displayMessage(username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
     
         const messageElement = document.createElement('div');
@@ -131,21 +131,24 @@ document.addEventListener('DOMContentLoaded', function () {
     
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
-    
-        // Check role first for owner
-        if (role === 'owner') {
-            usernameElement.textContent = '[Owner] ' + username + ': ';
-            usernameElement.classList.add('owner');
-        } else if (isAdmin) {
-            usernameElement.textContent = '[Admin] ' + username + ': ';
-            usernameElement.classList.add('admin');
-        } else {
-            usernameElement.textContent = username + ': ';
-        }
+        usernameElement.textContent = username + ': ';
     
         const textElement = document.createElement('span');
         textElement.classList.add('text');
         textElement.textContent = text;
+    
+        // Add admin or owner class based on role
+        if (role === 'admin') {
+            usernameElement.classList.add('admin');
+        } else if (role === 'owner') {
+            usernameElement.classList.add('owner');
+    
+            // Append owner tag
+            const ownerTag = document.createElement('span');
+            ownerTag.classList.add('owner-tag');
+            ownerTag.textContent = ' (Owner)';
+            usernameElement.appendChild(ownerTag);
+        }
     
         messageElement.appendChild(timestampElement);
         messageElement.appendChild(usernameElement);
@@ -153,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
         messagesDiv.appendChild(messageElement);
     }
+    
 
     async function handleMessageSend() {
         const messageInput = document.getElementById('messageInput');
@@ -165,8 +169,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
-            const username = userDoc.exists ? userDoc.data().Username : 'Unknown';
-            const role = userDoc.exists ? userDoc.data().role : 'member';
+            const username = userDoc.exists() ? userDoc.data().Username : 'Unknown';
+            const role = userDoc.exists() ? userDoc.data().role : 'member';
 
             const userIp = await getUserIp();
             await addDoc(collection(db, 'messages'), {

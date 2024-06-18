@@ -18,6 +18,7 @@ const auth = getAuth();
 const db = getFirestore(app);
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Function to show a popup
     function showPopup(popupId) {
         const popup = document.getElementById(popupId);
         if (popup) {
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Function to hide a popup
     function hidePopup(popupId) {
         const popup = document.getElementById(popupId);
         if (popup) {
@@ -38,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Show beta code popup on page load
     showPopup('betaCodePopup');
 
     document.getElementById('submitBetaCodeBtn').addEventListener('click', async function (event) {
@@ -48,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const betaCode = betaCodeInput.value.trim();
 
         if (!betaCode) {
-            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
+            betaCodeError.textContent = 'Prosimo vnesite kodo za beta testiranje.';
             betaCodeError.style.display = 'block';
             return;
         }
@@ -62,20 +65,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 hidePopup('betaCodePopup');
                 checkLoginState();
             } else {
-                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
+                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo in poskusite znova!';
                 betaCodeError.style.display = 'block';
             }
         } catch (error) {
             console.error(error);
-            betaCodeError.textContent = 'An error occurred. Please try again later.';
+            betaCodeError.textContent = 'Prišlo je do napake. Prosimo poskusite kasneje.';
             betaCodeError.style.display = 'block';
         }
     });
 
     document.getElementById('loginRedirectBtn').addEventListener('click', function () {
-        window.location.href = '../login.html?source=chatroom';
+        window.location.href = '../prijava.html?source=chatroom'; // Redirect with source parameter
     });
 
+    // Check login state
     function checkLoginState() {
         onAuthStateChanged(auth, user => {
             if (user) {
@@ -88,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Get user's IP address
     async function getUserIp() {
         try {
             const response = await fetch('https://api.ipify.org?format=json');
@@ -99,61 +104,64 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    let lastLoadedMessageTimestamp = null;
-
+    // Load messages from Firestore and display them
     function loadMessages() {
         const messagesRef = collection(db, 'messages');
         const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
 
         onSnapshot(messagesQuery, (snapshot) => {
             const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = ''; // Clear existing messages
 
-            snapshot.docChanges().forEach((change) => {
-                if (change.type === 'added') {
-                    const message = change.doc.data();
-                    displayMessage(message.username, message.text, message.timestamp.toDate(), message.role);
-                }
+            snapshot.forEach((doc) => {
+                const message = doc.data();
+                displayMessage(message.username, message.text, message.timestamp.toDate(), message.role);
             });
-
-            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
         });
     }
 
-    function displayMessage(username, text, timestamp, role, isAdmin) {
+    // Function to display a message in the chat box
+    function displayMessage(username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
-    
+
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
-    
+
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
         timestampElement.textContent = new Date(timestamp).toLocaleTimeString();
-    
+
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
-    
-        // Check role first for owner
+        usernameElement.textContent = username + ': ';
+
         if (role === 'owner') {
-            usernameElement.textContent = '[Owner] ' + username + ': ';
+            const ownerTag = document.createElement('span');
+            ownerTag.textContent = '[Lastnik] ';
+            ownerTag.classList.add('owner-tag');
+            usernameElement.appendChild(ownerTag);
             usernameElement.classList.add('owner');
-        } else if (isAdmin) {
-            usernameElement.textContent = '[Admin] ' + username + ': ';
+        } else if (role === 'admin') {
+            const adminTag = document.createElement('span');
+            adminTag.textContent = '[Administrator] ';
+            adminTag.classList.add('admin-tag');
+            usernameElement.appendChild(adminTag);
             usernameElement.classList.add('admin');
-        } else {
-            usernameElement.textContent = username + ': ';
         }
-    
+
         const textElement = document.createElement('span');
         textElement.classList.add('text');
         textElement.textContent = text;
-    
+
         messageElement.appendChild(timestampElement);
         messageElement.appendChild(usernameElement);
         messageElement.appendChild(textElement);
-    
+
         messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
     }
 
+    // Send a message
     async function handleMessageSend() {
         const messageInput = document.getElementById('messageInput');
         const text = messageInput.value.trim();
@@ -165,18 +173,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
-            const username = userDoc.exists ? userDoc.data().Username : 'Unknown';
-            const role = userDoc.exists ? userDoc.data().role : 'member';
+            const username = userDoc.exists() ? userDoc.data().Username : 'Unknown';
 
             const userIp = await getUserIp();
             await addDoc(collection(db, 'messages'), {
                 username: username,
                 text: text,
                 timestamp: new Date(),
-                ip: userIp,
-                role: role
+                ip: userIp
             });
-            messageInput.value = '';
+            messageInput.value = ''; // Clear the input field
         } catch (error) {
             console.error('Error sending message:', error);
         }
@@ -184,16 +190,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('sendMessage').addEventListener('click', handleMessageSend);
 
+    // Handle enter key press
     document.getElementById('messageInput').addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             handleMessageSend();
         }
     });
 
+    // Initial login state check will now be triggered after beta code verification
+    // Function to delete old messages
     async function deleteOldMessages() {
         const messagesRef = collection(db, 'messages');
         const now = new Date();
-        now.setHours(0, 0, 0, 0);
+        now.setHours(0, 0, 0, 0); // Set to midnight
         const midnightTimestamp = Timestamp.fromDate(now);
 
         const messagesQuery = query(messagesRef, where('timestamp', '<=', midnightTimestamp));
@@ -206,18 +215,20 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Deleted messages older than midnight');
     }
 
+    // Schedule deletion at midnight
     function scheduleDeletion() {
         const now = new Date();
         const midnight = new Date();
-        midnight.setHours(24, 0, 0, 0);
+        midnight.setHours(13, 0, 0, 0); // Set to next midnight
 
         const timeToMidnight = midnight.getTime() - now.getTime();
 
         setTimeout(() => {
             deleteOldMessages();
-            scheduleDeletion();
+            scheduleDeletion(); // Reschedule for the next day
         }, timeToMidnight);
     }
 
+    // Start the deletion schedule
     scheduleDeletion();
 });
