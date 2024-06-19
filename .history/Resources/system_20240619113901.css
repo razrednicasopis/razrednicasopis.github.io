@@ -10,6 +10,9 @@
   color: red;
 }
 
+.username.owner {
+  color: red;
+}
 
 /* Koda za "Coming Soon" pop-up */
 
@@ -94,6 +97,8 @@ body.popup-open {
   filter: blur(5px); /* Apply blur effect only when popup is open */
   pointer-events: none;
 }
+
+
 
 #maintenancePopup {
   display: none;

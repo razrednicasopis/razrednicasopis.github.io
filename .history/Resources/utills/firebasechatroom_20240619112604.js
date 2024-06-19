@@ -134,9 +134,9 @@ document.addEventListener('DOMContentLoaded', function () {
     
         // Check role first for owner
         if (role === 'owner') {
-            usernameElement.textContent = '[Lastnik] ' + username + ': ';
+            usernameElement.textContent = '[Owner] ' + username + ': ';
             usernameElement.classList.add('owner');
-        } else if (role === 'admin') {
+        } else if (role ?) {
             usernameElement.textContent = '[Admin] ' + username + ': ';
             usernameElement.classList.add('admin');
         } else {
