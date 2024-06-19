@@ -6,10 +6,6 @@
   display: none;
 }
 
-.username.admin {
-  color: red;
-}
-
 
 /* Koda za "Coming Soon" pop-up */
 
@@ -87,12 +83,10 @@
 
 body.popup-open {
    overflow: hidden;
-   pointer-events: none;
 }
 
 .popup-open .blur-container {
   filter: blur(5px); /* Apply blur effect only when popup is open */
-  pointer-events: none;
 }
 
 #maintenancePopup {

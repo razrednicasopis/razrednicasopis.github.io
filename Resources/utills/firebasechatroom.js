@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('loginRedirectBtn').addEventListener('click', function () {
-        window.location.href = '../login.html?source=chatroom';
+        window.location.href = '../prijava.html?source=chatroom';
     });
 
     function checkLoginState() {
