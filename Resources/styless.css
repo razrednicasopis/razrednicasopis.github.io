@@ -191,7 +191,7 @@ footer {
 }
 
 .username.owner {
-  color: green;
+  color: darkred;
 }
 
 .admin-tag {
@@ -201,7 +201,7 @@ footer {
 }
 
 .owner-tag {
-  color: green;
+  color: darkred;
   font-weight: bold;
   margin-right: 5px;
 }
