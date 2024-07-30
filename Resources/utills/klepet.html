@@ -7,11 +7,17 @@
   <script type="module" src="./firebasechatroom.js"></script>
   <link rel="stylesheet" href="../styless.css">
   <link rel="stylesheet" href="../system.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script type="module" src="./auth/firebaseauth.js"></script>
   <title>Razredni Časopis</title>
 </head>
 <body>
-<div class="blur-container">
-<header>
+
+<div class="overlay"></div>
+
+  <header>
   <h1>Razredni Časopis</h1>
   <nav>
     <ul>
@@ -31,16 +37,16 @@
 <div id="chatroom">
   <div id="messages"></div>
   <div id="messageInputWrapper">
-      <input type="text" id="messageInput" placeholder="Vnesi sporočilo...">
-      <button id="sendMessage">Send</button>
+      <input type="text" id="messageInput" style="visibility: hidden;" placeholder="Vnesi sporočilo...">
+      <button id="sendMessage" style="visibility: hidden;">Pošlji</button>
   </div>
 </div>
 
-</div>
+
 
 <!--Od tu naprej je koda za razne stvari kot so popupi-->
 
-<div id="betaCodePopup">
+<div id="betaCodePopup" class="popup"> 
   <div id="betaCodePopupContent">
     <h1>Prosimo vnesi testno kodo!</h1><p>
     Kot morda veste, oblikovanje in vzdrževanje strani ni lahek zalogaj. Med ustvaritvijo strani se prikrade ogromno napak ter pregrad.

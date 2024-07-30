@@ -79,23 +79,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 document.addEventListener('DOMContentLoaded', function () {
     function toggleMaintenancePopup(show, endTime) {
         const maintenancePopup = document.getElementById('maintenancePopup');
-        const blurContainer = document.querySelector('.blur-container');
         const endTimeP = document.getElementById('maintenanceEndTime'); // New element for end time
+        const overlay = document.querySelector('.overlay');
         if (maintenancePopup) {
             console.log('Toggling maintenance popup:', show);
             maintenancePopup.style.display = show ? 'block' : 'none';
-            document.body.classList.toggle('popup-open', show);
+            overlay.style.display = show ? 'block' : 'none';
             if (show && endTime && endTimeP) {
                 endTimeP.textContent = endTime;
             }
         } else {
             console.error('maintenancePopup element not found');
-        }
-
-        if (blurContainer) {
-            blurContainer.style.filter = show ? 'blur(5px)' : 'none';
-        } else {
-            console.error('blur-container element not found');
         }
     }
 

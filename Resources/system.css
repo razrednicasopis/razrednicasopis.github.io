@@ -7,7 +7,43 @@
 }
 
 
+/* Koda za toaste */
+
+.toast {
+  font-size: 1.2em; /* Increase font size */
+  padding: 20px 25px; /* Increase padding */
+}
+
+/* White progress bar */
+.toast-progress {
+  background-color: white !important;
+}
+
 /* Koda za "Coming Soon" pop-up */
+
+body.popupInvulnerable .overlay .betaCodePopup .loginPopup {
+    pointer-events: none;
+}
+
+ .popupInvulnerable .popup-open{
+  pointer-events: none;
+}
+
+/* New Dark Overlay for Pop-ups */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
+}
+
+/* Display the dark overlay when the popup is open */
+
+
+
 
 #popupContainer, #loginPopup {
     display: none;
@@ -62,7 +98,7 @@
     border-radius: 10px;
     text-align: center;
     z-index: top;
-  }
+  } 
 
   #betaCodePopupContent {
       font-size: small;
@@ -86,8 +122,11 @@ body.popup-open {
 }
 
 .popup-open .blur-container {
-  filter: blur(5px); /* Apply blur effect only when popup is open */
+    pointer-events: none;
+    filter: blur(5px);
 }
+
+
 
 #maintenancePopup {
   display: none;
@@ -120,6 +159,10 @@ body.popup-open {
 
 #closeMaintenancePopupBtn:hover {
   background-color: #4da8e1;
+}
+
+#maintenancePopup.open {
+  pointer-events: none;
 }
 
 .error-message {
@@ -222,14 +265,10 @@ form textarea {
   cursor: pointer;
 }
 
-body.popup-open {
- overflow: hidden;
-}
+
 
 body.blur {
 filter: blur(5px);
-pointer-events: none;
-z-index: 1;
 }
 
 

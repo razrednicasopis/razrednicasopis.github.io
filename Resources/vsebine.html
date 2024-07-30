@@ -9,7 +9,8 @@
 </head>
 <body>
 
-<div class="blur-container">
+<div class="overlay"></div>
+
 <header>
     <h1>Vsebine - Razredni Časopis</h1>
     <nav>
@@ -44,20 +45,17 @@
 <footer>
     <p>&copy; 2024 Razredni Časopis 1KAB. All rights reserved.</p>
 </footer>
-</div>
 
 
 <!-- Pop-ups and other HTML -->
 <div id="popupContainer">
-    
     <div id="popupContent">
         <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
-        <p>Te vsebine bodo na voljo v naslednjih verzijah strani.</p>
-        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.</p>
-        <br>
+        <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
         <button id="closePopupBtn">V redu</button>
     </div>
-</div>
+  </div>
 
 <div id="maintenance-warning">
     <p id="maintenance-message"></p>
@@ -73,6 +71,8 @@
   
 
  <script src="alerts.js"></script>
+ <script type="module" src="auth/firebaseauth.js"></script>
+ <script type="module" src="utills/firebasechatroom.js"></script>
  <script type="module" src="settings/settings.js"></script>
 
 </body>

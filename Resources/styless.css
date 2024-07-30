@@ -122,6 +122,8 @@ footer {
 }
 
 /* Chatroom specific styles */
+
+
 #messageInputWrapper {
   position: relative;
   display: flex;

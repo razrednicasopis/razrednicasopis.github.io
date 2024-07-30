@@ -23,47 +23,99 @@ function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
 }
+
+// Toastr options
+toastr.options = {
+  "positionClass": "toast-top-center", // Change this to your preferred position
+  "closeButton": true,
+  "debug": false,
+  "newestOnTop": true,
+  "progressBar": true,
+  "preventDuplicates": false,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "5000",
+  "extendedTimeOut": "1000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
+};
+
+// Function to handle toasts from localStorage
+function handleToasts() {
+  const loginRedirect = localStorage.getItem('loginRedirect');
+  const toastType = localStorage.getItem('toast');
+
+  if (loginRedirect) {
+    if (toastType === 'login-success') {
+      toastr.success('Prijava uspešna!');
+    }
+    localStorage.removeItem('toast'); // Clear the toast message after displaying
+    localStorage.removeItem('loginRedirect'); // Clear the redirect flag
+  } else {
+    if (toastType) {
+      switch (toastType) {
+        case 'registration-success':
+          toastr.success('Račun uspešno ustvarjen! Prosimo preverite svoj e-mail račun za potrditev.');
+          break;
+        case 'login-success':
+          toastr.success('Prijava uspešna!');
+          break;
+        case 'logout-success':
+          toastr.success('Odjava uspešna.');
+          break;
+        default:
+          console.log("Unknown toast type:", toastType); // Debug line for unknown toast types
+          break;
+      }
+      localStorage.removeItem('toast'); // Clear the toast message after displaying
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  handleToasts(); // Check for toasts on page load
+
   const signUpBtn = document.getElementById('registracijaBtn');
   if (signUpBtn) {
-      signUpBtn.addEventListener('click', async (event) => {
-          event.preventDefault();
-          const username = document.getElementById('register-username').value;
-          const email = document.getElementById('register-email').value;
-          const password = document.getElementById('register-password').value;
+    signUpBtn.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const username = document.getElementById('register-username').value;
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
 
-          try {
-              const ipResponse = await axios.get('https://api.ipify.org?format=json');
-              const ipAddress = ipResponse.data.ip;
+      try {
+        const ipResponse = await axios.get('https://api.ipify.org?format=json');
+        const ipAddress = ipResponse.data.ip;
 
-              const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-              const user = userCredential.user;
-              const userData = {
-                  Username: username,
-                  Email: email,
-                  IP_Address: ipAddress,
-                  isAdmin: false, // Initially set to false
-                  role: 'member' // Set role to "member" initially
-              };
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        const userData = {
+          Username: username,
+          Email: email,
+          IP_Address: ipAddress,
+          isAdmin: false, // Initially set to false
+          role: 'member' // Set role to "member" initially
+        };
 
-              await setDoc(doc(db, "users", user.uid), userData);
+        await setDoc(doc(db, "users", user.uid), userData);
+        await sendEmailVerification(userCredential.user);
+        await signOut(auth);
 
-              await sendEmailVerification(userCredential.user);
-
-              alert('Račun uspešno ustvarjen! Prosimo preverite svoj e-mail račun za potrditev.');
-              window.location.href = 'prijava.html';
+        localStorage.setItem('toast', 'registration-success');
+        window.location.href = 'prijava.html'; // Redirect to login page
       } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
-          alert('Ta e-mail račun je že v uporabi. Prosimo poskusite drug račun.');
+          toastr.error('Ta e-mail račun je že v uporabi. Prosimo poskusite drug račun.');
+        } else if (error.code === 'auth/invalid-email') {
+          toastr.error('E-mail naslov ni veljaven.');
+        } else if (error.code === 'auth/weak-password') {
+          toastr.error('Geslo je prešibko. Prosimo, izberite močnejše geslo.');
         } else {
-          if (error.code === 'auth/invalid-email') {
-            alert('E-mail naslov ni veljaven.');
-          } else if (error.code === 'auth/weak-password') {
-            alert('Geslo je prešibko. Prosimo, izberite močnejše geslo.');
-          } else {
-            console.error("Prišlo je do napake pri ustvarjanju računa:", error);
-            alert('Napaka pri ustvarjanju računa. Prosimo kontaktirajte našo pomoč.');
-          }
+          console.error("Prišlo je do napake pri ustvarjanju računa:", error);
+          toastr.error('Napaka pri ustvarjanju računa. Prosimo kontaktirajte našo pomoč.');
         }
       }
     });
@@ -80,46 +132,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         if (!user.emailVerified) {
-          alert('E-mail ni potrjen. Preverite vaš e-poštni predal za potrditveno e-sporočilo.');
+          toastr.warning('E-mail ni potrjen. Preverite vaš e-poštni predal za potrditveno e-sporočilo.');
+          await signOut(auth);
           return;
         }
-        alert('Prijava uspešna!');
-        
-        // Redirect based on the source parameter
+
         const source = getQueryParam('source');
-        if (source === 'chatroom') {
-          window.location.href = 'utills/klepet.html'; // Redirect to chatroom
-        } else {
-          window.location.href = 'index.html'; // Default redirect to index
-        }
+        const redirectUrl = source === 'chatroom' ? 'utills/klepet.html' : 'index.html';
+        localStorage.setItem('toast', 'login-success');
+        window.location.href = `${redirectUrl}`; // Redirect based on source
       } catch (error) {
         if (error.code === 'auth/invalid-credential') {
-          alert('Napačno geslo ali e-mail račun. Prosimo, poskusite znova.');
+          toastr.error('Napačno geslo ali e-mail račun. Prosimo, poskusite znova.');
         } else if (error.code === 'auth/user-not-found') {
-          alert('Uporabnik s tem e-mail naslovom ne obstaja. Prosimo, preverite e-mail ali se registrirajte.');
+          toastr.error('Uporabnik s tem e-mail naslovom ne obstaja. Prosimo, preverite e-mail ali se registrirajte.');
         } else if (error.code === 'auth/invalid-email') {
-          alert('Napačno geslo ali e-mail račun. Prosimo poskusite znova.');
+          toastr.error('Napačno geslo ali e-mail račun. Prosimo poskusite znova.');
         } else if (error.code === 'auth/user-disabled') {
-          alert('Vaš račun je bil blokiran. Prosimo kontaktirajte našo pomoč.');
-        } else  {
+          await signOut(auth);
+          toastr.error('Vaš račun je bil blokiran. Prosimo kontaktirajte našo pomoč.');
+        } else {
           console.error("Prišlo je do napake pri prijavi:", error);
-          alert('Napaka pri prijavi. Prosimo kontaktirajte našo pomoč.');
+          toastr.error('Napaka pri prijavi. Prosimo kontaktirajte našo pomoč.');
         }
       }
     });
   }
 
-  const loginHref = document.getElementById('loginHref');
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
       try {
         await signOut(auth);
-        alert('Odjava uspešna.');
-        window.location.href = 'prijava.html'; // Redirect to the login page after logout
+        localStorage.setItem('toast', 'logout-success');
+        window.location.href = 'prijava.html'; // Redirect to login page after logout
       } catch (error) {
-        console.error('Error logging out')
-        alert('Napaka pri odjavi:', error);
+        console.error('Error logging out');
+        toastr.error('Napaka pri odjavi:', error);
       }
     });
   }
@@ -127,10 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       if (logoutBtn) logoutBtn.style.display = 'block';
-      if (loginHref) loginHref.style.display = 'none';
     } else {
       if (logoutBtn) logoutBtn.style.display = 'none';
-      if (loginHref) loginHref.style.display = 'block';
     }
   });
 });

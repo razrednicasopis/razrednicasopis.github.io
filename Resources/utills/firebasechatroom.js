@@ -17,14 +17,24 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
 
+const chatBox = document.getElementById('messageInput');
+const messageSendBtn = document.getElementById('sendMessage');
+const overlay = document.querySelector('.overlay');
+
 document.addEventListener('DOMContentLoaded', function () {
     function showPopup(popupId) {
         const popup = document.getElementById(popupId);
         if (popup) {
             popup.style.display = 'block';
             document.body.classList.add('popup-open');
++           document.body.classList.add('popupInvulnerable');
+            overlay.style.display = 'block';
+            console.log(`Showing popup: ${popupId}`);
+            console.log('Overlay display:', overlay.style.display);
         } else {
             console.error(`Popup with ID ${popupId} not found.`);
+            overlay.style.display = 'none';
+            
         }
     }
 
@@ -33,12 +43,19 @@ document.addEventListener('DOMContentLoaded', function () {
         if (popup) {
             popup.style.display = 'none';
             document.body.classList.remove('popup-open');
-        } else {
+            overlay.style.display = 'none';
+            document.body.classList.remove('popupInvulnerable');
+            } else {
             console.error(`Popup with ID ${popupId} not found.`);
+           
         }
     }
 
+
     showPopup('betaCodePopup');
+
+
+
 
     document.getElementById('submitBetaCodeBtn').addEventListener('click', async function (event) {
         event.preventDefault();
@@ -63,16 +80,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 checkLoginState();
             } else {
                 betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
-                betaCodeError.style.display = 'block';
             }
         } catch (error) {
             console.error(error);
             betaCodeError.textContent = 'An error occurred. Please try again later.';
-            betaCodeError.style.display = 'block';
         }
     });
 
     document.getElementById('loginRedirectBtn').addEventListener('click', function () {
+        localStorage.setItem('loginRedirect', 'true');
         window.location.href = '../prijava.html?source=chatroom';
     });
 
@@ -81,8 +97,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (user) {
                 hidePopup('loginPopup');
                 document.getElementById('chatroom').classList.remove('hidden');
+                chatBox.style.visibility = 'visible';
+                messageSendBtn.style.visibility = 'visible';
                 loadMessages();
             } else {
+                document.body.classList.add('popup-open');
                 showPopup('loginPopup');
             }
         });
@@ -119,7 +138,22 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function displayMessage(username, text, timestamp, role, isAdmin) {
+    function formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        const days = ['Nedelja', 'Ponedeljek', 'Torek', 'Sreda', 'Četrtek', 'Petek', 'Sobota'];
+        const day = days[date.getDay()];
+
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+
+        return `${day}, ${hours}:${minutes}:${seconds} ${ampm}`;
+    }
+
+    function displayMessage(username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
     
         const messageElement = document.createElement('div');
@@ -127,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
-        timestampElement.textContent = new Date(timestamp).toLocaleTimeString();
+        timestampElement.textContent = formatTimestamp(timestamp);
     
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
@@ -193,30 +227,32 @@ document.addEventListener('DOMContentLoaded', function () {
     async function deleteOldMessages() {
         const messagesRef = collection(db, 'messages');
         const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        const midnightTimestamp = Timestamp.fromDate(now);
+        const lastWeek = new Date(now);
+        lastWeek.setDate(now.getDate() - 7);
+        const lastWeekTimestamp = Timestamp.fromDate(lastWeek);
 
-        const messagesQuery = query(messagesRef, where('timestamp', '<=', midnightTimestamp));
+        const messagesQuery = query(messagesRef, where('timestamp', '<=', lastWeekTimestamp));
         const querySnapshot = await getDocs(messagesQuery);
 
         querySnapshot.forEach(async (doc) => {
             await deleteDoc(doc.ref);
         });
 
-        console.log('Deleted messages older than midnight');
+        console.log('Deleted messages older than a week');
     }
 
     function scheduleDeletion() {
         const now = new Date();
-        const midnight = new Date();
-        midnight.setHours(24, 0, 0, 0);
+        const nextMonday = new Date();
+        nextMonday.setDate(now.getDate() + ((1 + 7 - now.getDay()) % 7));
+        nextMonday.setHours(0, 0, 0, 0);
 
-        const timeToMidnight = midnight.getTime() - now.getTime();
+        const timeToNextMonday = nextMonday.getTime() - now.getTime();
 
         setTimeout(() => {
             deleteOldMessages();
-            scheduleDeletion();
-        }, timeToMidnight);
+            setInterval(deleteOldMessages, 7 * 24 * 60 * 60 * 1000); // every 7 days
+        }, timeToNextMonday);
     }
 
     scheduleDeletion();
