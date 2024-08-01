@@ -211,3 +211,27 @@ footer {
 .text {
   word-wrap: break-word;
 }
+
+/* Random Alignments */
+
+.version2alignment {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.version2alignment li {
+  position: relative;
+  padding-left: 25px;
+  font-size: 1.5em; /* Increase font size */
+  margin-bottom: 10px;
+}
+
+.version2alignment li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #3498db;
+  font-size: 1em;
+  font-weight: bold;
+}
