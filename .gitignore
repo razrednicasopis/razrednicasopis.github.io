@@ -1,8 +1,4 @@
-Resources/settings/
-Resources/utills/
-Resources/auth/
-Resources/system.css
-Resources/styless.css
+
 /In Developement/
 /node_modules/
 .env
