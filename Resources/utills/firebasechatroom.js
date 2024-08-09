@@ -52,40 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    showPopup('betaCodePopup');
-
-
-
-
-    document.getElementById('submitBetaCodeBtn').addEventListener('click', async function (event) {
-        event.preventDefault();
-
-        const betaCodeInput = document.getElementById('betaCodeInput');
-        const betaCodeError = document.getElementById('betaCodeError');
-        const betaCode = betaCodeInput.value.trim();
-
-        if (!betaCode) {
-            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
-            betaCodeError.style.display = 'block';
-            return;
-        }
-
-        try {
-            const betaCodeRef = doc(db, 'betaCodes', betaCode);
-            const betaCodeDoc = await getDoc(betaCodeRef);
-
-            if (betaCodeDoc.exists() && betaCodeDoc.data().valid) {
-                betaCodeError.style.display = 'none';
-                hidePopup('betaCodePopup');
-                checkLoginState();
-            } else {
-                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
-            }
-        } catch (error) {
-            console.error(error);
-            betaCodeError.textContent = 'An error occurred. Please try again later.';
-        }
-    });
+    checkLoginState();
+  
 
     document.getElementById('loginRedirectBtn').addEventListener('click', function () {
         localStorage.setItem('loginRedirect', 'true');
@@ -103,6 +71,9 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 document.body.classList.add('popup-open');
                 showPopup('loginPopup');
+                overlay.style.display = 'block';
+                document.body.classList.add('popupInvulnerable');
+
             }
         });
     }

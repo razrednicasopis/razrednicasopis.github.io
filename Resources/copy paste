@@ -1,3 +1,65 @@
+BETA CODE POPUP
+
+<div id="betaCodePopup" class="popup"> 
+  <div id="betaCodePopupContent">
+    <h1>Prosimo vnesi testno kodo!</h1><p>
+    Kot morda veste, oblikovanje in vzdrževanje strani ni lahek zalogaj. Med ustvaritvijo strani se prikrade ogromno napak ter pregrad.
+    Prav zaradi teh težav je ekipa Razrednega Časopisa ustvarila BETA testiranje za klepet preden bo le-ta na voljo vsem. <p>
+    Nekateri posamezniki so samodejno prejeli kodo, a se lahko vsakdo prijavi za potencialno pridobitev kode. <br>
+    <a href="../kontakt.html">Tu se lahko prijavite za morebitno pridobitev beta kode.</a>
+    Administratorji strani bodo sprejeli le določeno število vpisanih. <p>
+      V primeru da naletite na napako, jo prosimo prijavite s pomočjo našega kontakt obrazca. <br><br>
+      Če ste eden izmed srečnih posameznikov, ki so prejeli kodo, jo prosim vnesite v spodnje polje za dostop do klepeta. Veselo testiranje! <p>
+        <center>Administratorji Razrednega Časopisa</center>
+      </p>
+    </p>
+    </p>
+    <div class="error-message" id="betaCodeError"></div><br>
+    <input type="text" id="betaCodeInput" placeholder="Vnesite BETA kodo"><br><br>
+    <button id="submitBetaCodeBtn">Pošlji</button>
+  </div>
+</div>
+
+  showPopup('betaCodePopup');
+
+
+
+
+    document.getElementById('submitBetaCodeBtn').addEventListener('click', async function (event) {
+        event.preventDefault();
+
+        const betaCodeInput = document.getElementById('betaCodeInput');
+        const betaCodeError = document.getElementById('betaCodeError');
+        const betaCode = betaCodeInput.value.trim();
+
+        if (!betaCode) {
+            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
+            betaCodeError.style.display = 'block';
+            return;
+        }
+
+        try {
+            const betaCodeRef = doc(db, 'betaCodes', betaCode);
+            const betaCodeDoc = await getDoc(betaCodeRef);
+
+            if (betaCodeDoc.exists() && betaCodeDoc.data().valid) {
+                betaCodeError.style.display = 'none';
+                hidePopup('betaCodePopup');
+                checkLoginState();
+            } else {
+                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
+            }
+        } catch (error) {
+            console.error(error);
+            betaCodeError.textContent = 'An error occurred. Please try again later.';
+        }
+    });
+
+
+
+END OF THE BETA POPUP
+
+
 <p><center><h1>TRUTH AND LIES</h1></center>
 <center><br>
 Painfull truth and pretty lies,</center>
