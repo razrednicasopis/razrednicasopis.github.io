@@ -1,9 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
-import axios from 'https://cdn.skypack.dev/axios'; // Import Axios for making HTTP requests
+import { getFirestore, setDoc, doc, collection, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import axios from 'https://cdn.skypack.dev/axios';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
   authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
@@ -26,7 +25,7 @@ function getQueryParam(param) {
 
 // Toastr options
 toastr.options = {
-  "positionClass": "toast-top-center", // Change this to your preferred position
+  "positionClass": "toast-top-center",
   "closeButton": true,
   "debug": false,
   "newestOnTop": true,
@@ -52,8 +51,8 @@ function handleToasts() {
     if (toastType === 'login-success') {
       toastr.success('Prijava uspešna!');
     }
-    localStorage.removeItem('toast'); // Clear the toast message after displaying
-    localStorage.removeItem('loginRedirect'); // Clear the redirect flag
+    localStorage.removeItem('toast');
+    localStorage.removeItem('loginRedirect');
   } else {
     if (toastType) {
       switch (toastType) {
@@ -67,16 +66,16 @@ function handleToasts() {
           toastr.success('Odjava uspešna.');
           break;
         default:
-          console.log("Unknown toast type:", toastType); // Debug line for unknown toast types
+          console.log("Unknown toast type:", toastType);
           break;
       }
-      localStorage.removeItem('toast'); // Clear the toast message after displaying
+      localStorage.removeItem('toast');
     }
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  handleToasts(); // Check for toasts on page load
+  handleToasts();
 
   const signUpBtn = document.getElementById('registracijaBtn');
   if (signUpBtn) {
@@ -87,6 +86,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById('register-password').value;
 
       try {
+        // Check if the username is already taken
+        const usersRef = collection(db, "users");
+        const usernameQuery = query(usersRef, where("Username", "==", username));
+        const usernameSnapshot = await getDocs(usernameQuery);
+
+        if (!usernameSnapshot.empty) {
+          toastr.error('To uporabniško ime je že v uporabi. Prosimo, izberite drugo ime.');
+          return;
+        }
+
         const ipResponse = await axios.get('https://api.ipify.org?format=json');
         const ipAddress = ipResponse.data.ip;
 
@@ -96,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
           Username: username,
           Email: email,
           IP_Address: ipAddress,
-          isAdmin: false, // Initially set to false
-          role: 'member' // Set role to "member" initially
+          isAdmin: false,
+          role: 'member'
         };
 
         await setDoc(doc(db, "users", user.uid), userData);
@@ -105,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await signOut(auth);
 
         localStorage.setItem('toast', 'registration-success');
-        window.location.href = 'prijava.html'; // Redirect to login page
+        window.location.href = 'prijava.html';
       } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
           toastr.error('Ta e-mail račun je že v uporabi. Prosimo poskusite drug račun.');
@@ -125,10 +134,26 @@ document.addEventListener('DOMContentLoaded', () => {
   if (loginBtn) {
     loginBtn.addEventListener('click', async (event) => {
       event.preventDefault();
-      const email = document.getElementById('email').value;
+      const identifier = document.getElementById('email').value; // Can be either email or username
       const password = document.getElementById('password').value;
 
       try {
+        let email = identifier;
+
+        // Check if identifier is a username, then get corresponding email
+        if (!identifier.includes('@')) {
+          const usersRef = collection(db, "users");
+          const usernameQuery = query(usersRef, where("Username", "==", identifier));
+          const usernameSnapshot = await getDocs(usernameQuery);
+
+          if (usernameSnapshot.empty) {
+            toastr.error('Uporabniško ime ne obstaja. Prosimo preverite svoje podatke.');
+            return;
+          }
+
+          email = usernameSnapshot.docs[0].data().Email;
+        }
+
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         if (!user.emailVerified) {
@@ -140,14 +165,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const source = getQueryParam('source');
         const redirectUrl = source === 'chatroom' ? 'utills/klepet.html' : 'index.html';
         localStorage.setItem('toast', 'login-success');
-        window.location.href = `${redirectUrl}`; // Redirect based on source
+        window.location.href = `${redirectUrl}`;
       } catch (error) {
-        if (error.code === 'auth/invalid-credential') {
-          toastr.error('Napačno geslo ali e-mail račun. Prosimo, poskusite znova.');
-        } else if (error.code === 'auth/user-not-found') {
-          toastr.error('Uporabnik s tem e-mail naslovom ne obstaja. Prosimo, preverite e-mail ali se registrirajte.');
+        if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+          toastr.error('Napačno geslo ali e-mail račun/uporabniško ime. Prosimo, poskusite znova.');
         } else if (error.code === 'auth/invalid-email') {
-          toastr.error('Napačno geslo ali e-mail račun. Prosimo poskusite znova.');
+          toastr.error('Napačno geslo ali e-mail račun/uporabniško ime. Prosimo poskusite znova.');
         } else if (error.code === 'auth/user-disabled') {
           await signOut(auth);
           toastr.error('Vaš račun je bil blokiran. Prosimo kontaktirajte našo pomoč.');
@@ -165,9 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         await signOut(auth);
         localStorage.setItem('toast', 'logout-success');
-        window.location.href = 'prijava.html'; // Redirect to login page after logout
+        window.location.href = 'prijava.html';
       } catch (error) {
-        console.error('Error logging out');
+        console.error('Error logging out:', error);
         toastr.error('Napaka pri odjavi:', error);
       }
     });

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User Documents with UID</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
+            authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
+            projectId: "razrednicasopisdatabase-29bad",
+            storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
+            messagingSenderId: "294018128318",
+            appId: "1:294018128318:web:31df9ea055eec5798e81ef"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function updateUserDocsWithUID() {
+            const usersCollection = collection(db, "users");
+            const userDocs = await getDocs(usersCollection);
+
+            userDocs.forEach(async (userDoc) => {
+                const userId = userDoc.id; // This is the uid
+                const userData = userDoc.data();
+
+                // If UID field is not already set, add it
+                if (!userData.uid) {
+                    await updateDoc(doc(db, "users", userId), { uid: userId });
+                    console.log(`Updated document for user: ${userId}`);
+                }
+            });
+
+            alert("All user documents have been updated with UID.");
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const updateButton = document.getElementById('updateButton');
+            updateButton.addEventListener('click', updateUserDocsWithUID);
+        });
+    </script>
+</head>
+<body>
+    <h1>Update User Documents with UID</h1>
+    <button id="updateButton">Update User Documents</button>
+</body>
+</html>
