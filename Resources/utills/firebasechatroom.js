@@ -19,7 +19,7 @@ const db = getFirestore(app);
 
 const chatBox = document.getElementById('messageInput');
 const messageSendBtn = document.getElementById('sendMessage');
-const overlay = document.querySelector('.overlay');
+const overlay = document.getElementById('loginPopupOverlay');
 
 document.addEventListener('DOMContentLoaded', function () {
     function showPopup(popupId) {
