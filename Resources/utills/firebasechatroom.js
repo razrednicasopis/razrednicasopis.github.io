@@ -84,8 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    let lastLoadedMessageTimestamp = null;
-
     function loadMessages() {
         const messagesRef = collection(db, 'messages');
         const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
@@ -118,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const seconds = date.getSeconds().toString().padStart(2, '0');
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
-        hours = hours ? 12 : 0; 
+        hours = hours ? hours : 12;
 
         return `${day}, ${hours}:${minutes}:${seconds} ${ampm}`;
     }
@@ -256,7 +254,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 sendPrivateMessage('SERVER: Unknown command.');
         }
     }
-    
 
     async function deleteMessage(messageId) {
         try {
@@ -274,18 +271,60 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function muteUserCommand(username, reason, duration) {
-        console.log(`Muting user ${username} for ${duration}. Reason: ${reason}`);
-        // Implement mute logic here (e.g., add a mute entry to Firebase)
+        try {
+            const userDoc = await getDocs(query(collection(db, 'users'), where('Username', '==', username)));
+            if (userDoc.empty) {
+                sendPrivateMessage(`SERVER: User ${username} not found.`);
+                return;
+            }
+
+            const userId = userDoc.docs[0].id;
+            await addDoc(collection(db, 'mutedUsers'), {
+                username: username,
+                userId: userId,
+                reason: reason,
+                duration: duration,
+                timestamp: Timestamp.fromDate(new Date())
+            });
+
+            sendPrivateMessage(`SERVER: User ${username} has been muted.`);
+        } catch (error) {
+            console.error('Error muting user:', error);
+            sendPrivateMessage('SERVER: Error muting user.');
+        }
     }
 
     async function unmuteUserCommand(username) {
-        console.log(`Unmuting user ${username}`);
-        // Implement unmute logic here (e.g., remove mute entry from Firebase)
+        try {
+            const querySnapshot = await getDocs(query(collection(db, 'mutedUsers'), where('username', '==', username)));
+            if (querySnapshot.empty) {
+                sendPrivateMessage(`SERVER: User ${username} is not muted.`);
+                return;
+            }
+
+            querySnapshot.forEach(async (doc) => {
+                await deleteDoc(doc.ref);
+            });
+
+            sendPrivateMessage(`SERVER: User ${username} has been unmuted.`);
+        } catch (error) {
+            console.error('Error unmuting user:', error);
+            sendPrivateMessage('SERVER: Error unmuting user.');
+        }
     }
 
     async function purgeChat() {
-        console.log('Purging all messages in the chat.');
-        // Implement chat purge logic here (e.g., delete all messages in Firebase)
+        try {
+            const messagesSnapshot = await getDocs(collection(db, 'messages'));
+            messagesSnapshot.forEach(async (doc) => {
+                await deleteDoc(doc.ref);
+            });
+
+            sendPrivateMessage('SERVER: All messages have been purged.');
+        } catch (error) {
+            console.error('Error purging chat:', error);
+            sendPrivateMessage('SERVER: Error purging chat.');
+        }
     }
 
     messageSendBtn.addEventListener('click', handleMessageSend);
