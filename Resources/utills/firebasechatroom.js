@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, addDoc, collection, query, orderBy, onSnapshot, where, getDocs, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, addDoc, collection, query, orderBy, onSnapshot, where, getDocs, deleteDoc, updateDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -27,14 +27,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (popup) {
             popup.style.display = 'block';
             document.body.classList.add('popup-open');
-+           document.body.classList.add('popupInvulnerable');
+            document.body.classList.add('popupInvulnerable');
             overlay.style.display = 'block';
             console.log(`Showing popup: ${popupId}`);
             console.log('Overlay display:', overlay.style.display);
         } else {
             console.error(`Popup with ID ${popupId} not found.`);
             overlay.style.display = 'none';
-            
         }
     }
 
@@ -45,15 +44,12 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.classList.remove('popup-open');
             overlay.style.display = 'none';
             document.body.classList.remove('popupInvulnerable');
-            } else {
+        } else {
             console.error(`Popup with ID ${popupId} not found.`);
-           
         }
     }
 
-
     checkLoginState();
-  
 
     document.getElementById('loginRedirectBtn').addEventListener('click', function () {
         localStorage.setItem('loginRedirect', 'true');
@@ -73,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 showPopup('loginPopup');
                 overlay.style.display = 'block';
                 document.body.classList.add('popupInvulnerable');
-
             }
         });
     }
@@ -99,9 +94,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const messagesDiv = document.getElementById('messages');
 
             snapshot.docChanges().forEach((change) => {
+                const messageId = change.doc.id;
+                const messageData = change.doc.data();
+
                 if (change.type === 'added') {
-                    const message = change.doc.data();
-                    displayMessage(message.username, message.text, message.timestamp.toDate(), message.role);
+                    displayMessage(messageId, messageData.username, messageData.text, messageData.timestamp.toDate(), messageData.role);
+                } else if (change.type === 'removed') {
+                    removeMessageDiv(messageId);
                 }
             });
 
@@ -119,25 +118,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const seconds = date.getSeconds().toString().padStart(2, '0');
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours ? 12 : 0; 
 
         return `${day}, ${hours}:${minutes}:${seconds} ${ampm}`;
     }
 
-    function displayMessage(username, text, timestamp, role) {
+    function displayMessage(messageId, username, text, timestamp, role) {
         const messagesDiv = document.getElementById('messages');
-    
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
-    
+        messageElement.setAttribute('data-message-id', messageId);  // Add unique attribute for easy removal
+
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
         timestampElement.textContent = formatTimestamp(timestamp);
-    
+
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
-    
-        // Check role first for owner
+
         if (role === 'owner') {
             usernameElement.textContent = '[Lastnik] ' + username + ': ';
             usernameElement.classList.add('owner');
@@ -147,16 +145,24 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             usernameElement.textContent = username + ': ';
         }
-    
+
         const textElement = document.createElement('span');
         textElement.classList.add('text');
         textElement.textContent = text;
-    
+
         messageElement.appendChild(timestampElement);
         messageElement.appendChild(usernameElement);
         messageElement.appendChild(textElement);
-    
+
         messagesDiv.appendChild(messageElement);
+    }
+
+    function removeMessageDiv(messageId) {
+        const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+        if (messageElement) {
+            messageElement.remove();
+            console.log('Message removed from UI:', messageId);
+        }
     }
 
     async function handleMessageSend() {
@@ -165,6 +171,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const user = auth.currentUser;
 
         if (!text || !user) {
+            return;
+        }
+
+        // Handle commands
+        if (text.startsWith('/')) {
+            await handleCommand(text, user);
+            messageInput.value = '';
             return;
         }
 
@@ -187,44 +200,98 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    document.getElementById('sendMessage').addEventListener('click', handleMessageSend);
+    async function handleCommand(commandText, user) {
+        const commandArgs = commandText.split(' ');
+        const command = commandArgs[0].toLowerCase();
+    
+        // Fetch user data from the 'users' collection to check role
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+    
+        if (!userDoc.exists) {
+            sendPrivateMessage('SERVER: User data not found.');
+            return;
+        }
+    
+        const userRole = userDoc.data().role;  // Fetch user role
+    
+        switch (command) {
+            case '/deletemsg':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+                const messageId = commandArgs[1];
+                await deleteMessage(messageId);
+                break;
+    
+            case '/chatpurge':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+                await purgeChat();
+                break;
+    
+            case '/mute':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+                const muteUser = commandArgs[1];
+                const reason = commandArgs[2] || 'No reason provided';
+                const duration = commandArgs[3] || 'indefinite';
+                await muteUserCommand(muteUser, reason, duration);
+                break;
+    
+            case '/unmute':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+                const unmuteUser = commandArgs[1];
+                await unmuteUserCommand(unmuteUser);
+                break;
+    
+            default:
+                sendPrivateMessage('SERVER: Unknown command.');
+        }
+    }
+    
 
-    document.getElementById('messageInput').addEventListener('keydown', function (event) {
+    async function deleteMessage(messageId) {
+        try {
+            const messageDocRef = doc(db, 'messages', messageId);
+            await deleteDoc(messageDocRef);
+            console.log('Message deleted successfully:', messageId);
+        } catch (error) {
+            console.error('Error deleting message:', error);
+        }
+    }
+
+    function sendPrivateMessage(text) {
+        const messageInput = document.getElementById('messageInput');
+        messageInput.value = text;
+    }
+
+    async function muteUserCommand(username, reason, duration) {
+        console.log(`Muting user ${username} for ${duration}. Reason: ${reason}`);
+        // Implement mute logic here (e.g., add a mute entry to Firebase)
+    }
+
+    async function unmuteUserCommand(username) {
+        console.log(`Unmuting user ${username}`);
+        // Implement unmute logic here (e.g., remove mute entry from Firebase)
+    }
+
+    async function purgeChat() {
+        console.log('Purging all messages in the chat.');
+        // Implement chat purge logic here (e.g., delete all messages in Firebase)
+    }
+
+    messageSendBtn.addEventListener('click', handleMessageSend);
+    chatBox.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
             handleMessageSend();
         }
     });
-
-    async function deleteOldMessages() {
-        const messagesRef = collection(db, 'messages');
-        const now = new Date();
-        const lastWeek = new Date(now);
-        lastWeek.setDate(now.getDate() - 7);
-        const lastWeekTimestamp = Timestamp.fromDate(lastWeek);
-
-        const messagesQuery = query(messagesRef, where('timestamp', '<=', lastWeekTimestamp));
-        const querySnapshot = await getDocs(messagesQuery);
-
-        querySnapshot.forEach(async (doc) => {
-            await deleteDoc(doc.ref);
-        });
-
-        console.log('Deleted messages older than a week');
-    }
-
-    function scheduleDeletion() {
-        const now = new Date();
-        const nextMonday = new Date();
-        nextMonday.setDate(now.getDate() + ((1 + 7 - now.getDay()) % 7));
-        nextMonday.setHours(0, 0, 0, 0);
-
-        const timeToNextMonday = nextMonday.getTime() - now.getTime();
-
-        setTimeout(() => {
-            deleteOldMessages();
-            setInterval(deleteOldMessages, 7 * 24 * 60 * 60 * 1000); // every 7 days
-        }, timeToNextMonday);
-    }
-
-    scheduleDeletion();
 });
