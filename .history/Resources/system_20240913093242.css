@@ -57,7 +57,7 @@ body.popupInvulnerable .overlay .betaCodePopup .loginPopup {
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    z-index: 999;
+    z-index: top;
   }
 
   #popupContent, #betaCodePopup, #loginPopup {
