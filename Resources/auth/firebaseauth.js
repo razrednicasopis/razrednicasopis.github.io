@@ -16,8 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
-const prijavaLinkBtn = document.getElementById('loginHref');
-const logoutBtn = document.getElementById('logoutBtn');
+
 
 // Helper function to get URL parameter
 function getQueryParam(param) {
@@ -78,6 +77,7 @@ function handleToasts() {
 
 document.addEventListener('DOMContentLoaded', () => {
   handleToasts();
+  updateButtonVisibility();
 
   const signUpBtn = document.getElementById('registracijaBtn');
   if (signUpBtn) {
@@ -198,13 +198,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      logoutBtn.style.display = 'block';
-      prijavaLinkBtn.style.display = 'none';
-    } else {
-      logoutBtn.style.display = 'none';
-      prijavaLinkBtn.style.display = 'block';
-    }
-  });
+  function updateButtonVisibility() {
+    const prijavaLinkBtn = document.getElementById('loginHref');
+    const logoutBtn = document.getElementById('logoutBtn');
+  
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        if (logoutBtn) logoutBtn.style.display = 'block';
+        if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'none';
+      } else {
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'block';
+      }
+    });
+  }
 });
