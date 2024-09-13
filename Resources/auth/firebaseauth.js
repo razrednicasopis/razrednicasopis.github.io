@@ -16,6 +16,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
+const prijavaLinkBtn = document.getElementById('loginHref');
+const logoutBtn = document.getElementById('logoutBtn');
 
 // Helper function to get URL parameter
 function getQueryParam(param) {
@@ -198,9 +200,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      if (logoutBtn) logoutBtn.style.display = 'block';
+      logoutBtn.style.display = 'block';
+      prijavaLinkBtn.style.display = 'none';
     } else {
-      if (logoutBtn) logoutBtn.style.display = 'none';
+      logoutBtn.style.display = 'none';
+      prijavaLinkBtn.style.display = 'block';
     }
   });
 });
