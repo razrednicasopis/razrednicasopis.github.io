@@ -123,6 +123,15 @@ footer {
 
 /* Chatroom specific styles */
 
+.server-message {
+  color: #00ff00; /* Bright green */
+  font-weight: bold; /* Bold text */
+}
+
+.chatMaintenance {
+  pointer-events: none;
+  opacity: 0.5;
+}
 
 #messageInputWrapper {
   position: relative;
@@ -130,6 +139,7 @@ footer {
   width: 100%;
   z-index: 1;
 }
+
 
 #messageInput {
   width: 100%;

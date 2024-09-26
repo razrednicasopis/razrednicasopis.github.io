@@ -142,6 +142,7 @@ body.popup-open {
   z-index: top;
 }
 
+
 #maintenancePopupContent {
   max-width: 400px;
   margin: 0 auto;

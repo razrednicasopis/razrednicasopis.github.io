@@ -1,174 +1,336 @@
-BETA CODE POPUP
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, addDoc, collection, query, orderBy, onSnapshot, where, getDocs, deleteDoc, updateDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
-<div id="betaCodePopup" class="popup"> 
-  <div id="betaCodePopupContent">
-    <h1>Prosimo vnesi testno kodo!</h1><p>
-    Kot morda veste, oblikovanje in vzdrževanje strani ni lahek zalogaj. Med ustvaritvijo strani se prikrade ogromno napak ter pregrad.
-    Prav zaradi teh težav je ekipa Razrednega Časopisa ustvarila BETA testiranje za klepet preden bo le-ta na voljo vsem. <p>
-    Nekateri posamezniki so samodejno prejeli kodo, a se lahko vsakdo prijavi za potencialno pridobitev kode. <br>
-    <a href="../kontakt.html">Tu se lahko prijavite za morebitno pridobitev beta kode.</a>
-    Administratorji strani bodo sprejeli le določeno število vpisanih. <p>
-      V primeru da naletite na napako, jo prosimo prijavite s pomočjo našega kontakt obrazca. <br><br>
-      Če ste eden izmed srečnih posameznikov, ki so prejeli kodo, jo prosim vnesite v spodnje polje za dostop do klepeta. Veselo testiranje! <p>
-        <center>Administratorji Razrednega Časopisa</center>
-      </p>
-    </p>
-    </p>
-    <div class="error-message" id="betaCodeError"></div><br>
-    <input type="text" id="betaCodeInput" placeholder="Vnesite BETA kodo"><br><br>
-    <button id="submitBetaCodeBtn">Pošlji</button>
-  </div>
-</div>
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
+    authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
+    projectId: "razrednicasopisdatabase-29bad",
+    storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
+    messagingSenderId: "294018128318",
+    appId: "1:294018128318:web:31df9ea055eec5798e81ef"
+};
 
-  showPopup('betaCodePopup');
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore(app);
 
+const chatBox = document.getElementById('messageInput');
+const messageSendBtn = document.getElementById('sendMessage');
+const overlay = document.getElementById('loginPopupOverlay');
 
+document.addEventListener('DOMContentLoaded', function () {
+    function showPopup(popupId) {
+        const popup = document.getElementById(popupId);
+        if (popup) {
+            popup.style.display = 'block';
+            document.body.classList.add('popup-open');
+            document.body.classList.add('popupInvulnerable');
+            overlay.style.display = 'block';
+            console.log(`Showing popup: ${popupId}`);
+            console.log('Overlay display:', overlay.style.display);
+        } else {
+            console.error(`Popup with ID ${popupId} not found.`);
+            overlay.style.display = 'none';
+        }
+    }
 
+    function hidePopup(popupId) {
+        const popup = document.getElementById(popupId);
+        if (popup) {
+            popup.style.display = 'none';
+            document.body.classList.remove('popup-open');
+            overlay.style.display = 'none';
+            document.body.classList.remove('popupInvulnerable');
+        } else {
+            console.error(`Popup with ID ${popupId} not found.`);
+        }
+    }
 
-    document.getElementById('submitBetaCodeBtn').addEventListener('click', async function (event) {
-        event.preventDefault();
+    checkLoginState();
 
-        const betaCodeInput = document.getElementById('betaCodeInput');
-        const betaCodeError = document.getElementById('betaCodeError');
-        const betaCode = betaCodeInput.value.trim();
+    document.getElementById('loginRedirectBtn').addEventListener('click', function () {
+        localStorage.setItem('loginRedirect', 'true');
+        window.location.href = '../prijava.html?source=chatroom';
+    });
 
-        if (!betaCode) {
-            betaCodeError.textContent = 'Prosimo vnesite beta kodo.';
-            betaCodeError.style.display = 'block';
+    function checkLoginState() {
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                hidePopup('loginPopup');
+                document.getElementById('chatroom').classList.remove('hidden');
+                chatBox.style.visibility = 'visible';
+                messageSendBtn.style.visibility = 'visible';
+                loadMessages();
+            } else {
+                document.body.classList.add('popup-open');
+                showPopup('loginPopup');
+                overlay.style.display = 'block';
+                document.body.classList.add('popupInvulnerable');
+            }
+        });
+    }
+
+    async function getUserIp() {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch (error) {
+            console.error('Failed to get user IP:', error);
+            return 'Unknown';
+        }
+    }
+
+    function loadMessages() {
+        const messagesRef = collection(db, 'messages');
+        const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
+
+        onSnapshot(messagesQuery, (snapshot) => {
+            const messagesDiv = document.getElementById('messages');
+
+            snapshot.docChanges().forEach((change) => {
+                const messageId = change.doc.id;
+                const messageData = change.doc.data();
+
+                if (change.type === 'added') {
+                    displayMessage(messageId, messageData.username, messageData.text, messageData.timestamp.toDate(), messageData.role);
+                } else if (change.type === 'removed') {
+                    removeMessageDiv(messageId);
+                }
+            });
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
+        });
+    }
+
+    function formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        const days = ['Nedelja', 'Ponedeljek', 'Torek', 'Sreda', 'Četrtek', 'Petek', 'Sobota'];
+        const day = days[date.getDay()];
+
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+
+        return `${day}, ${hours}:${minutes}:${seconds} ${ampm}`;
+    }
+
+    function displayMessage(messageId, username, text, timestamp, role) {
+        const messagesDiv = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.setAttribute('data-message-id', messageId);  // Add unique attribute for easy removal
+
+        const timestampElement = document.createElement('span');
+        timestampElement.classList.add('timestamp');
+        timestampElement.textContent = formatTimestamp(timestamp);
+
+        const usernameElement = document.createElement('span');
+        usernameElement.classList.add('username');
+
+        if (role === 'owner') {
+            usernameElement.textContent = '[Lastnik] ' + username + ': ';
+            usernameElement.classList.add('owner');
+        } else if (role === 'admin') {
+            usernameElement.textContent = '[Admin] ' + username + ': ';
+            usernameElement.classList.add('admin');
+        } else {
+            usernameElement.textContent = username + ': ';
+        }
+
+        const textElement = document.createElement('span');
+        textElement.classList.add('text');
+        textElement.textContent = text;
+
+        messageElement.appendChild(timestampElement);
+        messageElement.appendChild(usernameElement);
+        messageElement.appendChild(textElement);
+
+        messagesDiv.appendChild(messageElement);
+    }
+
+    function removeMessageDiv(messageId) {
+        const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+        if (messageElement) {
+            messageElement.remove();
+            console.log('Message removed from UI:', messageId);
+        }
+    }
+
+    async function handleMessageSend() {
+        const messageInput = document.getElementById('messageInput');
+        const text = messageInput.value.trim();
+        const user = auth.currentUser;
+
+        if (!text || !user) {
+            return;
+        }
+
+        // Handle commands
+        if (text.startsWith('/')) {
+            await handleCommand(text, user);
+            messageInput.value = '';
             return;
         }
 
         try {
-            const betaCodeRef = doc(db, 'betaCodes', betaCode);
-            const betaCodeDoc = await getDoc(betaCodeRef);
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const username = userDoc.exists ? userDoc.data().Username : 'Unknown';
+            const role = userDoc.exists ? userDoc.data().role : 'member';
 
-            if (betaCodeDoc.exists() && betaCodeDoc.data().valid) {
-                betaCodeError.style.display = 'none';
-                hidePopup('betaCodePopup');
-                checkLoginState();
-            } else {
-                betaCodeError.textContent = 'Prosimo vnesite veljavno beta kodo.';
-            }
+            const userIp = await getUserIp();
+            await addDoc(collection(db, 'messages'), {
+                username: username,
+                text: text,
+                timestamp: new Date(),
+                ip: userIp,
+                role: role
+            });
+            messageInput.value = '';
         } catch (error) {
-            console.error(error);
-            betaCodeError.textContent = 'An error occurred. Please try again later.';
+            console.error('Error sending message:', error);
+        }
+    }
+
+    async function handleCommand(commandText, user) {
+        const commandArgs = commandText.split(' ');
+        const command = commandArgs[0].toLowerCase();
+    
+        // Fetch user data from the 'users' collection to check role
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+    
+        if (!userDoc.exists) {
+            sendPrivateMessage('SERVER: User data not found.');
+            return;
+        }
+    
+        const userRole = userDoc.data().role;  // Fetch user role
+    
+        switch (command) {
+            case '/deletemsg':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+                const messageId = commandArgs[1];
+                await deleteMessage(messageId);
+                break;
+    
+            case '/chatpurge':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+                await purgeChat();
+                break;
+    
+            case '/mute':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+                const muteUser = commandArgs[1];
+                const reason = commandArgs[2] || 'No reason provided';
+                const duration = commandArgs[3] || 'indefinite';
+                await muteUserCommand(muteUser, reason, duration);
+                break;
+    
+            case '/unmute':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+                const unmuteUser = commandArgs[1];
+                await unmuteUserCommand(unmuteUser);
+                break;
+    
+            default:
+                sendPrivateMessage('SERVER: Unknown command.');
+        }
+    }
+
+    async function deleteMessage(messageId) {
+        try {
+            const messageDocRef = doc(db, 'messages', messageId);
+            await deleteDoc(messageDocRef);
+            console.log('Message deleted successfully:', messageId);
+        } catch (error) {
+            console.error('Error deleting message:', error);
+        }
+    }
+
+    function sendPrivateMessage(text) {
+        const messageInput = document.getElementById('messageInput');
+        messageInput.value = text;
+    }
+
+    async function muteUserCommand(username, reason, duration) {
+        try {
+            const userDoc = await getDocs(query(collection(db, 'users'), where('Username', '==', username)));
+            if (userDoc.empty) {
+                sendPrivateMessage(`SERVER: User ${username} not found.`);
+                return;
+            }
+
+            const userId = userDoc.docs[0].id;
+            await addDoc(collection(db, 'mutedUsers'), {
+                username: username,
+                userId: userId,
+                reason: reason,
+                duration: duration,
+                timestamp: Timestamp.fromDate(new Date())
+            });
+
+            sendPrivateMessage(`SERVER: User ${username} has been muted.`);
+        } catch (error) {
+            console.error('Error muting user:', error);
+            sendPrivateMessage('SERVER: Error muting user.');
+        }
+    }
+
+    async function unmuteUserCommand(username) {
+        try {
+            const querySnapshot = await getDocs(query(collection(db, 'mutedUsers'), where('username', '==', username)));
+            if (querySnapshot.empty) {
+                sendPrivateMessage(`SERVER: User ${username} is not muted.`);
+                return;
+            }
+
+            querySnapshot.forEach(async (doc) => {
+                await deleteDoc(doc.ref);
+            });
+
+            sendPrivateMessage(`SERVER: User ${username} has been unmuted.`);
+        } catch (error) {
+            console.error('Error unmuting user:', error);
+            sendPrivateMessage('SERVER: Error unmuting user.');
+        }
+    }
+
+    async function purgeChat() {
+        try {
+            const messagesSnapshot = await getDocs(collection(db, 'messages'));
+            messagesSnapshot.forEach(async (doc) => {
+                await deleteDoc(doc.ref);
+            });
+
+            sendPrivateMessage('SERVER: All messages have been purged.');
+        } catch (error) {
+            console.error('Error purging chat:', error);
+            sendPrivateMessage('SERVER: Error purging chat.');
+        }
+    }
+
+    messageSendBtn.addEventListener('click', handleMessageSend);
+    chatBox.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            handleMessageSend();
         }
     });
-
-
-
-END OF THE BETA POPUP
-
-
-<p><center><h1>TRUTH AND LIES</h1></center>
-<center><br>
-Painfull truth and pretty lies,</center>
-
-<center>what'll happen when our love dies?<p>
-Is it true that you're still mine, <p>
-even though we're not always doing fine?<p>
-Is it lie that you didn't like me just for my look,<p>
-or is it just my fantasy from a book?</center><br>
- 
-<center>Why are you always in my mind when I'm overthinking? <p>
-And why do I always look at you without even blinking? <p>
-What is the truth and what is a lie, <p>
-I guess I'll never know <p>
-till the day we say each other goodbye. </center><br>
-
- <center><h1>Sara Dropulja</h1>
-</center></p>
-
-
-<main>
-    <section class="novice">
-      <h2>Najnovejše novice</h2>
-      <article>
-        <h3>tri stvari ki bi jih uzev na samotni otok</h3>
-        <p>Na samotni otok bi s seboj vzela nož, da bi si lahko z njim pomagala pri preživetju (npr. pri rezanju ali lupljenju kakšne hrane, ki bi jo tam našla in kot občutek varnosti, če bi se počutila ogroženo kakšne divje živali ali kaj drugega), odejo, saj bi potrebovala nekaj za ogrniti ob slabem vremenu in knjigo, da mi ne bi bilo preveč dolgčas :)
-  
-  </p>
-  <h3>Sara Dropulja</h3>
-  <hr>
-        <h3>tri stvari ki bi jih uzev na samotni otok</h3>
-              <p>Te 3 stvari so:
-  Kompas: V primeru, da je otok zelo velik, da bi se znal orientirat po otoku.
-  Štedilnik na sončne celice, da bi si lahko ujel hrano in jo nato spekel na štedilniku brez problema.
-  Svojega mucka, to pa zato ker vedno ko sem z njim se mi čas skrajša za vsaj trikrat.
-  <h3>Nejc Zlatnik</h3>
-  </p>
-  <hr>
-  <h3>Za kaj se je vredno boriti za ljubezen ali denar in zakaj?</h3>
-    <p>Za ljubezen, ker denar vedno kadar ga dobimo ga hočemo takoj zapraviti. Ljubezen je veliko lepša kot denar, ker to ni stvar ampak čustvo, ki nam je pomembno. Dan danes je ljubezen veliko lepša kot včasih. Takrat so starši odločali s kom se poročiš in s kom ne. V starih časih so dekletom in fantom odločali s kom naj se poročijo, po navadi so starši izbirali ravno tiste fante dekletom, ki so imeli veliko denarja in ravno tisti jim niso bili všeč. Puncam je veliko pomembnejša ljubezen kakor denar pa tudi pri fantih je tako seveda. Moje mnenje je tako, da so odrasli včasih veliko manj gledali na čustva svojih otrok kot pa danes.
-  
-  <h3>Matic Novak</h3></p>
-  
-  <hr>
-  <br>
-  <h3>Za kaj se je vredno boriti za ljubezen ali denar?
-  </h3>
-  <p>Pogosto se nam porodita vprašanji “zakaj” in “ali je vredno” in tokrat se nam je porodilo vprašanje – “Za kaj se je vredno boriti – za ljubezen ali denar?”
-  Jaz sem mišljenja, da se je v življenju za vse potrebno boriti, saj nič v življenju ni samoumevno. Vse si moramo “prislužiti” oz. v to vložiti vsaj kanček našega časa in energije.
-  Ampak sedaj je tu vprašanje ljubezen ali denar? Jaz menim, da se je bolj vredno boriti za ljubezen in za tebi ljubljene osebe. Ker, če si srečen in imaš ob sebi prave osebe, si s tem tudi produktiven in lahko dobro zaslužiš in tako imaš oboje – ljubezen in denar.
-  Če pa stremiš samo k denarju pa čez čas postaneš obseden in hočeš samo več in več. S tem sčasoma odrivaš stran sebi čljube ljudi in počasi ostaneš sam.
-  Pravijo, da več ko imaš, več veljaš. Ampak temu ni vedno tako. Je že res, da imaš lahko denarja cel kup, ampak kaj ti pomaga, če nisi človek in ne znaš ceniti vse in vsega, ki jih imaš okoli sebe? Nič. Zato sem mnenja, da v življenju ne smemo biti materialistični temveč moramo biti hvaležni za vsako malenkost, ki jo dobimo ali pa se zgodi, saj bomo tako veliko bolj srečni in dejansko imeli več vsega – tako ljubezni, kot denarja.<br>
-  <h3>Zala Kozole</h3>
-  </p>
-  <hr>
-  <h3>Za kaj se je vredno boriti za ljubezen ali denar?</h3>
-  <p>Ljudje imamo različne vrednote. Če bi me kdo vprašal, za kaj naj se bori ali za ljubezen ali za denar, bi mi odgovorila tako. Moj odgovor bi bil Ljubezen.  
-  Ljubezen ni le čustvo, je razlog, da sploh smo ljudje na svetu. Tisti, ki je ustvaril naš svet, je gotovo to naredil z razlogom. Človek bi bil brez ljubezni izgubljen, ne bi videl smisla, ki nam ga ljubezen da. Njena moč ni le v tem, da nas zadane in prevzame ob misli na simpatijo. Omogoča nam, da v človeku ne vidimo le kupa enih kosti in mišic ampak človeka za katerega bi bili pripravljeni narediti vse. Večkrat je tudi nepredvidljiva. Spelje nas s poti za katero mislimo, da je prava. Njena veličina na žalost ni vedno dosegljiva. Od nas zahteva borbo, moč in vztrajnost. Pot do nje je trnova in težka. Jaz jo primerjam z vzponom na Triglav. Ko prideš do vrha, začutiš veselje in občutek, da ti je uspelo. Ljubezen ti trud vedno poplača.
-  </p>
-        <h3>Vita Potočnik</h3>
-        <hr>
-        <h3>Zakaj se je vredno boriti za ljubezen ali za denar?
-  </h3>
-  <P>To je dobro vprašanje. Meni osebno je bolj pomembna ljubezen ker pravo ljubezen doživiš enkrat v življenju, denar pa je samo namenjen za preživetje. Razlika med denarjem in ljubeznijo je, da ljubezen te izboljša, denar pa pokvari. Pravijo da je ljubezen najlepše in najmočnejše čustvo, ki ga lahko občuti bitje. Najlepše je ko se vidiš z ljubljeno osebo, jo objameš in ji lahko popolnoma zaupaš. To lahko traja večno in ima največjo vrednost medtem ko denar se hitro zapravi in tudi vrednost mu pada. Če izgubiš ljubljeno osebo, boli bolj kot če bi bankrotiral. Najlepše je vedeti da je oseba s katero si, srečna ob tebi. Denar ti ne more dati tega občutka sreče niti približek tega.</P>
-  <h3>Denis Robinek</h3>
-  <hr>
-  <h3>Za kaj se je vredno boriti za ljubezen ali za denar?</h3>
-  <p><h4>Ljubezen:</h4><br>
-  Za ljubezen se je potrebno boriti zato, ker ti bo ljubljena oseba vedno stala ob strani in ti pomagala pri vseh problemih. Ljubezen je ena in edina.<br>
-  <br>
-  <h4>Denar:</h4>
-  <br>
-  Danes ni mogoče biti brez denarja. Seveda sedaj ko ni več korone? Vse se je podražilo v trgovinah, v lekarnah itd. Vsi gledajo da imaš denar, ker če ga nimaš si za njih 0. Ko ga imaš, te imajo vsi radi in vsi se družijo s tabo. Ko ti kaj potrebuješ, pa ni nikogar.
-  <h3>Rene Gumpot</h3></p>
-  <hr>
-  <h3>Zakaj se je vredno boriti za ljubezen ali za denar?</h3>
-  <p>meni so zdi da se je bolj vredno boriti za ljubezen zato rek če se boriš
-  za denar in nimaš nobenega ti je dolgčas in nimaš nobenga ki bi ga imel rad in si potem depresiven 
-  in to je moje mnenje zaka se je vredno boriti za ljubezen ne pa za denar
-  
-  <h3>Matej Marinšek</h3></p>
-  <hr>
-      <p>"Jaz pravim, da je sta enako pomembni, saj biti popolnoma samoten ni zabavno, brez denarja pa prav tako ne moremo pridobiti skoraj nic."
-  
-  <h3>Žan Hafnar</h3></p>
-  
-
-  <!--Firebase Config-->
-
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-
-  apiKey: "AIzaSyBxQdhylPvbBSvENdbVGfuLeSbFx5DpR-I",
-  authDomain: "razredni-casopis-database.firebaseapp.com",
-  projectId: "razredni-casopis-database",
-  storageBucket: "razredni-casopis-database.appspot.com",
-  messagingSenderId: "469900513547",
-  appId: "1:469900513547:web:781580c89566f1cacb920e",
-  measurementId: "G-T7QKD3ZGL0"
 });
-
-
-
-
-
-
-

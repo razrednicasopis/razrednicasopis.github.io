@@ -29,10 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.classList.add('popup-open');
             document.body.classList.add('popupInvulnerable');
             overlay.style.display = 'block';
-            console.log(`Showing popup: ${popupId}`);
-            console.log('Overlay display:', overlay.style.display);
         } else {
-            console.error(`Popup with ID ${popupId} not found.`);
             overlay.style.display = 'none';
         }
     }
@@ -44,20 +41,29 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.classList.remove('popup-open');
             overlay.style.display = 'none';
             document.body.classList.remove('popupInvulnerable');
-        } else {
-            console.error(`Popup with ID ${popupId} not found.`);
         }
     }
 
     checkLoginState();
+    setupAutoPurge();
+    monitorChatMaintenance();
 
     document.getElementById('loginRedirectBtn').addEventListener('click', function () {
         localStorage.setItem('loginRedirect', 'true');
         window.location.href = '../prijava.html?source=chatroom';
     });
 
-    function checkLoginState() {
-        onAuthStateChanged(auth, user => {
+    async function checkLoginState() {
+        onAuthStateChanged(auth, async user => {
+            const chatMaintenance = await checkChatMaintenance();
+            if (chatMaintenance.enabled) {
+                chatBox.classList.add('chatMaintenance');
+                messageSendBtn.classList.add('chatMaintenance');
+                chatBox.placeholder = 'Napaka pri povezavi z strežnikom. Prosimo poskusite kasneje.';
+                document.getElementById('maintenanceMessage').textContent = chatMaintenance.message || 'Chat is under maintenance.';
+                return;
+            }
+            
             if (user) {
                 hidePopup('loginPopup');
                 document.getElementById('chatroom').classList.remove('hidden');
@@ -73,13 +79,48 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    async function checkChatMaintenance() {
+        const settingsDoc = await getDoc(doc(db, 'settings', 'chatMaintenance'));
+        if (settingsDoc.exists()) {
+            return settingsDoc.data();
+        }
+        return { enabled: false, message: '' };
+    }
+
+    async function monitorChatMaintenance() {
+        let lastEnabledStatus = false; // Track last known status
+    
+        setInterval(async () => {
+            const chatMaintenance = await checkChatMaintenance();
+            
+            // If enabled has changed, update chat and show/hide messages accordingly
+            if (chatMaintenance.enabled !== lastEnabledStatus) {
+                lastEnabledStatus = chatMaintenance.enabled;
+    
+                const messageContent = `[SERVER] ${chatMaintenance.message}`;
+                if (lastEnabledStatus) {
+                    // Disable chat inputs
+                    chatBox.classList.add('chatMaintenance');
+                    messageSendBtn.classList.add('chatMaintenance');
+                    chatBox.placeholder = 'Napaka pri povezavi z strežnikom. Prosimo poskusite kasneje.';
+                    sendPublicServerMessage(messageContent); // Send the public message
+                } else {
+                    // Enable chat inputs
+                    chatBox.classList.remove('chatMaintenance');
+                    messageSendBtn.classList.remove('chatMaintenance');
+                    chatBox.placeholder = 'Vnesi sporočilo...';
+                }
+            }
+        }, 1000); // Check every 5 seconds
+    }
+
+
     async function getUserIp() {
         try {
             const response = await fetch('https://api.ipify.org?format=json');
             const data = await response.json();
             return data.ip;
         } catch (error) {
-            console.error('Failed to get user IP:', error);
             return 'Unknown';
         }
     }
@@ -125,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const messagesDiv = document.getElementById('messages');
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
-        messageElement.setAttribute('data-message-id', messageId);  // Add unique attribute for easy removal
+        messageElement.setAttribute('data-message-id', messageId);
 
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
@@ -159,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
         if (messageElement) {
             messageElement.remove();
-            console.log('Message removed from UI:', messageId);
         }
     }
 
@@ -210,9 +250,25 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
     
-        const userRole = userDoc.data().role;  // Fetch user role
+        const userRole = userDoc.data().role;
     
         switch (command) {
+            case '/maintenance':
+                if (userRole !== 'admin' && userRole !== 'owner') {
+                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    break;
+                }
+    
+                const action = commandArgs[1];
+                if (action === 'enable') {
+                    await enableChatMaintenance();
+                } else if (action === 'disable') {
+                    await disableChatMaintenance();
+                } else {
+                    sendPrivateMessage('SERVER: Usage: /maintenance <enable|disable>');
+                }
+                break;
+
             case '/deletemsg':
                 if (userRole !== 'admin' && userRole !== 'owner') {
                     sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
@@ -235,102 +291,104 @@ document.addEventListener('DOMContentLoaded', function () {
                     sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
                     break;
                 }
-                const muteUser = commandArgs[1];
-                const reason = commandArgs[2] || 'No reason provided';
-                const duration = commandArgs[3] || 'indefinite';
-                await muteUserCommand(muteUser, reason, duration);
+                // Implement the mute functionality
                 break;
     
-            case '/unmute':
+            case '/clearchat':
                 if (userRole !== 'admin' && userRole !== 'owner') {
-                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    sendPrivateMessage('SERVER: Neznan ukaz.');
                     break;
                 }
-                const unmuteUser = commandArgs[1];
-                await unmuteUserCommand(unmuteUser);
+                await clearChat();
                 break;
     
             default:
-                sendPrivateMessage('SERVER: Unknown command.');
+                sendPrivateMessage('SERVER: Neznan ukaz.');
+                break;
         }
     }
 
+    async function enableChatMaintenance() {
+        try {
+            await updateDoc(doc(db, 'settings', 'chatMaintenance'), { enabled: true });
+            sendPublicServerMessage('Chat is now under maintenance.');
+            chatBox.classList.add('chatMaintenance');
+            messageSendBtn.classList.add('chatMaintenance');
+            chatBox.placeholder = 'Napaka pri povezavi z strežnikom. Prosimo poskusite kasneje.';
+        } catch (error) {
+            sendPrivateMessage('SERVER: Could not enable maintenance.');
+        }
+    }
+    
+    async function disableChatMaintenance() {
+        try {
+            await updateDoc(doc(db, 'settings', 'chatMaintenance'), { enabled: false });
+            sendPublicServerMessage('Chat maintenance has been disabled.');
+            chatBox.classList.remove('chatMaintenance');
+            messageSendBtn.classList.remove('chatMaintenance');
+            chatBox.placeholder = 'Vnesi sporočilo...';
+        } catch (error) {
+            sendPrivateMessage('SERVER: Could not disable maintenance.');
+        }
+    }
+    
+    function sendPublicServerMessage(message) {
+        const publicMessageElement = document.createElement('div');
+        publicMessageElement.classList.add('message', 'server-message');
+        publicMessageElement.textContent = message;
+        document.getElementById('messages').appendChild(publicMessageElement);
+    }
+    
     async function deleteMessage(messageId) {
         try {
-            const messageDocRef = doc(db, 'messages', messageId);
-            await deleteDoc(messageDocRef);
-            console.log('Message deleted successfully:', messageId);
+            await deleteDoc(doc(db, 'messages', messageId));
         } catch (error) {
-            console.error('Error deleting message:', error);
-        }
-    }
-
-    function sendPrivateMessage(text) {
-        const messageInput = document.getElementById('messageInput');
-        messageInput.value = text;
-    }
-
-    async function muteUserCommand(username, reason, duration) {
-        try {
-            const userDoc = await getDocs(query(collection(db, 'users'), where('Username', '==', username)));
-            if (userDoc.empty) {
-                sendPrivateMessage(`SERVER: User ${username} not found.`);
-                return;
-            }
-
-            const userId = userDoc.docs[0].id;
-            await addDoc(collection(db, 'mutedUsers'), {
-                username: username,
-                userId: userId,
-                reason: reason,
-                duration: duration,
-                timestamp: Timestamp.fromDate(new Date())
-            });
-
-            sendPrivateMessage(`SERVER: User ${username} has been muted.`);
-        } catch (error) {
-            console.error('Error muting user:', error);
-            sendPrivateMessage('SERVER: Error muting user.');
-        }
-    }
-
-    async function unmuteUserCommand(username) {
-        try {
-            const querySnapshot = await getDocs(query(collection(db, 'mutedUsers'), where('username', '==', username)));
-            if (querySnapshot.empty) {
-                sendPrivateMessage(`SERVER: User ${username} is not muted.`);
-                return;
-            }
-
-            querySnapshot.forEach(async (doc) => {
-                await deleteDoc(doc.ref);
-            });
-
-            sendPrivateMessage(`SERVER: User ${username} has been unmuted.`);
-        } catch (error) {
-            console.error('Error unmuting user:', error);
-            sendPrivateMessage('SERVER: Error unmuting user.');
+            sendPrivateMessage('SERVER: Could not delete the message.');
         }
     }
 
     async function purgeChat() {
         try {
             const messagesSnapshot = await getDocs(collection(db, 'messages'));
-            messagesSnapshot.forEach(async (doc) => {
-                await deleteDoc(doc.ref);
+            const deletePromises = [];
+
+            messagesSnapshot.forEach((messageDoc) => {
+                deletePromises.push(deleteDoc(doc(db, 'messages', messageDoc.id)));
             });
 
-            sendPrivateMessage('SERVER: All messages have been purged.');
+            await Promise.all(deletePromises);
+            sendPrivateMessage('SERVER: Chat purged successfully.');
         } catch (error) {
-            console.error('Error purging chat:', error);
-            sendPrivateMessage('SERVER: Error purging chat.');
+            sendPrivateMessage('SERVER: Failed to purge chat.');
         }
     }
 
+    function sendPrivateMessage(message) {
+        const privateMessageElement = document.createElement('div');
+        privateMessageElement.classList.add('message', 'server-message');
+        privateMessageElement.textContent = message;
+        document.getElementById('messages').appendChild(privateMessageElement);
+    }
+
+    async function setupAutoPurge() {
+        const now = new Date();
+        const nextMonday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (7 - now.getDay()), 0, 0, 0);
+        const timeUntilNextMonday = nextMonday.getTime() - now.getTime();
+
+        setTimeout(async () => {
+            await purgeChat();
+            setInterval(purgeChat, 7 * 24 * 60 * 60 * 1000); // Every Monday
+        }, timeUntilNextMonday);
+    }
+
     messageSendBtn.addEventListener('click', handleMessageSend);
-    chatBox.addEventListener('keypress', function (event) {
-        if (event.key === 'Enter') {
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && !event.shiftKey && chatBox.value.trim()) {
             handleMessageSend();
         }
     });
+
 });
+
+
