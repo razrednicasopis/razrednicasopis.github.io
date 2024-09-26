@@ -17,6 +17,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore();
 
+
 // Helper function to get URL parameter
 function getQueryParam(param) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -76,6 +77,7 @@ function handleToasts() {
 
 document.addEventListener('DOMContentLoaded', () => {
   handleToasts();
+  updateButtonVisibility();
 
   const signUpBtn = document.getElementById('registracijaBtn');
   if (signUpBtn) {
@@ -196,11 +198,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      if (logoutBtn) logoutBtn.style.display = 'block';
-    } else {
-      if (logoutBtn) logoutBtn.style.display = 'none';
-    }
-  });
+  function updateButtonVisibility() {
+    const prijavaLinkBtn = document.getElementById('loginHref');
+    const logoutBtn = document.getElementById('logoutBtn');
+  
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        if (logoutBtn) logoutBtn.style.display = 'block';
+        if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'none';
+      } else {
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'block';
+      }
+    });
+  }
 });

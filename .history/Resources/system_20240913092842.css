@@ -38,7 +38,7 @@ body.popupInvulnerable .overlay .betaCodePopup .loginPopup {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
-  z-index: 998;
+  z-index: ma;
 }
 
 /* Display the dark overlay when the popup is open */
@@ -57,7 +57,7 @@ body.popupInvulnerable .overlay .betaCodePopup .loginPopup {
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    z-index: 999;
+    z-index: top;
   }
 
   #popupContent, #betaCodePopup, #loginPopup {
@@ -140,9 +140,8 @@ body.popup-open {
   padding: 20px;
   border-radius: 10px;
   text-align: center;
-  z-index: 999;
+  z-index: top;
 }
-
 
 #maintenancePopupContent {
   max-width: 400px;
