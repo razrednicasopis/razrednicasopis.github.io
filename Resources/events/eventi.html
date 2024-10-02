@@ -1,0 +1,78 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="/Resources/auth/firebaseauth.js"></script>
+    <link rel="stylesheet" href="/Resources/styless.css">
+    <link rel="stylesheet" href="/Resources/system.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <title>Events - Razredni Časopis</title>
+  </head>
+  <body>
+
+
+  <div class="overlay"></div>
+  <header>
+    <h1>Events</h1>
+    <nav>
+      <ul>
+        <li><a href="/Resources/index.html">Domov</a></li>
+        <li><a href="/Resources/ura.html">Točna Ura</a></li>
+        <li><a href="/Resources/o-nas.html">O nas</a></li>
+        <li><a href="/Resources/vsebine.html">Vsebine </a></li>
+        <li><a href="/Resources/obvestila.html">Obvestila</a></li>
+        <li id="chatLink" class=""><a href="/Resources/utills/klepet.html">Klepet</a></li>
+        <li><a href="/Resources/kontakt.html">Kontakt</a></li>
+        <li class="prijavaLink" id="loginHref"><a href="/Resources/prijava.html" style="display: block;">Prijava</a></li>
+        <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
+        <li class="prijavaLink"><a href="/Resources/registracija.html">Registracija</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div id="available-events">
+    <h2>Dosegljivi Eventi</h2>
+    <div id="available-container" class="events-container">
+        <p id="no-available-events" class="no-events">Trenutno ni dosegljivih eventov.</p>
+    </div>
+  </div>
+  <div id="unavailable-events">
+    <h2>Nedosegljivi Eventi</h2>
+    <div id="unavailable-container" class="events-container">
+        <!-- Unavailable events will be dynamically added here -->
+    </div>
+  </div>
+
+
+  <!--Od tu naprej je koda za razne stvari kot so popupi-->
+
+  <div id="popupContainer">
+    <div id="popupContent">
+        <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
+        <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+        <button id="closePopupBtn">V redu</button>
+    </div>
+  </div>
+
+  <div id="maintenance-warning">
+    <p id="maintenance-message"></p>
+  </div>
+
+  <div id="maintenancePopup">
+      <div id="maintenancePopupContent">
+        <h1>POVEZAVA IZGUBLJENA</h1>
+        <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+        <button id="closeMaintenancePopupBtn">Osveži</button>
+      </div>  
+  </div>
+
+
+  <script src="/Resources/alerts.js"></script>
+  <script type="module" src="/Resources/settings/settings.js"></script>
+
+  </body>
+  </html>
