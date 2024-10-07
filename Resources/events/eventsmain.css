@@ -1,57 +1,17 @@
-#available-events {
-    padding-top: 50px;
-    margin-left: 150px;
-}
-
-
 .events-container {
     display: flex;
-    flex-direction: column;
-    align-items: center; /* Centering child elements */
-    width: 300px; /* Fixed width for the containers */
-    margin: 20px; /* Spacing between containers */
-    padding: 10px;
-    padding-top: 50px;
-    border-radius: 8px;
-    background-color: #fff; /* White background */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Slight shadow */
+    justify-content: center;
+    align-items: flex-start;  /* Aligns items slightly lower on the screen */
+    margin-top: 50px;         /* Add margin to move containers down */
 }
 
 .event-box {
-    background-color: #e0e0e0; /* Light gray background for events */
+    width: 200px;
+    height: 150px;
+    margin: 10px;
     padding: 10px;
-    margin: 10px 0; /* Spacing between event boxes */
-    border-radius: 5px;
-    width: 100%; /* Full width of the container */
+    border: 1px solid #ccc;
     position: relative;
-    text-align: center; /* Center the text inside */
-    transition: transform 0.2s; /* Animation for popup effect */
-}
-
-.event-title {
-    font-weight: bold;
-    display: block; /* Block for proper alignment */
-}
-
-.event-countdown, .unavailable-overlay {
-    display: block; /* Block for proper alignment */
-}
-
-.popup {
-    transform: scale(1.05); /* Slightly enlarge on hover */
-}
-
-.join-button {
-    background-color: #4CAF50; /* Green */
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.join-button:hover {
-    background-color: #45a049; /* Darker green on hover */
 }
 
 .unavailable-overlay {
@@ -60,12 +20,12 @@
     left: 0;
     right: 0;
     bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: red;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.5); /* black overlay */
-    color: white;
-    border-radius: 5px;
+    font-size: 16px;
     font-weight: bold;
 }
 
