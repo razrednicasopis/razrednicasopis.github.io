@@ -1,59 +1,92 @@
-/* Container for event boxes */
+/* Centering the available and unavailable sections */
+#available-events, #unavailable-events {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto; /* Adjust the margin as needed */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 80%;
+  background-color: #f9f9f9;
+}
+
+
+/* Event container layout - display events in a grid */
 .events-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px; /* Space between event boxes */
-  }
-  
-  /* Event Box Styling */
-  .event-box {
-    position: relative;
-    width: 250px;  /* Adjust the size as needed */
-    height: 150px;
-    background-color: #f9f9f9;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  /* Event Title Styling */
-  .event-title {
-    position: absolute;
-    top: 10px;
-    left: 15px;
-    font-weight: bold;
-    font-size: 18px;
-  }
-  
-  /* Countdown Timer Styling */
-  .event-countdown {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-weight: bold;
-    font-size: 14px;
-    color: #ff6600;
-  }
-  
-  /* Join Button Styling */
-  .join-event-btn {
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    background-color: #ffc107;
-    border: none;
-    padding: 8px 15px;
-    color: white;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .join-event-btn:hover {
-    background-color: #ffa000;
-  }
-  
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Creates responsive grid */
+  grid-gap: 20px;
+  width: 750px;
+}
+
+/* Event box styling */
+.event-box {
+  border: 2px solid #000000;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  background-color: #fff;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.event-box:hover {
+  transform: scale(1.05); /* Slight scale effect on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Event title styling */
+.event-title {
+  font-weight: bold;
+  font-size: 25px;
+  display: block;
+  margin-right: 650px;
+  width: 50px;
+}
+
+/* Countdown styling */
+.event-countdown {
+  font-size: 20px;
+  font-weight: bolder;
+  color: #333;
+  margin-left: 650px;
+}
+
+/* Join button styling */
+.join-button {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.join-button:hover {
+  background-color: #218838;
+}
+
+/* Unavailable overlay styling */
+.unavailable-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.no-events {
+  font-size: 18px;
+  color: #555;
+  text-align: center;
+  margin: 10px 0;
+}
