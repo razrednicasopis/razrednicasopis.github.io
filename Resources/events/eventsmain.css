@@ -1,34 +1,59 @@
+/* Container for event boxes */
 .events-container {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;  /* Aligns items slightly lower on the screen */
-    margin-top: 50px;         /* Add margin to move containers down */
-}
-
-.event-box {
-    width: 200px;
-    height: 150px;
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between event boxes */
+  }
+  
+  /* Event Box Styling */
+  .event-box {
     position: relative;
-}
-
-.unavailable-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    color: red;
+    width: 250px;  /* Adjust the size as needed */
+    height: 150px;
+    background-color: #f9f9f9;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  /* Event Title Styling */
+  .event-title {
+    position: absolute;
+    top: 10px;
+    left: 15px;
     font-weight: bold;
-}
-
-.padlock {
-    margin-right: 5px;
-}
+    font-size: 18px;
+  }
+  
+  /* Countdown Timer Styling */
+  .event-countdown {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #ff6600;
+  }
+  
+  /* Join Button Styling */
+  .join-event-btn {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background-color: #ffc107;
+    border: none;
+    padding: 8px 15px;
+    color: white;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .join-event-btn:hover {
+    background-color: #ffa000;
+  }
+  

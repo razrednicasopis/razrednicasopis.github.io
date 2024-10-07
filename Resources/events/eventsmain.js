@@ -22,7 +22,9 @@ const noAvailableEventsMessage = document.getElementById('no-available-events');
 
 // Function to load and render events
 async function loadEvents() {
+    console.log('Loading events...');
     const eventSettingsSnapshot = await getDocs(collection(db, 'eventSettings'));
+    console.log('Event settings snapshot size:', eventSettingsSnapshot.size);  // Check the number of documents retrieved
     console.log('Loaded event settings:', eventSettingsSnapshot.docs.map(doc => doc.data())); // Log the event data
     let availableEventCount = 0; // Track number of available events
 
