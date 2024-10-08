@@ -4,7 +4,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 20px auto; /* Adjust the margin as needed */
+  margin: 20px auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -12,11 +12,10 @@
   background-color: #f9f9f9;
 }
 
-
 /* Event container layout - display events in a grid */
 .events-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Creates responsive grid */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
   grid-gap: 20px;
   width: 750px;
 }
@@ -33,42 +32,73 @@
 }
 
 .event-box:hover {
-  transform: scale(1.05); /* Slight scale effect on hover */
+  transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.unavailable-overlay {
+  position: relative;
+  pointer-events: none; /* Disable hover effects */
+}
+
+.unavailable-overlay::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  border-radius: 10px;
+  z-index: 1;
+}
+
+/* Event title and countdown container */
+.event-header {
+  display: flex;
+  justify-content: space-between; /* Separate title and countdown */
+  align-items: center;
+  margin-bottom: 10px; /* Space between header and description */
+  width: 100%;
 }
 
 /* Event title styling */
 .event-title {
   font-weight: bold;
   font-size: 25px;
-  display: block;
-  margin-right: 650px;
-  width: 50px;
+  text-align: left;
 }
 
 /* Countdown styling */
 .event-countdown {
   font-size: 20px;
-  font-weight: bolder;
+  font-weight: bold;
   color: #333;
-  margin-left: 650px;
+  text-align: right;
+}
+
+/* Event description styling */
+.event-description {
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 
 /* Join button styling */
-.join-button {
+.join-event-btn {
   background-color: #28a745;
   color: #fff;
   border: none;
   border-radius: 5px;
   padding: 8px 15px;
   cursor: pointer;
+  font-size: 16px;
 }
 
-.join-button:hover {
+.join-event-btn:hover {
   background-color: #218838;
 }
 
-/* Unavailable overlay styling */
+/* Styling for unavailable overlay */
 .unavailable-overlay {
   position: absolute;
   top: 0;
@@ -84,6 +114,7 @@
   border-radius: 10px;
 }
 
+/* No events available message */
 .no-events {
   font-size: 18px;
   color: #555;

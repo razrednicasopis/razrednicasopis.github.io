@@ -15,155 +15,71 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Event section divs
-const availableEventsDiv = document.getElementById('available-container');
-const unavailableEventsDiv = document.getElementById('unavailable-container');
-const noAvailableEventsMessage = document.getElementById('no-available-events');
-
-// Function to load and render events
-async function loadEvents() {
-    console.log('Loading events...');
-    const eventSettingsSnapshot = await getDocs(collection(db, 'eventSettings'));
-    console.log('Event settings snapshot size:', eventSettingsSnapshot.size);  // Check the number of documents retrieved
-    console.log('Loaded event settings:', eventSettingsSnapshot.docs.map(doc => doc.data())); // Log the event data
-    let availableEventCount = 0; // Track number of available events
-
-    // Render all events into the UI, regardless of their availability
-    eventSettingsSnapshot.forEach((doc) => {
-        const eventData = doc.data();
-        const title = eventData.title;
-        const startTime = eventData.startTime.toDate();
-        const endTime = eventData.endTime.toDate();
-        console.log('Processing event:', eventData.title, 'Start time:', startTime, 'End time:', endTime);
-        createEventBox(title, startTime, endTime, doc.id);
-
-        // Check if the event is currently available
-        if (isEventAvailable(startTime, endTime)) {
-            console.log(eventData.title, 'is available');
-            availableEventCount++;
-        } else {
-            console.log(eventData.title, 'is unavailable');
-        }
-    });
-
-    // If there are available events, hide the 'no-available-events' message
-    if (availableEventCount > 0) {
-        noAvailableEventsMessage.style.display = 'none';
+// Function to format the countdown time dynamically
+function formatTime(timeLeft) {
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+  
+    if (days > 0) {
+      return `${days}d ${hours}h`;
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}m`;
     } else {
-        noAvailableEventsMessage.style.display = 'block';
+      return `${minutes}m ${seconds}s`;
     }
-
-    // Start real-time status update
-    setInterval(checkEventStatus, 1000);
-}
-
-// Helper function to check if the event is available based on start and end time
-function isEventAvailable(startTime, endTime) {
-    const now = new Date();
-    return now >= startTime && now <= endTime;
-}
-
-// Function to create event boxes dynamically
-function createEventBox(title, startTime, endTime, eventId) {
-    const eventBox = document.createElement('div');
-    eventBox.classList.add('event-box');
-    eventBox.setAttribute('id', eventId);
-
-    // Event title
-    const titleElement = document.createElement('span');
-    titleElement.classList.add('event-title');
-    titleElement.textContent = title;
-    eventBox.appendChild(titleElement);
-
-    // Countdown or event unavailable status
-    const countdownElement = document.createElement('span');
-    countdownElement.classList.add('event-countdown');
-    eventBox.appendChild(countdownElement);
-
-    // Add event box to the unavailable section by default
-    unavailableEventsDiv.appendChild(eventBox);
-
-    // Popup effect on hover
-    eventBox.addEventListener('mouseover', () => {
-        eventBox.classList.add('popup');
-    });
-
-    eventBox.addEventListener('mouseout', () => {
-        eventBox.classList.remove('popup');
-    });
-}
-
-// Function to check event status and update UI accordingly
-async function checkEventStatus() {
-    const now = Timestamp.now().toDate();
-    const eventSettingsSnapshot = await getDocs(collection(db, 'eventSettings'));
-    let availableEventCount = 0;
-
-    eventSettingsSnapshot.forEach((doc) => {
-        const eventData = doc.data();
-        const startTime = eventData.startTime.toDate();
-        const endTime = eventData.endTime.toDate();
-        const eventId = doc.id;
-
-        const eventBox = document.getElementById(eventId);
-        const countdownElement = eventBox.querySelector('.event-countdown');
-
-        // Check if the event is currently available
-        if (isEventAvailable(startTime, endTime)) {
-            updateCountdown(countdownElement, endTime);
-            moveToAvailable(eventBox);
-            availableEventCount++;
-        } else {
-            countdownElement.textContent = 'Event unavailable';
-            moveToUnavailable(eventBox);
-        }
-    });
-
-    // Update the 'no-available-events' message visibility based on available events
-    if (availableEventCount > 0) {
-        noAvailableEventsMessage.style.display = 'none';
-    } else {
-        noAvailableEventsMessage.style.display = 'block';
-    }
-}
-
-// Function to move event to available section
-function moveToAvailable(eventBox) {
-    if (availableEventsDiv.contains(eventBox)) return; // If already in available section, skip
-
-    availableEventsDiv.appendChild(eventBox);
-    if (unavailableEventsDiv.contains(eventBox)) {
-        unavailableEventsDiv.removeChild(eventBox);
-    }
-}
-
-// Function to move event to unavailable section
-function moveToUnavailable(eventBox) {
-    if (unavailableEventsDiv.contains(eventBox)) return; // If already in unavailable section, skip
-
-    unavailableEventsDiv.appendChild(eventBox);
-    if (availableEventsDiv.contains(eventBox)) {
-        availableEventsDiv.removeChild(eventBox);
-    }
-}
-
-// Function to update the countdown dynamically
-function updateCountdown(countdownElement, endTime) {
-    const interval = setInterval(() => {
-        const now = new Date();
-        const timeDiff = endTime - now;
-
-        if (timeDiff > 0) {
-            const minutes = Math.floor(timeDiff / (1000 * 60) % 60);
-            const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-            countdownElement.textContent = `${hours}h ${minutes}m remaining`;
-        } else {
-            // Event has ended
+  }
+  
+  // Function to update the event status
+  async function updateEventStatus() {
+    const now = new Date().getTime();
+    const eventsRef = collection(db, "eventSettings");
+  
+    // Get all event settings from Firebase
+    const querySnapshot = await getDocs(eventsRef);
+    querySnapshot.forEach((doc) => {
+      const eventData = doc.data();
+      const eventName = eventData.eventName; // Add the event name to the database
+      const startTime = eventData.startTime.toMillis();
+      const endTime = eventData.endTime.toMillis();
+  
+      // Select the correct event box based on eventName
+      const eventBox = document.querySelector(`.event-box[data-event-name="${eventName}"]`);
+      const countdownElement = eventBox.querySelector(".event-countdown");
+      const joinButton = eventBox.querySelector(".join-event-btn");
+  
+      if (now >= startTime && now <= endTime) {
+        // Event is ongoing, show the countdown
+        const timeLeft = endTime - now;
+        countdownElement.innerHTML = formatTime(timeLeft);
+        
+        // Continue updating the countdown every second
+        const interval = setInterval(() => {
+          const updatedTimeLeft = endTime - new Date().getTime();
+          if (updatedTimeLeft <= 0) {
             clearInterval(interval);
-            countdownElement.textContent = 'Event ended';
-        }
-    }, 1000);
-}
-
-// Initial call to load events
-loadEvents();
+            countdownElement.remove();
+            joinButton.replaceWith(document.createTextNode("Event je končan"));
+  
+            // Apply the dark overlay and stop hover effect
+            eventBox.classList.add("unavailable-overlay");
+            eventBox.style.pointerEvents = "none";
+          } else {
+            countdownElement.innerHTML = formatTime(updatedTimeLeft);
+          }
+        }, 1000);
+      } else {
+        // Event has ended or not started yet, mark as unavailable
+        countdownElement.remove();
+        joinButton.replaceWith(document.createTextNode("Event je končan"));
+  
+        // Apply the dark overlay and stop hover effect
+        eventBox.classList.add("unavailable-overlay");
+        eventBox.style.pointerEvents = "none";
+      }
+    });
+  }
+  
+  // Call the function on page load to check event statuses
+  updateEventStatus();
