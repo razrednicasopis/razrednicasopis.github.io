@@ -8,7 +8,7 @@
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  width: 80%;
+  width: 80%; 
   background-color: #f9f9f9;
 }
 
@@ -20,104 +20,154 @@
   width: 750px;
 }
 
-/* Event box styling */
-.event-box {
-  border: 2px solid #000000;
-  border-radius: 10px;
-  padding: 15px;
+/* No events message */
+.no-events-message {
   text-align: center;
-  background-color: #fff;
-  transition: transform 0.2s;
-  position: relative;
+  font-size: 18px;
+  color: red; /* Change this to your preferred color */
+  margin-top: 20px;
 }
 
-.event-box:hover {
-  transform: scale(1.05);
+/* Event box styling */
+.event-box {
+  position: relative;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.unavailable-overlay {
-  position: relative;
-  pointer-events: none; /* Disable hover effects */
-}
-
-.unavailable-overlay::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
-  border-radius: 10px;
-  z-index: 1;
-}
-
-/* Event title and countdown container */
 .event-header {
   display: flex;
-  justify-content: space-between; /* Separate title and countdown */
-  align-items: center;
-  margin-bottom: 10px; /* Space between header and description */
-  width: 100%;
+  flex-direction: column; /* Stack the title, countdown, and description vertically */
 }
 
-/* Event title styling */
 .event-title {
+  font-size: 18px;
   font-weight: bold;
-  font-size: 25px;
-  text-align: left;
+  margin-bottom: 5px; /* Add some space below the title */
 }
 
-/* Countdown styling */
 .event-countdown {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  text-align: right;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 5px; /* Space between countdown and description */
 }
 
-/* Event description styling */
 .event-description {
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-size: 13px;
+  color: #333;
+  margin-top: 5px; /* Ensure it is separated from the countdown */
 }
 
-/* Join button styling */
 .join-event-btn {
-  background-color: #28a745;
-  color: #fff;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #ffc107;
   border: none;
+  padding: 8px 16px;
+  font-size: 14px;
   border-radius: 5px;
-  padding: 8px 15px;
   cursor: pointer;
-  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
 .join-event-btn:hover {
-  background-color: #218838;
+  background-color: #e0a800;
 }
 
-/* Styling for unavailable overlay */
+/* Unavailable event box styling */
+.event-box.unavailable {
+  display: flex; /* Display the unavailable event box */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center items */
+  align-items: center; /* Center items */
+  position: relative; /* To position the overlay */
+  width: 80%; /* Adjust width to your liking */
+  height: 125px; /* Increase height as needed */
+  margin: 10px auto; /* Center the box with some margin */
+  background-color: #fff; /* Background color */
+  border: 2px solid #ccc; /* Border for visual distinction */
+  border-radius: 8px; /* Rounded corners */
+  opacity: 1; /* Full opacity */
+  z-index: 1; /* Lower z-index for the blurred background */
+}
+
+
+
+.eventUnavailableContent {
+  display: flex; /* Use flexbox for centering */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center items vertically */
+  align-items: center; /* Center items horizontally */
+  position: absolute; /* Position relative to the event box */
+  top: 50%; /* Move to the vertical center */
+  left: 50%; /* Move to the horizontal center */
+  transform: translate(-50%, -50%); /* Offset to center exactly */
+  z-index: 10; /* Higher z-index to appear above the blur */
+  pointer-events: auto; /* Allow interaction with this element */
+}
+
+.eventUnavailableImg {
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
+  margin-bottom: 10px; /* Space between the image and text */
+}
+
+.eventUnavailableTitle {
+  font-size: 16px; /* Adjust text size as needed */
+  text-align: center; /* Center the text */
+  color: #fff; /* Text color */
+  font-weight: bold;
+  font-style: italic;
+  margin-top: 45px;
+}
+
+/* Dark overlay effect */
 .unavailable-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 18px;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 10px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  z-index: 5;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
-/* No events available message */
-.no-events {
-  font-size: 18px;
-  color: #555;
-  text-align: center;
-  margin: 10px 0;
+/* Hide the hover effect for unavailable events */
+.event-box.unavailable:hover {
+  box-shadow: none;
+  transform: none;
+  pointer-events: none;
+}
+
+
+.overlay-content {
+  display: flex; /* Use flexbox for the icon and text */
+  flex-direction: column; /* Stack icon above text */
+  align-items: center; /* Center align the items */
+}
+
+.overlay-content i {
+  margin-bottom: 5px; /* Space between icon and text */
+  transform: translateY(-5px); /* Slightly raise the padlock */
+}
+
+.overlay-content span {
+  margin-top: 10px;
+  text-align: center; /* Center the text */
 }

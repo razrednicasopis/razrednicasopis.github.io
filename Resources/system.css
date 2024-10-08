@@ -165,6 +165,7 @@ body.popup-open {
 
 #maintenancePopup.open {
   pointer-events: none;
+  overflow: none;
 }
 
 .error-message {
