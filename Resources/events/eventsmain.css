@@ -95,6 +95,7 @@
   border-radius: 8px; /* Rounded corners */
   opacity: 1; /* Full opacity */
   z-index: 1; /* Lower z-index for the blurred background */
+  pointer-events: none;
 }
 
 
@@ -109,7 +110,7 @@
   left: 50%; /* Move to the horizontal center */
   transform: translate(-50%, -50%); /* Offset to center exactly */
   z-index: 10; /* Higher z-index to appear above the blur */
-  pointer-events: auto; /* Allow interaction with this element */
+  pointer-events: none; /* Allow interaction with this element */
 }
 
 .eventUnavailableImg {
