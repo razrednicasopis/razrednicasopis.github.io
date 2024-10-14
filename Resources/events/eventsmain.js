@@ -36,9 +36,18 @@ function createUnavailableOverlay() {
 
 // Function to format the countdown time dynamically
 function formatTime(timeLeft) {
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-    return `${minutes}m ${seconds}s`;
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24)); // Days
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Hours
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); // Minutes
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000); // Seconds
+
+    if (days > 0) {
+        return `${days}d ${hours}h`; // Display days and hours
+    } else if (hours > 0) {
+        return `${hours}h ${minutes}m`; // Display hours and minutes
+    } else {
+        return `${minutes}m ${seconds}s`; // Display minutes and seconds
+    }
 }
 
 // Function to update the countdown color
@@ -66,7 +75,7 @@ async function updateEventStatus() {
 
         const availableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].available`);
         const unavailableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].unavailable`);
-        const eventJoinBtn = document.querySelector('.join-event-btn');
+        const eventJoinBtn = availableEventBox.querySelector('.join-event-btn'); // Adjusted to target specific button
 
         if (availableEventBox && unavailableEventBox) {
             if (now >= startTime && now <= endTime) {
@@ -84,7 +93,7 @@ async function updateEventStatus() {
                     if (updatedTimeLeft <= 0) {
                         clearInterval(interval);
                         countdownElement.innerHTML = "Event končan."; // Change to "Event končan."
-                        eventJoinBtn.style.display = 'none';
+                        eventJoinBtn.style.display = 'none'; // Hide the specific event button
                         countdownElement.style.color = 'red'; // Set text color to red
 
                         // Keep the event in the available section for 1 minute
