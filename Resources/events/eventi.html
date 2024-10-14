@@ -37,33 +37,53 @@
 <div id="available-events">
     <h2>Dosegljivi Eventi</h2>
     <div id="available-container" class="events-container">
-        <!-- Example of a visible event box -->
+        <!-- Event box for typingRace -->
         <div class="event-box available" data-event-name="typingRace">
             <div class="event-header">
                 <div class="event-title">Hitro Tipkanje</div>
-                <div class="event-countdown" id="countdown-typingRace">Event bo potekel čez: 00:05:00</div><br>           
+                <div class="event-countdown" id="countdown-typingRace">Event bo potekel čez: 00:05:00</div>
                 <div class="event-description">Tekmujte v tipkanju proti robotu!</div>
             </div>
             <button class="join-event-btn checkEventServerStatus" data-href="./hitrotipkanje/domov.html">Join Event</button>
         </div>
-      </div>
+
+        <!-- Event box for guessingGame -->
+        <div class="event-box available" data-event-name="guessingGame">
+            <div class="event-header">
+                <div class="event-title">Igra Ugibanja</div>
+                <div class="event-countdown">Event will start in: 00:05:00</div>
+                <div class="event-description">Description of the new event.</div>
+            </div>
+            <button class="join-event-btn">Join Event</button>
+        </div>    
     </div>
 </div>
 
 <div id="unavailable-events">
-  <h2>Nedosegljivi Eventi</h2>
-  <div id="unavailable-container" class="events-container">
-      <div class="event-box unavailable" data-event-name="typingRace">
-          <div class="event-header">
-              <div class="event-title">Hitro Tipkanje</div>
-              <div class="eventUnavailableContent">
-                  <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
-              </div>
-          </div>
-      </div>
-  </div>
+    <h2>Nedosegljivi Eventi</h2>
+    <div id="unavailable-container" class="events-container">
+        <!-- Event box for typingRace -->
+        <div class="event-box unavailable" data-event-name="typingRace">
+            <div class="event-header">
+                <div class="event-title">Hitro Tipkanje</div>
+                <div class="eventUnavailableContent">
+                    <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event box for guessingGame -->
+        <div class="event-box unavailable" data-event-name="guessingGame">
+            <div class="event-header">
+                <div class="event-title">Igra Ugibanja</div>
+                <div class="eventUnavailableContent">
+                    <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-  
+
 <!-- Popup codes -->
 <div id="popupContainer">
     <div id="popupContent">

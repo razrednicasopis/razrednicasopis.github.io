@@ -1,4 +1,3 @@
-/* Centering the available and unavailable sections */
 #available-events, #unavailable-events {
   display: flex;
   flex-direction: column;
@@ -12,12 +11,13 @@
   background-color: #f9f9f9;
 }
 
-/* Event container layout - display events in a grid */
+/* Event container layout */
 .events-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
-  grid-gap: 20px;
-  width: 750px;
+  display: flex;
+  flex-direction: column; /* Stacks events vertically */
+  align-items: center;
+  gap: 5px; /* Add space between event boxes */
+  width: 750px; /* Adjust width to desired size */
 }
 
 /* No events message */
@@ -38,6 +38,7 @@
   background-color: #f9f9f9;
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 750px;
 }
 
 .event-header {
