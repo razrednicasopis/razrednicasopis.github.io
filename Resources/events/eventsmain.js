@@ -13,6 +13,8 @@ const firebaseConfig = {
 
 const db = getFirestore();
 
+const noAvailableEventsMsg = document.getElementById('noEventsNotif');
+
 // Function to create the unavailable overlay
 function createUnavailableOverlay() {
     const darkOverlay = document.createElement("div");
@@ -36,17 +38,17 @@ function createUnavailableOverlay() {
 
 // Function to format the countdown time dynamically
 function formatTime(timeLeft) {
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24)); // Days
-    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); // Hours
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)); // Minutes
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000); // Seconds
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
     if (days > 0) {
-        return `${days}d ${hours}h`; // Display days and hours
+        return `${days}d ${hours}h`;
     } else if (hours > 0) {
-        return `${hours}h ${minutes}m`; // Display hours and minutes
+        return `${hours}h ${minutes}m`;
     } else {
-        return `${minutes}m ${seconds}s`; // Display minutes and seconds
+        return `${minutes}m ${seconds}s`;
     }
 }
 
@@ -63,10 +65,10 @@ function updateCountdownColor(countdownElement, timeLeft) {
 async function updateEventStatus() {
     const now = new Date().getTime();
     const eventsRef = collection(db, "eventSettings");
-
-    // Get all event settings from Firebase
     const querySnapshot = await getDocs(eventsRef);
-    
+
+    let anyAvailableEvents = false; // Track if there are any available events
+
     querySnapshot.forEach((doc) => {
         const eventData = doc.data();
         const eventName = eventData.eventName; 
@@ -86,6 +88,7 @@ async function updateEventStatus() {
                 const timeLeft = endTime - now;
                 countdownElement.innerHTML = `Event bo potekel čez: ${formatTime(timeLeft)}`;
                 updateCountdownColor(countdownElement, timeLeft);
+                anyAvailableEvents = true; // Mark as available
 
                 // Update countdown every second
                 const interval = setInterval(() => {
@@ -100,6 +103,7 @@ async function updateEventStatus() {
                         setTimeout(() => {
                             unavailableEventBox.style.display = "block"; // Show the unavailable event box
                             availableEventBox.style.display = "none"; // Hide the available event box
+                            noAvailableEventsMsg.style.display = "block"; // Show no events message
                             const overlay = createUnavailableOverlay();
                             unavailableEventBox.appendChild(overlay);
                         }, 60000); // 1 minute in milliseconds
@@ -118,6 +122,13 @@ async function updateEventStatus() {
             }
         }
     });
+
+    // Display no events message if no available events
+    if (!anyAvailableEvents) {
+        noAvailableEventsMsg.style.display = "block"; // Show the no available events message
+    } else {
+        noAvailableEventsMsg.style.display = "none"; // Hide the no events message if events are available
+    }
 }
 
 // Call the function on page load to check event statuses

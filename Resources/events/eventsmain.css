@@ -21,11 +21,11 @@
 }
 
 /* No events message */
-.no-events-message {
+  #noEventsNotif {
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   color: red; /* Change this to your preferred color */
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 /* Event box styling */
