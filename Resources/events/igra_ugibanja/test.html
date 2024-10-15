@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="/Resources/auth/firebaseauth.js"></script>
+    <link rel="stylesheet" href="/Resources/styless.css">
+    <link rel="stylesheet" href="/Resources/system.css">
+    <link rel="stylesheet" href="/Resources/events/hitrotipkanje/typingRace.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Event hitro tipkanje - Razredni Časopis</title>
+</head>
+<body>
+
+<div class="overlay"></div>
+<div id="matchmakingOverlay" class="overlay"></div>
+<div id="eventEndedOverlay" class="overlay"></div>
+<header>
+    <h1>Hitro Tipkanje - Razredni Časopis</h1>
+    <nav>
+        <ul>
+            <li><a href="/Resources/events/eventi.html">Nazaj</a></li>
+            <li><a href="/Resources/index.html">Domov</a></li>
+            <li class="prijavaLink" id="loginHref"><a href="/Resources/prijava.html" style="display: block;">Prijava</a></li>
+            <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
+            <li class="prijavaLink"><a href="/Resources/registracija.html">Registracija</a></li>
+        </ul>
+    </nav>
+</header>
+
+<button id="startPvpMatchmaking">Search</button>
+
+<!-- Popup codes -->
+
+<!-- Matchmaking Popup -->
+<div id="matchmakingPopup" class="popup">
+    <div class="popup-content">
+        <div class="loading-circle"></div>
+        <p>Iskanje igralcev...</p>
+        <button id="closeMatchmakingPopup">Zapri</button>
+    </div>
+</div>
+
+<!-- Event Has Ended Popup -->
+<div id="eventEndedPopupContainer" style="display: none;" class="popup">
+    <div class="popup-content">
+        <h2>Dogodek je končan!</h2><br>
+        <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>
+        <button id="closeEventEndedPopup">Zapri</button>
+    </div>
+</div>
+
+<div id="popupContainer">
+    <div id="popupContent">
+        <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
+        <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+        <button id="closePopupBtn">V redu</button>
+    </div>
+</div>
+
+<div id="maintenance-warning">
+    <p id="maintenance-message"></p>
+</div>
+
+<div id="maintenancePopup">
+    <div id="maintenancePopupContent">
+        <h1>POVEZAVA IZGUBLJENA</h1>
+        <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+        <button id="closeMaintenancePopupBtn">Osveži</button>
+    </div>  
+</div>
+
+<script src="/Resources/alerts.js"></script>
+<script type="module" src="../eventServer.js"></script>
+<script type="module" src="../eventChecker.js"></script>
+<script type="module" src="/Resources/settings/settings.js"></script>
+<script type="module" src="./matchmaking.js"></script>
+</body>
+</html>

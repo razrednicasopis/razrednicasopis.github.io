@@ -1,0 +1,81 @@
+/* Overlay Style */
+#matchmakingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 500; /* Adjust as needed to sit above other content */
+    display: none; /* Initially hidden */
+}
+
+/* Popup Style */
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 500; /* Above overlay */
+    display: none; /* Initially hidden */
+}
+
+.popup-content {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Loading Circle */
+.loading-circle {
+    width: 40px;
+    height: 40px;
+    border: 5px solid #ccc; /* Light grey */
+    border-top: 5px solid #3498db; /* Blue */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px; /* Centering */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Button Styles */
+
+#closeMatchmakingPopup,
+#closeEventEndedPopup {
+    background-color: #3498db; /* Blue background */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 20px; /* Padding */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s ease; /* Smooth transition */
+    margin-top: 20px; /* Push down the button */
+    width: 500px;
+}
+
+#closeMatchmakingPopup:hover,
+#closeEventEndedPopup:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+}
+
+#closeMatchmakingPopup:focus,
+#closeEventEndedPopup:focus {
+    outline: none; /* Remove outline on focus */
+}
+
+/* Event Has Ended Popup Content */
+#eventEndedPopupContainer {
+    background-color: #fff; /* White background */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    z-index: 500;    
+}
