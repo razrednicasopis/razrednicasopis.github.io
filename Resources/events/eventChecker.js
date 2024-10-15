@@ -66,7 +66,7 @@ if (closeButton) {
     closeButton.onclick = function() {
         document.getElementById('eventEndedPopupContainer').style.display = 'none'; // Hide the popup
         document.getElementById('matchmakingOverlay').style.display = 'none'; // Hide the overlay
-        window.location.href = "../domov.html"; // Redirect to the specified URL
+        window.location.href = "/Resources/events/eventi.html"; // Redirect to the specified URL
     };
 }
 
