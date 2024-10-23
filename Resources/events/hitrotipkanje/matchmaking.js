@@ -1,7 +1,32 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { getFirestore, setDoc, doc, collection, query, where, getDocs, getDoc, serverTimestamp, arrayUnion, increment, updateDoc, onSnapshot, limit } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import axios from 'https://cdn.skypack.dev/axios';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
+    authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
+    projectId: "razrednicasopisdatabase-29bad",
+    storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
+    messagingSenderId: "294018128318",
+    appId: "1:294018128318:web:31df9ea055eec5798e81ef"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Firebase Firestore reference to matchmaking sessions
+const matchmakingSessionsRef = collection(db, 'matchmakingSessions');
+
 // Function to show the matchmaking popup
 function showMatchmakingPopup() {
     document.getElementById('matchmakingOverlay').style.display = 'block'; // Show overlay
     document.getElementById('matchmakingPopup').style.display = 'block'; // Show popup
+
+    // Start matchmaking process when the popup is shown
+    startMatchmakingProcess();
 }
 
 // Function to hide the matchmaking popup
@@ -15,3 +40,123 @@ document.getElementById('startPvpMatchmaking').addEventListener('click', showMat
 
 // Close button event
 document.getElementById('closeMatchmakingPopup').addEventListener('click', hideMatchmakingPopup);
+
+// Function to start the matchmaking process
+function startMatchmakingProcess() {
+    const user = auth.currentUser; // Modular SDK way of accessing the current user
+    const matchmakingPopupText = document.querySelector('#matchmakingPopup p'); // Select the text element
+
+    // Check if the user is authenticated
+    const loadingCircle = document.querySelector('.loading-circle');
+    const loginWarningTitle = document.querySelector('.loginWarningTitle');
+    if (!user) {
+        if (matchmakingPopupText) {
+            matchmakingPopupText.textContent = "Prosimo prijavite se za sodelovanje na tem eventu."; // Change message
+        }
+        loadingCircle.style.display = "none";
+        loginWarningTitle.style.display = "block";
+        console.error('User not authenticated');
+        return; // Exit the function if the user is not authenticated
+    }
+
+    const playerId = user.uid; // Get the current user's UID
+    const requiredPlayers = 2; // Define how many players are required for a match
+
+    // Create a query to find available sessions
+    const q = query(
+        matchmakingSessionsRef,
+        where('status', '==', 'waiting'),
+        where('totalPlayers', '<', requiredPlayers),
+        limit(1) // Ensure limit is called within the query function
+    );
+
+    getDocs(q)
+        .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                // No available session found, create a new one
+                createMatchmakingSession(playerId, requiredPlayers);
+            } else {
+                // Join the existing session
+                const sessionDoc = querySnapshot.docs[0];
+                joinMatchmakingSession(sessionDoc.id, playerId, requiredPlayers);
+            }
+        })
+        .catch((error) => {
+            console.error('Error finding matchmaking session:', error);
+        });
+}
+
+// Function to create a new matchmaking session
+function createMatchmakingSession(playerId, requiredPlayers) {
+    const sessionRef = doc(matchmakingSessionsRef); // Create a new document for the session
+    const newSession = {
+        status: 'waiting',
+        totalPlayers: 1,
+        players: [playerId], // Add the first player to the session
+        requiredPlayers: requiredPlayers,
+        startTime: serverTimestamp() // Using serverTimestamp from Firestore v9
+    };
+
+    setDoc(sessionRef, newSession)
+        .then(() => {
+            console.log(`Matchmaking session created for player ${playerId}`);
+            listenToMatchmaking(sessionRef.id); // Start listening to the session updates
+        })
+        .catch((error) => {
+            console.error('Error creating matchmaking session:', error);
+        });
+}
+
+// Function to join an existing matchmaking session
+function joinMatchmakingSession(sessionId, playerId, requiredPlayers) {
+    const sessionRef = doc(db, 'matchmakingSessions', sessionId);
+
+    // Add the player to the session
+    updateDoc(sessionRef, {
+        players: arrayUnion(playerId), // Using arrayUnion from Firestore v9
+        totalPlayers: increment(1) // Using increment from Firestore v9
+    })
+    .then(() => {
+        console.log(`Player ${playerId} joined session ${sessionId}`);
+        listenToMatchmaking(sessionId); // Start listening to the session updates
+    })
+    .catch((error) => {
+        console.error('Error joining matchmaking session:', error);
+    });
+}
+
+// Function to listen for changes in the matchmaking session
+function listenToMatchmaking(sessionId) {
+    const sessionRef = doc(db, 'matchmakingSessions', sessionId);
+
+    onSnapshot(sessionRef, (doc) => {
+        if (doc.exists()) {
+            const sessionData = doc.data();
+            const totalPlayers = sessionData.totalPlayers;
+            const requiredPlayers = sessionData.requiredPlayers;
+
+            const matchmakingPopupText = document.querySelector('#matchmakingPopup p');
+            if (matchmakingPopupText) {
+                // Update the popup with the number of players found
+                matchmakingPopupText.textContent = `Igralci: ${totalPlayers}/${requiredPlayers}`;
+
+                // Check if all players are found
+                if (totalPlayers === requiredPlayers) {
+                    // Update the popup messages for server connection and game entry
+                    matchmakingPopupText.textContent = 'Povezovanje z serverjem...';
+
+                    setTimeout(() => {
+                        matchmakingPopupText.textContent = 'Vstopanje v igro...';
+
+                        setTimeout(() => {
+                            hideMatchmakingPopup(); // Close the popup after messages are displayed
+                            console.log('Entering the game...'); // Add game entry logic later
+                        }, 2000); // Display "Vstopanje v igro..." for 2 seconds
+                    }, 3000); // Display "Povezovanje z serverjem..." for 3 seconds
+                }
+            } else {
+                console.error('Matchmaking popup text element is missing');
+            }
+        }
+    });
+}
