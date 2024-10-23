@@ -204,34 +204,39 @@ function listenToMatchmaking(sessionId) {
 
                 // Check if all players are found
                 if (totalPlayers === requiredPlayers) {
-                    // Update the popup messages for server connection and game entry
-                    matchmakingPopupText.textContent = 'Povezovanje z serverjem...';
+                    // Change the status to "in-progress"
+                    updateDoc(sessionRef, {
+                        status: 'in-progress' // Change status
+                    }).then(() => {
+                        // Remove matchmaking data from local storage
+                        localStorage.removeItem('matchmakingStatus');
+                        localStorage.setItem('inGameStatus', sessionId); // Store in-game status
 
-                    setTimeout(() => {
-                        matchmakingPopupText.textContent = 'Vstopanje v igro...';
+                        // Update the popup messages for server connection and game entry
+                        matchmakingPopupText.textContent = 'Povezovanje z serverjem...';
 
                         setTimeout(() => {
-                            hideMatchmakingPopup(); // Close the popup after messages are displayed
-                            console.log('Entering the game...'); // Add game entry logic later
-                        }, 2000); // Display "Vstopanje v igro..." for 2 seconds
-                    }, 3000); // Display "Povezovanje z serverjem..." for 3 seconds
+                            matchmakingPopupText.textContent = 'Vstopanje v igro...';
+
+                            setTimeout(() => {
+                                hideMatchmakingPopup(); // Close the popup after messages are displayed
+                                console.log('Entering the game...'); // Add game entry logic later
+                            }, 1500); // Wait before closing
+                        }, 1500); // Wait before displaying the game entry message
+                    });
                 }
-            } else {
-                console.error('Matchmaking popup text element is missing');
             }
         }
     });
 }
 
-// Initial check for matchmaking status on page load
-window.onload = () => {
-    const storedMatchmakingStatus = localStorage.getItem('matchmakingStatus');
-
-    if (storedMatchmakingStatus) {
-        currentSessionId = storedMatchmakingStatus; // Restore current session ID from local storage
-        console.log(`Restored matchmaking session ID: ${currentSessionId}`);
-
-        // Optionally check the session and update the UI if needed
-        checkAndUpdateSession(currentSessionId);
+// Check for user authentication status
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log('User is logged in:', user.uid);
+        // Further logic for user
+    } else {
+        console.log('No user is logged in');
+        // Handle not logged in user
     }
-};
+});
