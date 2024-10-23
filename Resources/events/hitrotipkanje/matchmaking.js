@@ -1,7 +1,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-import { getFirestore, setDoc, doc, collection, query, where, getDocs, getDoc, serverTimestamp, arrayUnion, increment, updateDoc, onSnapshot, limit } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
-import axios from 'https://cdn.skypack.dev/axios';
+import {
+    getFirestore, setDoc, doc, collection, query, where, getDocs,
+    updateDoc, serverTimestamp, arrayUnion, increment, arrayRemove,
+    getDoc, deleteDoc, limit, onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
@@ -19,6 +22,7 @@ const db = getFirestore(app);
 
 // Firebase Firestore reference to matchmaking sessions
 const matchmakingSessionsRef = collection(db, 'matchmakingSessions');
+let currentSessionId = null; // Variable to track the current session ID
 
 // Function to show the matchmaking popup
 function showMatchmakingPopup() {
@@ -39,11 +43,20 @@ function hideMatchmakingPopup() {
 document.getElementById('startPvpMatchmaking').addEventListener('click', showMatchmakingPopup);
 
 // Close button event
-document.getElementById('closeMatchmakingPopup').addEventListener('click', hideMatchmakingPopup);
+document.getElementById('closeMatchmakingPopup').addEventListener('click', () => {
+    hideMatchmakingPopup(); // Hide the popup
+    // Remove matchmaking status from local storage
+    localStorage.removeItem('matchmakingStatus');
+    
+    // Check if there's a current session to update
+    if (currentSessionId) {
+        checkAndUpdateSession(currentSessionId);
+    }
+});
 
 // Function to start the matchmaking process
 function startMatchmakingProcess() {
-    const user = auth.currentUser; // Modular SDK way of accessing the current user
+    const user = auth.currentUser; // Get the current user's UID
     const matchmakingPopupText = document.querySelector('#matchmakingPopup p'); // Select the text element
 
     // Check if the user is authenticated
@@ -62,12 +75,18 @@ function startMatchmakingProcess() {
     const playerId = user.uid; // Get the current user's UID
     const requiredPlayers = 2; // Define how many players are required for a match
 
+    // Check if the user is already in a session
+    if (currentSessionId) {
+        console.log(`User ${playerId} is already in session ${currentSessionId}.`);
+        return; // Prevent creating a new session if already in one
+    }
+
     // Create a query to find available sessions
     const q = query(
         matchmakingSessionsRef,
         where('status', '==', 'waiting'),
         where('totalPlayers', '<', requiredPlayers),
-        limit(1) // Ensure limit is called within the query function
+        limit(1)
     );
 
     getDocs(q)
@@ -100,6 +119,8 @@ function createMatchmakingSession(playerId, requiredPlayers) {
     setDoc(sessionRef, newSession)
         .then(() => {
             console.log(`Matchmaking session created for player ${playerId}`);
+            currentSessionId = sessionRef.id; // Store the session ID
+            localStorage.setItem('matchmakingStatus', sessionRef.id); // Store session ID in local storage
             listenToMatchmaking(sessionRef.id); // Start listening to the session updates
         })
         .catch((error) => {
@@ -116,13 +137,54 @@ function joinMatchmakingSession(sessionId, playerId, requiredPlayers) {
         players: arrayUnion(playerId), // Using arrayUnion from Firestore v9
         totalPlayers: increment(1) // Using increment from Firestore v9
     })
-    .then(() => {
-        console.log(`Player ${playerId} joined session ${sessionId}`);
-        listenToMatchmaking(sessionId); // Start listening to the session updates
-    })
-    .catch((error) => {
-        console.error('Error joining matchmaking session:', error);
-    });
+        .then(() => {
+            console.log(`Player ${playerId} joined session ${sessionId}`);
+            currentSessionId = sessionId; // Store the session ID
+            localStorage.setItem('matchmakingStatus', sessionId); // Store session ID in local storage
+            listenToMatchmaking(sessionId); // Start listening to the session updates
+        })
+        .catch((error) => {
+            console.error('Error joining matchmaking session:', error);
+        });
+}
+
+// Function to check and update the session when leaving
+function checkAndUpdateSession(sessionId) {
+    const sessionRef = doc(db, 'matchmakingSessions', sessionId);
+
+    getDoc(sessionRef)
+        .then((doc) => {
+            if (doc.exists()) {
+                const sessionData = doc.data();
+                const totalPlayers = sessionData.totalPlayers;
+
+                // If there are no players left, delete the session
+                if (totalPlayers <= 1) { // If totalPlayers is 1 or lower, delete the session
+                    deleteDoc(sessionRef)
+                        .then(() => {
+                            console.log(`Matchmaking session ${sessionRef.id} deleted.`);
+                            currentSessionId = null; // Clear current session ID
+                        })
+                        .catch((error) => {
+                            console.error('Error deleting matchmaking session:', error);
+                        });
+                } else {
+                    // If totalPlayers was more than 1, decrement the player count
+                    updateDoc(sessionRef, {
+                        totalPlayers: increment(-1) // Decrease the total players by 1
+                    })
+                    .then(() => {
+                        console.log(`Player count decreased for session ${sessionId}.`);
+                    })
+                    .catch((error) => {
+                        console.error('Error updating player count:', error);
+                    });
+                }
+            }
+        })
+        .catch((error) => {
+            console.error('Error getting matchmaking session:', error);
+        });
 }
 
 // Function to listen for changes in the matchmaking session
@@ -160,3 +222,16 @@ function listenToMatchmaking(sessionId) {
         }
     });
 }
+
+// Initial check for matchmaking status on page load
+window.onload = () => {
+    const storedMatchmakingStatus = localStorage.getItem('matchmakingStatus');
+
+    if (storedMatchmakingStatus) {
+        currentSessionId = storedMatchmakingStatus; // Restore current session ID from local storage
+        console.log(`Restored matchmaking session ID: ${currentSessionId}`);
+
+        // Optionally check the session and update the UI if needed
+        checkAndUpdateSession(currentSessionId);
+    }
+};
