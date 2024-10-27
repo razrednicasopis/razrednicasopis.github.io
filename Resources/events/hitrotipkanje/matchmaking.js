@@ -62,7 +62,6 @@ function startMatchmakingProcess() {
     // Check if the user is authenticated
     const loadingCircle = document.querySelector('.loading-circle');
     const loginWarningTitle = document.querySelector('.loginWarningTitle');
-    const leaveMatchmakingBtn = document.getElementById('closeMatchmakingPopup');
     if (!user) {
         if (matchmakingPopupText) {
             matchmakingPopupText.textContent = "Prosimo prijavite se za sodelovanje na tem eventu."; // Change message
@@ -215,6 +214,7 @@ function listenToMatchmaking(sessionId) {
 
                         // Update the popup messages for server connection, game entry and hide the leave button
                         matchmakingPopupText.textContent = 'Povezovanje z serverjem...';
+                        const leaveMatchmakingBtn = document.getElementById('closeMatchmakingPopup');
                         leaveMatchmakingBtn.style.display = 'none';
 
                         setTimeout(() => {
@@ -222,6 +222,7 @@ function listenToMatchmaking(sessionId) {
 
                             setTimeout(() => {
                                 hideMatchmakingPopup(); // Close the popup after messages are displayed
+                                window.location.href = 'igra.html';
                                 console.log('Entering the game...'); // Add game entry logic later
                             }, 1500); // Wait before closing
                         }, 1500); // Wait before displaying the game entry message
