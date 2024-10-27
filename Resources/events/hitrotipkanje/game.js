@@ -128,5 +128,5 @@ document.getElementById('typingField').addEventListener('paste', (e) => {
 
 // Leave the game (this will log the user out or redirect)
 document.getElementById('leaveButton').addEventListener('click', () => {
-    window.location.href = 'index.html'; // Redirect to a main page or logout
+    window.location.href = 'domov.html'; // Redirect to a main page or logout
 });
