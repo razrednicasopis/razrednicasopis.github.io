@@ -79,3 +79,107 @@
     text-align: center;
     z-index: 500;    
 }
+
+
+
+/* Typing Race Game Page Styles */
+
+/* Leave Button */
+#leaveButton {
+    position: absolute;
+    top: 25px;
+    left: 50px;
+    padding: 10px 20px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#leaveButton:hover {
+    background-color: #ff4949;
+}
+
+/* Progress Bars Section */
+#playersProgress {
+    position: absolute;
+    top: 100px;
+    width: 60%; /* Adjust this to control the width */
+    max-width: 600px; /* Maximum width */
+    text-align: center;
+}
+
+/* Progress Bar Container */
+.progress-container {
+    margin: 10px 0;
+}
+
+.progress-bar {
+    background-color: #007bff;
+    height: 20px;
+    border-radius: 10px;
+    width: 0; /* Initial progress is 0% */
+    transition: width 0.3s ease;
+}
+
+span {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Text to Type */
+#textToType {
+    position: absolute;
+    top: 200px;
+    margin-left: 30%;
+    margin-top: 7%;
+    width: 750px; /* Adjust width */
+    height: 150px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    text-align: center;
+    color: #333;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+/* Typing Field */
+#typingField {
+    position: absolute;
+    margin-left: 35%;
+    margin-top: 100px;
+    top: 400px;
+    width: 60%; /* Adjust width */
+    height: 55px;
+    max-width: 600px;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    color: #333;
+    outline: none;
+    resize: none;
+}
+
+#typingField:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+.correct-char {
+    color: green;
+}
+.incorrect-char {
+    color: red;
+}
