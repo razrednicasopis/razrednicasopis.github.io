@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/fireba
 import { getFirestore, doc, updateDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
     authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
@@ -10,6 +11,7 @@ const firebaseConfig = {
     messagingSenderId: "294018128318",
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
+
 
 const db = getFirestore();
 const auth = getAuth();
@@ -28,13 +30,26 @@ async function fetchRandomWikipediaSnippet() {
     return firstPage.extract; // Return the extract of the random Wikipedia page
 }
 
+// Function to fetch random text and translate it into Slovenian
+async function fetchRandomTextAndTranslate() {
+    const gameText = await fetchRandomWikipediaSnippet();
+
+    // Store in Firestore
+    const sessionRef = doc(db, 'matchmakingSessions', sessionId);
+    await updateDoc(sessionRef, {
+        text: gameText // Store the random text in Firestore
+    });
+
+    return gameText; // Return the fetched text
+}
+
 // Function to start the game by loading session data
 async function startGame() {
-    const sessionRef = db.collection('matchmakingSessions').doc(sessionId);
+    const sessionRef = doc(db, 'matchmakingSessions', sessionId);
     
-    // Fetch or generate the game text (random snippet)
+    // Fetch or generate the game text
     let gameText;
-    const docSnap = await sessionRef.get();
+    const docSnap = await getDoc(sessionRef);
     if (docSnap.exists()) {
         const sessionData = docSnap.data();
         
@@ -43,10 +58,7 @@ async function startGame() {
             gameText = sessionData.text; // Use the existing text
         } else {
             // If not, fetch a random Wikipedia snippet and store it in Firestore
-            gameText = await fetchRandomWikipediaSnippet();
-            await sessionRef.update({
-                text: gameText // Store the random text in Firestore
-            });
+            gameText = await fetchRandomTextAndTranslate();
         }
         
         // Display the text to type
@@ -54,7 +66,7 @@ async function startGame() {
 
         // Initialize progress bars for each player
         Object.keys(sessionData.progress || {}).forEach((playerId) => {
-            updateProgressBar(playerId, sessionData.progress[playerId]);
+            updateProgressBar(playerId, sessionData.progress[playerId], sessionData.wpm[playerId]);
         });
 
         trackTypingProgress(gameText); // Start tracking typing progress
@@ -62,7 +74,7 @@ async function startGame() {
 }
 
 // Function to update progress bars for players
-function updateProgressBar(playerId, progress) {
+function updateProgressBar(playerId, progress, wpm) {
     let progressBar = document.getElementById(`${playerId}-progress`);
     
     // Create progress bar if it doesn't exist
@@ -73,18 +85,29 @@ function updateProgressBar(playerId, progress) {
         progressContainer.classList.add('progress-container');
         progressContainer.innerHTML = `
             <span class="player-name">${playerName}</span>
-            <div class="progress-bar" id="${playerId}-progress" style="width: ${progress}%"></div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="${playerId}-progress" style="width: ${progress}%"></div>
+                <div class="moving-lines"></div> <!-- Add moving lines -->
+            </div>
+            <span class="wpm">${progress}% (${wpm} WPM)</span>
         `;
-        document.getElementById('playersProgress').appendChild(progressContainer);
+        if (playerId === auth.currentUser.uid) {
+            progressContainer.classList.add('current-user'); // Highlight the current user
+            document.getElementById('playersProgress').prepend(progressContainer); // Always place user's bar at the top
+        } else {
+            document.getElementById('playersProgress').appendChild(progressContainer);
+        }
     } else {
         progressBar.style.width = `${progress}%`;
+        document.querySelector(`#${playerId}-container .wpm`).textContent = `${progress}% (${wpm} WPM)`;
     }
 }
 
 // Function to track typing progress and check for errors
 function trackTypingProgress(textToType) {
     const typingField = document.getElementById('typingField');
-    
+    const startTime = new Date().getTime(); // Start time for WPM calculation
+
     typingField.addEventListener('input', (e) => {
         const typedText = e.target.value;
         let correctText = '';
@@ -107,11 +130,21 @@ function trackTypingProgress(textToType) {
         // Calculate progress percentage
         const progress = Math.min((typedText.length / textToType.length) * 100, 100);
         
+        // Calculate Words Per Minute (WPM)
+        const currentTime = new Date().getTime();
+        const elapsedTimeInMinutes = (currentTime - startTime) / (1000 * 60);
+        const wordCount = typedText.split(' ').length; // Estimate word count based on spaces
+        const wpm = Math.round(wordCount / elapsedTimeInMinutes);
+
         // Update the player's progress in Firebase
-        const sessionRef = db.collection('matchmakingSessions').doc(sessionId);
-        sessionRef.update({
-            [`progress.${auth.currentUser.uid}`]: progress
+        const sessionRef = doc(db, 'matchmakingSessions', sessionId);
+        updateDoc(sessionRef, {
+            [`progress.${auth.currentUser.uid}`]: progress,
+            [`wpm.${auth.currentUser.uid}`]: wpm,
         });
+
+        // Update UI progress bar
+        updateProgressBar(auth.currentUser.uid, progress, wpm);
 
         // Disable the input if the user finishes typing
         if (typedText === textToType) {
@@ -130,3 +163,6 @@ document.getElementById('typingField').addEventListener('paste', (e) => {
 document.getElementById('leaveButton').addEventListener('click', () => {
     window.location.href = 'domov.html'; // Redirect to a main page or logout
 });
+
+// Call startGame function when ready to initialize the game
+startGame();
