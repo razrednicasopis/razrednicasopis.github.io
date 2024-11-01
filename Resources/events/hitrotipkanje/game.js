@@ -18,7 +18,7 @@ const auth = getAuth();
 
 let sessionId; // ID of the current matchmaking session
 let startTime; // Start time for WPM calculation
-let typingInterval; // Interval for updating WPM and percentage
+let typingInterval; // Interval for updating WPM
 
 // Fetch a random Wikipedia snippet (in Slovenian)
 async function fetchRandomWikipediaSnippet() {
@@ -66,17 +66,13 @@ async function initializeSession() {
     const newSessionRef = doc(collection(db, 'matchmakingSessions')); // Create a new document reference
     sessionId = newSessionRef.id; // Assign the new session ID to sessionId
 
-    // Create a new session in Firestore with initial data
-    await setDoc(newSessionRef, {
-        progress: {},
-        wpm: {},
-        text: ''
-    });
-
     // Fetch random text and store it in Firestore
     const gameText = await fetchRandomTextAndTranslate();
-    await updateDoc(newSessionRef, {
-        text: gameText // Store the random text in Firestore
+
+    // Create a new session in Firestore with initial data
+    await setDoc(newSessionRef, {
+        text: gameText, // Store the random text in Firestore
+        players: {} // Initialize players object to store stats
     });
 }
 
@@ -89,7 +85,7 @@ async function startGame() {
 
     const sessionRef = doc(db, 'matchmakingSessions', sessionId);
     
-    // Fetch the game text
+    // Fetch the game text and player stats
     const docSnap = await getDoc(sessionRef);
     if (docSnap.exists()) {
         const sessionData = docSnap.data();
@@ -104,8 +100,9 @@ async function startGame() {
         limitTextToField(gameText);
 
         // Initialize progress bars for each player
-        Object.keys(sessionData.progress || {}).forEach((playerId) => {
-            updateProgressBar(playerId, sessionData.progress[playerId], sessionData.wpm[playerId]);
+        Object.keys(sessionData.players || {}).forEach((playerId) => {
+            const playerStats = sessionData.players[playerId];
+            updateProgressBar(playerId, playerStats.progress, playerStats.wpm);
         });
 
         trackTypingProgress(gameText); // Start tracking typing progress
@@ -182,7 +179,7 @@ function trackTypingProgress(textToType) {
     clearInterval(typingInterval);
     typingInterval = setInterval(updateWPM, 1000); // Update WPM every second
 
-    typingField.addEventListener('input', (e) => {
+    typingField.addEventListener('input', async (e) => {
         const typedText = e.target.value;
         let correctCount = 0;
 
@@ -211,11 +208,28 @@ function trackTypingProgress(textToType) {
             alert(`Bravo! Končali ste! Vaša končna WPM je ${finalWPM}.`);
             typingField.disabled = true; // Disable typing field
             clearInterval(typingInterval); // Stop WPM update
-        }
 
-        // Calculate and update progress
-        const progress = Math.min((correctCount / wordsToType.length) * 100, 100);
-        updateProgressBar(auth.currentUser.uid, progress, calculateWPM(typedText)); // Update progress bar
+            // Save final progress and WPM to Firestore
+            await savePlayerStats(auth.currentUser.uid, correctCount, wordsToType.length, finalWPM);
+        } else {
+            // Update progress based on correctly typed words
+            const progress = Math.min((correctCount / wordsToType.length) * 100, 100);
+            await savePlayerStats(auth.currentUser.uid, correctCount, wordsToType.length, calculateWPM(typedText));
+            updateProgressBar(auth.currentUser.uid, progress, calculateWPM(typedText)); // Update progress bar
+        }
+    });
+}
+
+// Function to save player statistics in Firestore
+async function savePlayerStats(playerId, correctCount, totalWords, finalWPM) {
+    const sessionRef = doc(db, 'matchmakingSessions', sessionId);
+
+    await updateDoc(sessionRef, {
+        [`players.${playerId}`]: { // Update the specific player's stats
+            progress: Math.min((correctCount / totalWords) * 100, 100),
+            wpm: finalWPM,
+            text: document.getElementById('textToType').innerText // Save current text for reference
+        }
     });
 }
 
@@ -230,7 +244,7 @@ function calculateWPM(typedText) {
 function updateWPM() {
     const typedText = document.getElementById('typingField').value;
     const finalWPM = calculateWPM(typedText);
-    updateProgressBar(auth.currentUser.uid, null, finalWPM); // Update only WPM without progress
+    savePlayerStats(auth.currentUser.uid, 0, 1, finalWPM); // Update only WPM without progress
 }
 
 // Submit button functionality
@@ -246,11 +260,11 @@ document.getElementById('submitButton').addEventListener('click', async () => {
         // Check if the typed text matches the original text
         if (typedText === originalText) {
             const finalWPM = calculateWPM(typedText);
-            alert(`Congratulations! Your final WPM is ${finalWPM}.`);
+            alert(`Bravo! Končali ste! Vaša končna WPM je ${finalWPM}.`);
             document.getElementById('typingField').disabled = true; // Disable the typing field after submission
             clearInterval(typingInterval); // Stop the WPM update
         } else {
-            alert("There are errors in your typing. Please try again."); // Show error message
+            alert("Imate napake v tipkanju. Poskusite znova."); // Show error message
         }
     }
 });
