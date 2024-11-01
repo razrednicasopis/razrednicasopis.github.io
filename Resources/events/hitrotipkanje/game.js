@@ -204,20 +204,29 @@ function trackTypingProgress(textToType) {
 
         // Check if reached the end of the race with no errors
         if (typedWords.length >= wordsToType.length) {
-            const finalWPM = calculateWPM(typedText);
-            alert(`Bravo! Končali ste! Vaša končna WPM je ${finalWPM}.`);
-            typingField.disabled = true; // Disable typing field
-            clearInterval(typingInterval); // Stop WPM update
-
-            // Save final progress and WPM to Firestore
-            await savePlayerStats(auth.currentUser.uid, correctCount, wordsToType.length, finalWPM);
+            const finalWPM = calculateWPM(textToType, startTime);
+            await savePlayerStats(auth.currentUser.uid, correctCount, wordsToType.length, finalWPM); // Save player stats
         } else {
-            // Update progress based on correctly typed words
-            const progress = Math.min((correctCount / wordsToType.length) * 100, 100);
-            await savePlayerStats(auth.currentUser.uid, correctCount, wordsToType.length, calculateWPM(typedText));
-            updateProgressBar(auth.currentUser.uid, progress, calculateWPM(typedText)); // Update progress bar
+            const progress = (correctCount / wordsToType.length) * 100;
+            const currentWPM = calculateWPM(textToType, startTime);
+            updateProgressBar(auth.currentUser.uid, progress, currentWPM); // Update progress
         }
     });
+}
+
+// Function to calculate the words-per-minute (WPM)
+function calculateWPM(text, startTime) {
+    const elapsedMinutes = (new Date().getTime() - startTime) / 1000 / 60; // Convert milliseconds to minutes
+    const totalWordsTyped = text.trim().split(/\s+/).length;
+    const wpm = Math.floor(totalWordsTyped / elapsedMinutes);
+    return wpm;
+}
+
+// Function to update WPM periodically
+function updateWPM() {
+    const typedText = document.getElementById('typingField').value;
+    const currentWPM = calculateWPM(typedText, startTime);
+    document.getElementById(`${auth.currentUser.uid}-wpm`).textContent = `${currentWPM} WPM`; // Update WPM for the current player
 }
 
 // Function to save player statistics in Firestore
