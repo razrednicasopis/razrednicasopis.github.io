@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, doc, updateDoc, getDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, doc, updateDoc, getDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 
 // Firebase configuration
@@ -15,6 +15,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const db = getFirestore();
 const auth = getAuth();
+
 
 let sessionId;
 let startTime;
@@ -53,8 +54,25 @@ async function fetchRandomTextAndTranslate() {
     return gameText;
 }
 
-// Initialize the matchmaking session
-async function initializeSession() {
+// Find or create matchmaking session
+async function findOrCreateSession() {
+    // Check if there is an existing session that isn't full or completed
+    const q = query(collection(db, 'matchmakingSessions'), where("playersCount", "<", 2));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+        // Join the first available session
+        const firstAvailableSession = querySnapshot.docs[0];
+        sessionId = firstAvailableSession.id;
+        await joinExistingSession(firstAvailableSession);
+    } else {
+        // Create a new session
+        await createNewSession();
+    }
+}
+
+// Create a new session
+async function createNewSession() {
     const newSessionRef = doc(collection(db, 'matchmakingSessions'));
     sessionId = newSessionRef.id;
 
@@ -62,34 +80,45 @@ async function initializeSession() {
 
     await setDoc(newSessionRef, {
         text: gameText,
-        players: {}
+        players: {},
+        playersCount: 1  // First player joining
     });
+
+    await joinExistingSession(newSessionRef);
 }
 
-// Start the game
-async function startGame() {
-    if (!sessionId) {
-        console.error("Session ID is not defined. Please create or join a session first.");
-        return;
-    }
-
+// Join an existing session and start the game
+async function joinExistingSession(sessionDoc) {
     const sessionRef = doc(db, 'matchmakingSessions', sessionId);
-    const docSnap = await getDoc(sessionRef);
+    const sessionData = (await getDoc(sessionRef)).data();
 
-    if (docSnap.exists()) {
-        const sessionData = docSnap.data();
-        const gameText = sessionData.text;
-        document.getElementById('textToType').innerText = gameText;
+    // Add current player to session
+    const playerId = auth.currentUser.uid;
+    const playerName = auth.currentUser.displayName || 'Player';
 
-        limitTextToField(gameText);
+    await updateDoc(sessionRef, {
+        [`players.${playerId}`]: {
+            progress: 0,
+            wpm: 0,
+            name: playerName
+        },
+        playersCount: sessionData.playersCount + 1  // Update player count
+    });
 
-        Object.keys(sessionData.players || {}).forEach((playerId) => {
-            const playerStats = sessionData.players[playerId];
-            updateProgressBar(playerId, playerStats.progress, playerStats.wpm);
-        });
+    // Load the text for the typing game
+    const gameText = sessionData.text;
+    document.getElementById('textToType').innerText = gameText;
 
-        trackTypingProgress(gameText);
-    }
+    limitTextToField(gameText);
+
+    // Display all player progress
+    Object.keys(sessionData.players || {}).forEach((playerId) => {
+        const playerStats = sessionData.players[playerId];
+        updateProgressBar(playerId, playerStats.progress, playerStats.wpm);
+    });
+
+    // Start tracking typing progress for the current user
+    trackTypingProgress(gameText);
 }
 
 // Limit text to the field size
@@ -176,14 +205,12 @@ function trackTypingProgress(textToType) {
             }
         }
 
-        if (typedWords.length >= wordsToType.length) {
-            const finalWPM = calculateWPM(typedText);
-            await savePlayerStats(auth.currentUser.uid, correctCount, wordsToType.length, finalWPM);
-        } else {
-            const progress = (correctCount / wordsToType.length) * 100;
-            const currentWPM = calculateWPM(typedText);
-            updateProgressBar(auth.currentUser.uid, progress, currentWPM);
-        }
+        const progress = (correctCount / wordsToType.length) * 100;
+        const currentWPM = calculateWPM(typedText);
+
+        await savePlayerStats(auth.currentUser.uid, progress, currentWPM);
+
+        updateProgressBar(auth.currentUser.uid, progress, currentWPM);
     });
 }
 
@@ -195,15 +222,12 @@ function calculateWPM(text) {
 }
 
 // Save player stats to Firestore
-async function savePlayerStats(playerId, correctCount, totalWords, finalWPM) {
+async function savePlayerStats(playerId, progress, wpm) {
     const sessionRef = doc(db, 'matchmakingSessions', sessionId);
 
     await updateDoc(sessionRef, {
-        [`players.${playerId}`]: {
-            progress: Math.min((correctCount / totalWords) * 100, 100),
-            wpm: finalWPM,
-            text: document.getElementById('textToType').innerText
-        }
+        [`players.${playerId}.progress`]: Math.min(progress, 100),
+        [`players.${playerId}.wpm`]: wpm
     });
 }
 
@@ -230,6 +254,6 @@ document.getElementById('submitButton').addEventListener('click', async () => {
 
 // Initialize session and start game
 document.addEventListener('DOMContentLoaded', async () => {
-    await initializeSession();
+    await findOrCreateSession();
     await startGame();
 });
