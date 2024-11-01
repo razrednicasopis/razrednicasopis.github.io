@@ -58,12 +58,6 @@ async function fetchRandomTextAndTranslate() {
     // Limit to 5 sentences
     gameText = splitIntoSentences(gameText);
 
-    // Store in Firestore
-    const sessionRef = doc(db, 'matchmakingSessions', sessionId);
-    await updateDoc(sessionRef, {
-        text: gameText // Store the random text in Firestore
-    });
-
     return gameText; // Return the cleaned fetched text
 }
 
@@ -78,6 +72,12 @@ async function initializeSession() {
         wpm: {},
         text: ''
     });
+
+    // Fetch random text and store it in Firestore
+    const gameText = await fetchRandomTextAndTranslate();
+    await updateDoc(newSessionRef, {
+        text: gameText // Store the random text in Firestore
+    });
 }
 
 // Function to start the game by loading session data
@@ -89,19 +89,13 @@ async function startGame() {
 
     const sessionRef = doc(db, 'matchmakingSessions', sessionId);
     
-    // Fetch or generate the game text
-    let gameText;
+    // Fetch the game text
     const docSnap = await getDoc(sessionRef);
     if (docSnap.exists()) {
         const sessionData = docSnap.data();
         
-        // Check if the text is already in Firestore
-        if (sessionData.text) {
-            gameText = sessionData.text; // Use the existing text
-        } else {
-            // If not, fetch a random Wikipedia snippet and store it in Firestore
-            gameText = await fetchRandomTextAndTranslate();
-        }
+        // Use the existing text in the session
+        const gameText = sessionData.text; 
         
         // Display the text to type
         document.getElementById('textToType').innerText = gameText;
