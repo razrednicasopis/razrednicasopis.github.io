@@ -136,21 +136,23 @@ span {
 /* Text to Type */
 #textToType {
     position: absolute;
-    top: 200px;
-    margin-left: 30%;
-    margin-top: 7%;
-    width: 750px; /* Adjust width */
+    top: 325px;
+    left: 55%; /* Center horizontally */
+    transform: translateX(-50%); /* Center adjustment */
+    width: 90%; /* Adjust width for better responsiveness */
+    max-width: 750px; /* Maximum width */
     height: 150px;
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    font-size: 18px;
+    font-size: 15px;
     text-align: center;
     color: #333;
     line-height: 1.5;
     word-wrap: break-word;
 }
+
 
 /* Typing Field */
 #typingField {
@@ -169,7 +171,6 @@ span {
     background-color: #f9f9f9;
     color: #333;
     outline: none;
-    resize: none;
 }
 
 #typingField:focus {
@@ -180,6 +181,7 @@ span {
 /* Progress Bars Section */
 #playersProgress {
     display: flex;
+    left: 30%;
     flex-direction: column;
     align-items: center;
 }
@@ -244,3 +246,30 @@ span.wpm {
     width: 20%;
     text-align: right;
 }
+
+.correct-char {
+    color: green;
+}
+.incorrect-char {
+    color: red;
+}
+.default-char {
+    color: black; /* Or any other default color for untyped characters */
+}
+
+.submitBtnContainer {
+    margin-top: 520px;
+    margin-left: 535px;
+    font-size: 16px; /* Optional: to adjust the size of the error message */
+    font-weight: bold;
+    font-style: italic;
+}
+
+    #submitButton {
+        width: 300px;
+        height: 50px;
+        margin-left: 100px;
+        background-color: orange;
+        border: none;
+        cursor: pointer;
+    }

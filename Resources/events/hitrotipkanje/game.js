@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, doc, updateDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, doc, updateDoc, getDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 
 // Firebase configuration
@@ -12,11 +12,13 @@ const firebaseConfig = {
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
 
-
+// Initialize Firebase
 const db = getFirestore();
 const auth = getAuth();
 
 let sessionId; // ID of the current matchmaking session
+let startTime; // Start time for WPM calculation
+let typingInterval; // Interval for updating WPM and percentage
 
 // Fetch a random Wikipedia snippet (in Slovenian)
 async function fetchRandomWikipediaSnippet() {
@@ -30,9 +32,31 @@ async function fetchRandomWikipediaSnippet() {
     return firstPage.extract; // Return the extract of the random Wikipedia page
 }
 
+// Clean the text by removing unusual characters and excessive spaces
+function cleanText(text) {
+    return text
+        .replace(/[\r\n]+/g, ' ') // Remove newlines
+        .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+        .trim() // Remove leading and trailing spaces
+        .replace(/[^\w\s,.!?čšžČŠŽ]/g, ''); // Allow Slovenian special characters
+}
+
+// Function to split text into sentences
+function splitIntoSentences(text) {
+    const sentences = text.match(/[^.!?]*[.!?]/g) || []; // Split into sentences
+    return sentences.slice(0, 5).join(' '); // Limit to 5 sentences
+}
+
 // Function to fetch random text and translate it into Slovenian
 async function fetchRandomTextAndTranslate() {
-    const gameText = await fetchRandomWikipediaSnippet();
+    let gameText = '';
+
+    // Fetch a random Wikipedia snippet
+    const snippet = await fetchRandomWikipediaSnippet();
+    gameText = cleanText(snippet); // Clean the text
+
+    // Limit to 5 sentences
+    gameText = splitIntoSentences(gameText);
 
     // Store in Firestore
     const sessionRef = doc(db, 'matchmakingSessions', sessionId);
@@ -40,11 +64,29 @@ async function fetchRandomTextAndTranslate() {
         text: gameText // Store the random text in Firestore
     });
 
-    return gameText; // Return the fetched text
+    return gameText; // Return the cleaned fetched text
+}
+
+// Function to create or retrieve a matchmaking session
+async function initializeSession() {
+    const newSessionRef = doc(collection(db, 'matchmakingSessions')); // Create a new document reference
+    sessionId = newSessionRef.id; // Assign the new session ID to sessionId
+
+    // Create a new session in Firestore with initial data
+    await setDoc(newSessionRef, {
+        progress: {},
+        wpm: {},
+        text: ''
+    });
 }
 
 // Function to start the game by loading session data
 async function startGame() {
+    if (!sessionId) {
+        console.error("Session ID is not defined. Please create or join a session first.");
+        return; // Exit the function if sessionId is not defined
+    }
+
     const sessionRef = doc(db, 'matchmakingSessions', sessionId);
     
     // Fetch or generate the game text
@@ -64,6 +106,9 @@ async function startGame() {
         // Display the text to type
         document.getElementById('textToType').innerText = gameText;
 
+        // Ensure text is within field
+        limitTextToField(gameText);
+
         // Initialize progress bars for each player
         Object.keys(sessionData.progress || {}).forEach((playerId) => {
             updateProgressBar(playerId, sessionData.progress[playerId], sessionData.wpm[playerId]);
@@ -73,96 +118,151 @@ async function startGame() {
     }
 }
 
+// Function to limit the text to fit within a designated field
+function limitTextToField(text) {
+    const textField = document.getElementById('textToType');
+    const fieldHeight = textField.clientHeight;
+    const sentences = text.split('.').filter(Boolean); // Split into sentences
+
+    let truncatedText = '';
+
+    for (let sentence of sentences) {
+        const trimmedSentence = sentence.trim();
+        if (trimmedSentence.length === 0) continue; // Skip empty sentences
+
+        const newText = truncatedText + (truncatedText ? '. ' : '') + trimmedSentence;
+
+        textField.innerText = newText;
+
+        if (textField.clientHeight > fieldHeight) {
+            break; // If exceeds the field height, stop adding
+        }
+        truncatedText = newText; // Update truncated text
+    }
+
+    textField.innerText = truncatedText.trim(); // Set the final truncated text
+}
+
 // Function to update progress bars for players
 function updateProgressBar(playerId, progress, wpm) {
     let progressBar = document.getElementById(`${playerId}-progress`);
     
     // Create progress bar if it doesn't exist
     if (!progressBar) {
-        const playerName = playerId === auth.currentUser.uid ? 'You' : `Player ${playerId}`;
+        const playerName = playerId === auth.currentUser.uid ? `${auth.currentUser.displayName || 'Player'}` : `Player ${playerId}`; 
         
         const progressContainer = document.createElement('div');
         progressContainer.classList.add('progress-container');
         progressContainer.innerHTML = `
             <span class="player-name">${playerName}</span>
             <div class="progress-bar-container">
-                <div class="progress-bar" id="${playerId}-progress" style="width: ${progress}%"></div>
-                <div class="moving-lines"></div> <!-- Add moving lines -->
+                <div class="progress-bar" id="${playerId}-progress" style="width: 0%"></div>
+                <div class="moving-lines"></div>
             </div>
-            <span class="wpm">${progress}% (${wpm} WPM)</span>
+            <span class="wpm" id="${playerId}-wpm">0% (0 WPM)</span>
         `;
         if (playerId === auth.currentUser.uid) {
-            progressContainer.classList.add('current-user'); // Highlight the current user
-            document.getElementById('playersProgress').prepend(progressContainer); // Always place user's bar at the top
+            progressContainer.classList.add('current-user');
+            document.getElementById('playersProgress').prepend(progressContainer);
         } else {
             document.getElementById('playersProgress').appendChild(progressContainer);
         }
     } else {
-        progressBar.style.width = `${progress}%`;
-        document.querySelector(`#${playerId}-container .wpm`).textContent = `${progress}% (${wpm} WPM)`;
+        // Update progress only if a valid progress value is provided
+        if (progress !== undefined) {
+            progressBar.style.width = `${progress}%`;
+        }
     }
+    
+    // Update WPM display
+    document.querySelector(`#${playerId}-wpm`).textContent = `${progress !== undefined ? progress.toFixed(0) : 0}% (${wpm} WPM)`;
 }
 
 // Function to track typing progress and check for errors
 function trackTypingProgress(textToType) {
     const typingField = document.getElementById('typingField');
-    const startTime = new Date().getTime(); // Start time for WPM calculation
+    typingField.value = ''; // Clear the typing field initially
+    startTime = new Date().getTime(); // Start time for WPM calculation
+
+    // Clear previous interval
+    clearInterval(typingInterval);
+    typingInterval = setInterval(updateWPM, 1000); // Update WPM every second
 
     typingField.addEventListener('input', (e) => {
         const typedText = e.target.value;
-        let correctText = '';
-        let isCorrect = true;
-        
-        // Check for spelling errors
-        for (let i = 0; i < typedText.length; i++) {
-            if (typedText[i] === textToType[i]) {
-                correctText += `<span class="correct-char">${textToType[i]}</span>`;
-            } else {
-                correctText += `<span class="incorrect-char">${textToType[i]}</span>`;
-                isCorrect = false;
-                break; // Stop checking after the first mistake
+        let correctCount = 0;
+
+        // Split the text and typedText into words for error checking
+        const wordsToType = textToType.split(' ');
+        const typedWords = typedText.split(' ');
+
+        // Check if the user has cleared the input
+        if (typedText.length === 0) {
+            updateProgressBar(auth.currentUser.uid, 0, 0); // Reset progress bar
+            return; // Exit the function early if input is empty
+        }
+
+        // Check for errors and prepare display text
+        for (let i = 0; i < wordsToType.length; i++) {
+            if (i < typedWords.length) {
+                if (typedWords[i] === wordsToType[i]) {
+                    correctCount++; // Count correct words
+                }
             }
         }
 
-        // Update the textToType display to highlight correct/incorrect chars
-        document.getElementById('textToType').innerHTML = correctText + textToType.slice(typedText.length);
-
-        // Calculate progress percentage
-        const progress = Math.min((typedText.length / textToType.length) * 100, 100);
-        
-        // Calculate Words Per Minute (WPM)
-        const currentTime = new Date().getTime();
-        const elapsedTimeInMinutes = (currentTime - startTime) / (1000 * 60);
-        const wordCount = typedText.split(' ').length; // Estimate word count based on spaces
-        const wpm = Math.round(wordCount / elapsedTimeInMinutes);
-
-        // Update the player's progress in Firebase
-        const sessionRef = doc(db, 'matchmakingSessions', sessionId);
-        updateDoc(sessionRef, {
-            [`progress.${auth.currentUser.uid}`]: progress,
-            [`wpm.${auth.currentUser.uid}`]: wpm,
-        });
-
-        // Update UI progress bar
-        updateProgressBar(auth.currentUser.uid, progress, wpm);
-
-        // Disable the input if the user finishes typing
-        if (typedText === textToType) {
-            typingField.disabled = true;
-            alert('Congratulations! You have finished the race.');
+        // Check if reached the end of the race with no errors
+        if (typedWords.length >= wordsToType.length) {
+            const finalWPM = calculateWPM(typedText);
+            alert(`Bravo! Končali ste! Vaša končna WPM je ${finalWPM}.`);
+            typingField.disabled = true; // Disable typing field
+            clearInterval(typingInterval); // Stop WPM update
         }
+
+        // Calculate and update progress
+        const progress = Math.min((correctCount / wordsToType.length) * 100, 100);
+        updateProgressBar(auth.currentUser.uid, progress, calculateWPM(typedText)); // Update progress bar
     });
 }
 
-// Prevent pasting into the typing field to avoid cheating
-document.getElementById('typingField').addEventListener('paste', (e) => {
-    e.preventDefault();
+// Function to calculate words per minute
+function calculateWPM(typedText) {
+    const wordsTyped = typedText.split(' ').length; // Count the number of words typed
+    const minutesPassed = (new Date().getTime() - startTime) / 60000; // Convert time to minutes
+    return Math.floor(wordsTyped / minutesPassed); // Calculate WPM
+}
+
+// Function to update WPM on the display
+function updateWPM() {
+    const typedText = document.getElementById('typingField').value;
+    const finalWPM = calculateWPM(typedText);
+    updateProgressBar(auth.currentUser.uid, null, finalWPM); // Update only WPM without progress
+}
+
+// Submit button functionality
+document.getElementById('submitButton').addEventListener('click', async () => {
+    const typedText = document.getElementById('typingField').value;
+    const sessionRef = doc(db, 'matchmakingSessions', sessionId);
+    const docSnap = await getDoc(sessionRef);
+    
+    if (docSnap.exists()) {
+        const sessionData = docSnap.data();
+        const originalText = sessionData.text;
+
+        // Check if the typed text matches the original text
+        if (typedText === originalText) {
+            const finalWPM = calculateWPM(typedText);
+            alert(`Congratulations! Your final WPM is ${finalWPM}.`);
+            document.getElementById('typingField').disabled = true; // Disable the typing field after submission
+            clearInterval(typingInterval); // Stop the WPM update
+        } else {
+            alert("There are errors in your typing. Please try again."); // Show error message
+        }
+    }
 });
 
-// Leave the game (this will log the user out or redirect)
-document.getElementById('leaveButton').addEventListener('click', () => {
-    window.location.href = 'domov.html'; // Redirect to a main page or logout
+// Event listener to initialize the session
+document.addEventListener('DOMContentLoaded', async () => {
+    await initializeSession(); // Initialize the session
+    await startGame(); // Start the game
 });
-
-// Call startGame function when ready to initialize the game
-startGame();
