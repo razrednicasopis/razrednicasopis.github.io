@@ -174,13 +174,6 @@ function trackTypingProgress(textToType) {
     });
 }
 
-// Update WPM function
-function updateWPM() {
-    const typedText = document.getElementById('typingField').value;
-    const currentWPM = calculateWPM(typedText);
-    document.querySelector(`#${auth.currentUser.uid}-wpm`).textContent = `${(typedText.length > 0 ? (currentWPM).toFixed(0) : 0)} WPM`;
-}
-
 // Calculate WPM
 function calculateWPM(text) {
     const elapsedMinutes = (new Date().getTime() - startTime) / 1000 / 60;
@@ -222,4 +215,5 @@ document.getElementById('submitButton').addEventListener('click', async () => {
 // Initialize session and start game
 document.addEventListener('DOMContentLoaded', async () => {
     await findOrCreateSession();
+    // We no longer need a separate startGame function since we directly handle session joining and game start here
 });

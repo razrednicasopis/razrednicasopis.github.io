@@ -137,8 +137,7 @@ function startMatchmakingProcess() {
         });
 }
 
-// Function to create a new matchmaking session
-async function createMatchmakingSession(playerId, requiredPlayers) {
+// Function to create a new matchmaking sessionfunction createMatchmakingSession(playerId, requiredPlayers) {
     const sessionRef = doc(matchmakingSessionsRef); // Create a new document for the session
     const gameText = await fetchRandomText(); // Fetch random Wikipedia text
     const newSession = {

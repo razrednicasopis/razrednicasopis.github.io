@@ -54,38 +54,6 @@ document.getElementById('closeMatchmakingPopup').addEventListener('click', () =>
     }
 });
 
-// Function to fetch random Wikipedia snippet
-async function fetchRandomWikipediaSnippet() {
-    const url = 'https://sl.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exchars=500&explaintext&generator=random&grnnamespace=0&origin=*';
-    const response = await fetch(url);
-    const data = await response.json();
-    const pages = data.query.pages;
-    const firstPage = Object.values(pages)[0];
-    return firstPage.extract;
-}
-
-// Function to clean and format the fetched text
-function cleanText(text) {
-    return text
-        .replace(/[\r\n]+/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .replace(/[^\w\s,.!?čšžČŠŽ]/g, '');
-}
-
-// Function to split text into sentences and return the first five
-function splitIntoSentences(text) {
-    const sentences = text.match(/[^.!?]*[.!?]/g) || [];
-    return sentences.slice(0, 5).join(' ');
-}
-
-// Function to fetch and clean random Wikipedia text
-async function fetchRandomText() {
-    const snippet = await fetchRandomWikipediaSnippet();
-    let gameText = cleanText(snippet);
-    return splitIntoSentences(gameText);
-}
-
 // Function to start the matchmaking process
 function startMatchmakingProcess() {
     const user = auth.currentUser; // Get the current user's UID
@@ -138,16 +106,14 @@ function startMatchmakingProcess() {
 }
 
 // Function to create a new matchmaking session
-async function createMatchmakingSession(playerId, requiredPlayers) {
+function createMatchmakingSession(playerId, requiredPlayers) {
     const sessionRef = doc(matchmakingSessionsRef); // Create a new document for the session
-    const gameText = await fetchRandomText(); // Fetch random Wikipedia text
     const newSession = {
         status: 'waiting',
         totalPlayers: 1,
         players: [playerId], // Add the first player to the session
         requiredPlayers: requiredPlayers,
-        text: gameText, // Store the fetched text
-        startTime: serverTimestamp() // Using serverTimestamp from Firestore
+        startTime: serverTimestamp() // Using serverTimestamp from Firestore v9
     };
 
     setDoc(sessionRef, newSession)

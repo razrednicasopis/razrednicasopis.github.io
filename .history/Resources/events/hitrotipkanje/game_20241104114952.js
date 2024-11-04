@@ -16,31 +16,70 @@ const firebaseConfig = {
 const db = getFirestore();
 const auth = getAuth();
 
+
 let sessionId;
 let startTime;
 let typingInterval;
 
+// Fetch a random Wikipedia snippet (in Slovenian)
+async function fetchRandomWikipediaSnippet() {
+    const url = 'https://sl.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exchars=500&explaintext&generator=random&grnnamespace=0&origin=*';
+    const response = await fetch(url);
+    const data = await response.json();
+    const pages = data.query.pages;
+    const firstPage = Object.values(pages)[0];
+    return firstPage.extract;
+}
+
+// Clean the text
+function cleanText(text) {
+    return text
+        .replace(/[\r\n]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/[^\w\s,.!?čšžČŠŽ]/g, '');
+}
+
+// Split text into sentences
+function splitIntoSentences(text) {
+    const sentences = text.match(/[^.!?]*[.!?]/g) || [];
+    return sentences.slice(0, 5).join(' ');
+}
+
+// Fetch random text
+async function fetchRandomTextAndTranslate() {
+    const snippet = await fetchRandomWikipediaSnippet();
+    let gameText = cleanText(snippet);
+    gameText = splitIntoSentences(gameText);
+    return gameText;
+}
+
 // Find or create matchmaking session
 async function findOrCreateSession() {
+    // Check if there is an existing session that isn't full or completed
     const q = query(collection(db, 'matchmakingSessions'), where("playersCount", "<", 2));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
+        // Join the first available session
         const firstAvailableSession = querySnapshot.docs[0];
         sessionId = firstAvailableSession.id;
         await joinExistingSession(firstAvailableSession);
     } else {
+        // Create a new session
         await createNewSession();
     }
 }
 
-// Create a new session (no text generation)
+// Create a new session
 async function createNewSession() {
     const newSessionRef = doc(collection(db, 'matchmakingSessions'));
     sessionId = newSessionRef.id;
 
+    const gameText = await fetchRandomTextAndTranslate();
+
     await setDoc(newSessionRef, {
-        text: '', // Initially no text
+        text: gameText,
         players: {},
         playersCount: 1  // First player joining
     });
@@ -53,6 +92,7 @@ async function joinExistingSession(sessionDoc) {
     const sessionRef = doc(db, 'matchmakingSessions', sessionId);
     const sessionData = (await getDoc(sessionRef)).data();
 
+    // Add current player to session
     const playerId = auth.currentUser.uid;
     const playerName = auth.currentUser.displayName || 'Player';
 
@@ -65,8 +105,8 @@ async function joinExistingSession(sessionDoc) {
         playersCount: sessionData.playersCount + 1  // Update player count
     });
 
-    // Load the text for the typing game from the session
-    const gameText = sessionData.text || 'No text available for this session.';
+    // Load the text for the typing game
+    const gameText = sessionData.text;
     document.getElementById('textToType').innerText = gameText;
 
     limitTextToField(gameText);
@@ -174,13 +214,6 @@ function trackTypingProgress(textToType) {
     });
 }
 
-// Update WPM function
-function updateWPM() {
-    const typedText = document.getElementById('typingField').value;
-    const currentWPM = calculateWPM(typedText);
-    document.querySelector(`#${auth.currentUser.uid}-wpm`).textContent = `${(typedText.length > 0 ? (currentWPM).toFixed(0) : 0)} WPM`;
-}
-
 // Calculate WPM
 function calculateWPM(text) {
     const elapsedMinutes = (new Date().getTime() - startTime) / 1000 / 60;
@@ -222,4 +255,5 @@ document.getElementById('submitButton').addEventListener('click', async () => {
 // Initialize session and start game
 document.addEventListener('DOMContentLoaded', async () => {
     await findOrCreateSession();
+    await startGame();
 });

@@ -34,15 +34,18 @@ async function findOrCreateSession() {
     }
 }
 
-// Create a new session (no text generation)
+// Create a new session
 async function createNewSession() {
     const newSessionRef = doc(collection(db, 'matchmakingSessions'));
     sessionId = newSessionRef.id;
 
+    // Example: Static game text used as a placeholder instead of generating from an API
+    const gameText = "This is the typing test text for the new session. You need to type it quickly and accurately to win the game.";
+
     await setDoc(newSessionRef, {
-        text: '', // Initially no text
+        text: gameText,
         players: {},
-        playersCount: 1  // First player joining
+        playersCount: 1
     });
 
     await joinExistingSession(newSessionRef);
@@ -62,22 +65,19 @@ async function joinExistingSession(sessionDoc) {
             wpm: 0,
             name: playerName
         },
-        playersCount: sessionData.playersCount + 1  // Update player count
+        playersCount: sessionData.playersCount + 1
     });
 
-    // Load the text for the typing game from the session
-    const gameText = sessionData.text || 'No text available for this session.';
+    const gameText = sessionData.text || "Default text if there is no text set"; // Text from session
     document.getElementById('textToType').innerText = gameText;
 
     limitTextToField(gameText);
 
-    // Display all player progress
     Object.keys(sessionData.players || {}).forEach((playerId) => {
         const playerStats = sessionData.players[playerId];
         updateProgressBar(playerId, playerStats.progress, playerStats.wpm);
     });
 
-    // Start tracking typing progress for the current user
     trackTypingProgress(gameText);
 }
 
@@ -145,7 +145,7 @@ function trackTypingProgress(textToType) {
     startTime = new Date().getTime();
 
     clearInterval(typingInterval);
-    typingInterval = setInterval(updateWPM, 1000);
+    typingInterval = setInterval(updateWPM, 1000); // Calls updateWPM every second
 
     typingField.addEventListener('input', async (e) => {
         const typedText = e.target.value;
@@ -174,18 +174,18 @@ function trackTypingProgress(textToType) {
     });
 }
 
-// Update WPM function
-function updateWPM() {
-    const typedText = document.getElementById('typingField').value;
-    const currentWPM = calculateWPM(typedText);
-    document.querySelector(`#${auth.currentUser.uid}-wpm`).textContent = `${(typedText.length > 0 ? (currentWPM).toFixed(0) : 0)} WPM`;
-}
-
 // Calculate WPM
 function calculateWPM(text) {
     const elapsedMinutes = (new Date().getTime() - startTime) / 1000 / 60;
     const totalWordsTyped = text.trim().split(/\s+/).length;
     return Math.floor(totalWordsTyped / elapsedMinutes);
+}
+
+// The missing updateWPM function that updates WPM every second
+function updateWPM() {
+    const typedText = document.getElementById('typingField').value;
+    const currentWPM = calculateWPM(typedText);
+    updateProgressBar(auth.currentUser.uid, undefined, currentWPM); // Update only the WPM
 }
 
 // Save player stats to Firestore
@@ -222,4 +222,5 @@ document.getElementById('submitButton').addEventListener('click', async () => {
 // Initialize session and start game
 document.addEventListener('DOMContentLoaded', async () => {
     await findOrCreateSession();
+    await startGame();
 });

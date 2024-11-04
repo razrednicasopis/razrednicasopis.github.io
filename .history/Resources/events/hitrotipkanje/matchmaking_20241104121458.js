@@ -84,7 +84,7 @@ async function fetchRandomText() {
     const snippet = await fetchRandomWikipediaSnippet();
     let gameText = cleanText(snippet);
     return splitIntoSentences(gameText);
-}
+};
 
 // Function to start the matchmaking process
 function startMatchmakingProcess() {
@@ -138,7 +138,7 @@ function startMatchmakingProcess() {
 }
 
 // Function to create a new matchmaking session
-async function createMatchmakingSession(playerId, requiredPlayers) {
+function createMatchmakingSession(playerId, requiredPlayers) {
     const sessionRef = doc(matchmakingSessionsRef); // Create a new document for the session
     const gameText = await fetchRandomText(); // Fetch random Wikipedia text
     const newSession = {
