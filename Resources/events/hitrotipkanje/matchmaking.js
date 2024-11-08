@@ -26,7 +26,7 @@ let currentSessionId = null; // Variable to track the current session ID
 
 
 // Text generation logic moved from game.js
-async function fetchRandomWikipediaSnippet() {
+async function fetchRandomText() {
     const url = 'https://sl.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exchars=500&explaintext&generator=random&grnnamespace=0&origin=*';
     const response = await fetch(url);
     const data = await response.json();
@@ -50,9 +50,9 @@ function splitIntoSentences(text) {
 
 async function generateRaceText() {
     const snippet = await fetchRandomWikipediaSnippet();
-    let gameText = cleanText(snippet);
-    gameText = splitIntoSentences(gameText);
-    return gameText;
+    let raceText = cleanText(snippet);
+    raceText = splitIntoSentences(raceText);
+    return raceText;
 }
 
 // Function to show the matchmaking popup
@@ -140,7 +140,7 @@ function startMatchmakingProcess() {
 // Function to create a new matchmaking session
 async function createMatchmakingSession(playerId, requiredPlayers) {
     const sessionRef = doc(matchmakingSessionsRef); // Create a new document for the session
-    const gameText = await fetchRandomText(); // Fetch random Wikipedia text
+    const raceText = await fetchRandomText(); // Fetch random Wikipedia text
     const newSession = {
         status: 'waiting',
         totalPlayers: 1,
