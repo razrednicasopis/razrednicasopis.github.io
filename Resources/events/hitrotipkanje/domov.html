@@ -31,7 +31,8 @@
         </nav>
     </header>
 
-    <button id="startPvpMatchmaking">Search</button>
+    <button id="startPvpMatchmaking">Search</button><br>
+    <button id="startPveMatchmaking">Play against AI</button>
 
     <!-- Popup codes -->
 
@@ -44,6 +45,17 @@
             <button id="closeMatchmakingPopup">Zapri</button>
         </div>
     </div>
+    
+<!-- Difficulty Selection Popup -->
+<div id="difficultyPopup" class="popup">
+    <div class="popup-content">
+        <h3>Izberi težavnost</h3><br>
+        <button class="difficultyBtn" data-difficulty="easy">Lahko</button>
+        <button class="difficultyBtn" data-difficulty="medium">Srednje</button>
+        <button class="difficultyBtn" data-difficulty="hard">Težko</button><br><br>
+        <button id="cancelBtn">Cancel</button>
+    </div>
+</div>
 
     <!-- Event Has Ended Popup -->
     <div id="eventEndedPopupContainer" style="display: none;" class="popup"><
@@ -81,5 +93,6 @@
     <script type="module" src="../eventsmain.js"></script>
     <script type="module" src="/Resources/settings/settings.js"></script>
     <script type="module" src="./matchmaking.js"></script>
+    <script type="module" src="./AIMatchmaking.js"></script>
     </body>
     </html>

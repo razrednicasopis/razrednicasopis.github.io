@@ -59,7 +59,6 @@ async function joinExistingSession(sessionDoc) {
     await updateDoc(sessionRef, {
         [`players.${playerId}`]: {
             progress: 0,
-            wpm: 0,
             name: playerName
         },
         playersCount: sessionData.playersCount + 1  // Update player count
@@ -74,7 +73,7 @@ async function joinExistingSession(sessionDoc) {
     // Display all player progress
     Object.keys(sessionData.players || {}).forEach((playerId) => {
         const playerStats = sessionData.players[playerId];
-        updateProgressBar(playerId, playerStats.progress, playerStats.wpm);
+        updateProgressBar(playerId, playerStats.progress);
     });
 
     // Start tracking typing progress for the current user
@@ -107,7 +106,7 @@ function limitTextToField(text) {
 }
 
 // Update progress bars for players
-function updateProgressBar(playerId, progress, wpm) {
+function updateProgressBar(playerId, progress) {
     let progressBar = document.getElementById(`${playerId}-progress`);
 
     if (!progressBar) {
@@ -121,7 +120,7 @@ function updateProgressBar(playerId, progress, wpm) {
                 <div class="progress-bar" id="${playerId}-progress" style="width: 0%"></div>
                 <div class="moving-lines"></div>
             </div>
-            <span class="wpm" id="${playerId}-wpm">0% (0 WPM)</span>
+            <span class="progress" id="${playerId}-progress-display">0%</span>
         `;
         if (playerId === auth.currentUser.uid) {
             progressContainer.classList.add('current-user');
@@ -135,7 +134,7 @@ function updateProgressBar(playerId, progress, wpm) {
         progressBar.style.width = `${progress}%`;
     }
 
-    document.querySelector(`#${playerId}-wpm`).textContent = `${progress !== undefined ? progress.toFixed(0) : 0}% (${wpm} WPM)`;
+    document.querySelector(`#${playerId}-progress-display`).textContent = `${progress !== undefined ? progress.toFixed(0) : 0}%`;
 }
 
 // Track typing progress
@@ -145,7 +144,7 @@ function trackTypingProgress(textToType) {
     startTime = new Date().getTime();
 
     clearInterval(typingInterval);
-    typingInterval = setInterval(updateWPM, 1000);
+    typingInterval = setInterval(updateProgress, 1000);
 
     typingField.addEventListener('input', async (e) => {
         const typedText = e.target.value;
@@ -155,7 +154,7 @@ function trackTypingProgress(textToType) {
         const typedWords = typedText.split(' ');
 
         if (typedText.length === 0) {
-            updateProgressBar(auth.currentUser.uid, 0, 0);
+            updateProgressBar(auth.currentUser.uid, 0);
             return;
         }
 
@@ -166,35 +165,27 @@ function trackTypingProgress(textToType) {
         }
 
         const progress = (correctCount / wordsToType.length) * 100;
-        const currentWPM = calculateWPM(typedText);
 
-        await savePlayerStats(auth.currentUser.uid, progress, currentWPM);
+        await savePlayerStats(auth.currentUser.uid, progress);
 
-        updateProgressBar(auth.currentUser.uid, progress, currentWPM);
+        updateProgressBar(auth.currentUser.uid, progress);
     });
 }
 
-// Update WPM function
-function updateWPM() {
+// Update progress
+function updateProgress() {
     const typedText = document.getElementById('typingField').value;
-    const currentWPM = calculateWPM(typedText);
-    document.querySelector(`#${auth.currentUser.uid}-wpm`).textContent = `${(typedText.length > 0 ? (currentWPM).toFixed(0) : 0)} WPM`;
-}
-
-// Calculate WPM
-function calculateWPM(text) {
-    const elapsedMinutes = (new Date().getTime() - startTime) / 1000 / 60;
-    const totalWordsTyped = text.trim().split(/\s+/).length;
-    return Math.floor(totalWordsTyped / elapsedMinutes);
+    const wordsToType = document.getElementById('textToType').innerText.split(' ');
+    const progress = (typedText.trim().split(/\s+/).length / wordsToType.length) * 100;
+    updateProgressBar(auth.currentUser.uid, progress);
 }
 
 // Save player stats to Firestore
-async function savePlayerStats(playerId, progress, wpm) {
+async function savePlayerStats(playerId, progress) {
     const sessionRef = doc(db, 'matchmakingSessions', sessionId);
 
     await updateDoc(sessionRef, {
-        [`players.${playerId}.progress`]: Math.min(progress, 100),
-        [`players.${playerId}.wpm`]: wpm
+        [`players.${playerId}.progress`]: Math.min(progress, 100)
     });
 }
 
@@ -209,8 +200,7 @@ document.getElementById('submitButton').addEventListener('click', async () => {
         const originalText = sessionData.text;
 
         if (typedText === originalText) {
-            const finalWPM = calculateWPM(typedText);
-            alert(`Bravo! Končali ste! Vaša končna WPM je ${finalWPM}.`);
+            alert("Bravo! Končali ste!");
             document.getElementById('typingField').disabled = true;
             clearInterval(typingInterval);
         } else {
