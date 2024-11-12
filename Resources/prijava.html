@@ -14,6 +14,7 @@
 <body>
 
 <div class="overlay"></div>
+<div id="resetPasswordOverlay" class="overlay"></div>
 
 <header>
     <h1>Razredni Časopis</h1>
@@ -36,6 +37,9 @@
     <h2>PRIJAVA V RAZREDNI ČASOPIS</h2><br>
     <input type="email" id="email" placeholder="E-mail" required><br>
     <input type="password" id="password" placeholder="Geslo" required><br>
+    <div id="resetPasswordContainer">
+    <a id="resetPassword" href="#" >Pozabljeno geslo?</a>
+    </div>
     <button class="blob-btn" id="prijavaBtn">Prijava
         <span class="blob-btn__inner">
             <span class="blob-btn__blobs">
@@ -46,8 +50,8 @@
             </span>
         </span>
     </button>
-    <a id="resetPassword" href="#">Pozabljeno geslo?</a>
 </div>
+
 
 <!-- Pop-ups -->
 
@@ -62,7 +66,7 @@
     </div>  
 </div>
 
-<!-- Password Reset Popups -->
+<!-- Password Reset Popup -->
 <div id="resetPasswordPopup" class="popup">
     <div class="popupContent">
         <h2>Resetiranje gesla</h2>
@@ -73,13 +77,6 @@
     </div>
 </div>
 
-<div id="confirmResetPopup" class="popup">
-    <div class="popupContent">
-        <h2>Potrditev e-pošte</h2>
-        <p>E-poštno sporočilo za ponastavitev gesla je bilo poslano na <span id="confirmEmail"></span>.</p>
-        <button id="closeConfirmPopupBtn">V redu</button>
-    </div>
-</div>
 
 <script src="alerts.js"></script>
 <script type="module" src="settings/settings.js"></script>

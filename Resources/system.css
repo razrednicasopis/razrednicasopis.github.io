@@ -361,7 +361,7 @@ display: inline-block
 
 #login-form  {
   text-align: center;
-  margin-top: 125px;
+  margin-top: 100px;
   justify-content: center;
 }
 
@@ -376,6 +376,83 @@ display: inline-block
 #prijavaBtn {
   margin-top: 15px;
 }
+
+/* Overlay Style for Password Reset Popup */
+#resetPasswordOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 500;
+  display: none; /* Initially hidden */
+}
+
+/* Popup Style for Password Reset */
+#resetPasswordPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 500; /* Above overlay */
+  display: none; /* Initially hidden */
+}
+
+#resetPasswordPopup .popupContent {
+  padding: 20px;
+  text-align: center;
+}
+
+#resetPasswordPopup input {
+  padding: 10px;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#resetPasswordPopup button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 20%;
+  max-width: 300px;
+}
+
+.popupContent button#confirmEmailBtn,
+.popupContent button#closeResetPopupBtn {
+    display: inline-block;
+    margin-top: 15px;
+}
+
+#resetPasswordPopup button:hover {
+  background-color: #2980b9;
+}
+
+#resetPasswordPopup button:focus {
+  outline: none;
+}
+
+/* Close Button Styling */
+#closeResetPopupBtn {
+  background-color: #ff6b6b;
+}
+
+#closeResetPopupBtn:hover {
+  background-color: #e74c3c;
+}
+
+
 
 /* Combined CSS for Blob Button */
 
@@ -542,6 +619,10 @@ display: inline-block
   text-align: center;
 }
 
+
+#resetPasswordContainer {
+  margin-top: 5px;
+}
 
 /*CSS za vse stranske nav skupine razen za glavno */
 

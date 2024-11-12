@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vzdrževanje strani - Razredni Časopis</title>
+    <link rel="stylesheet" href="../system.css">
+    <link rel="stylesheet" href="../styless.css">
+</head>
+<body>
+    
+<div class="overlay"></div>
+
+  <header>
+        <h1>Verzija 2.1 - Razredni Časopis</h1>
+        <nav>
+          <ul>
+            <li><a href="../index.html">Domov</a></li>
+            <li><a href="../obvestila.html">Nazaj</a></li>
+          </ul>
+        </nav>
+      </header>
+
+
+    <article>
+        <div class="člankitext">
+            <h1>Stanje po nujnem vzdrževanju & novosti v verziji 2.1</h1><br>
+            <div class="člankitext2">
+            <h2>Pravkar smo končali nujna dela ter popravke. Tu se nahajajo vse spremembe v verziji 2.1:</h2><br><br>
+            <span style="font-weight: normal; font-size: 16px;">
+                <ul class="version2alignment">
+                1. SISTEM ZA RAČUNE (Popravki)</li><br><br>
+               Zaradi sprememb v sistemu ki ga uporabljamo za naše račune, je bilo potrebno predelati ter popraviti nekatere dele sistema za registracijo. Sedaj je sistem ponovno funkcionalen. <br><br>
+               2. SISTEM ZA RAČUNE (Nov sistem - SPREMEMBA GESLA): <br><br>
+               Sedaj je mogoča sprememba gesla na <a href="../prijava.html">strani za prijavo. </a> kliknite na novo povezavo, vnesite vaš e-mail naslov, ter sledite navodilom.<br>
+               <img src="assets/pomoč1.png" style="width: 70%; height: 70%;"><br><br>
+               <img src="assets/pomoč2.png" style="width: 70%" height="70%;"><br><br>
+               <img src="assets/pomoč3.png" style="width: 70%; height: 70%;"><br><br>
+               
+               3. POPRAVKI (Celotna stran) <br><br>
+               Popravili smo nekaj napak pri prikazovanju oken, čas na strani za vzdrževanje, ter nekaj majhnih slovničnih napak. <br><br>
+               
+               4. PREDOGLEDI (Načrti za prihodnost) <br><br>
+               Trenutno načrtujemo še več manjših popravil ter priprave na December, saj bo le ta zelo napet! :) <br>
+               Tu je predogled za eno izmed prihajajočih dejavnosti ki so trenutno v delu ter bodo kmalu na voljo. <br><br>
+               <img src="assets/preview1.png" style="width: 70%; height: 70%;"><br><br>
+               <b>Kot vedno, se iskreno opravičujemo za vse nevščečnosti zaradi nenadnega vzdrževanja ter se vam zahvaljujemo za vaše razumevanje. <br>
+                  Naša dogodivščina z stranjo je daleč od konca, in upamo da nas boste spodbujevali med našimi trudi o nadgradnji strani. <br>
+                  Kot vedno, lahko predlagate nove ideje ter nas obvestite o napakah na našem <a href="../kontakt.html">kontakt obrazcu.</a><br><br>
+                Želimo vam vesel preostanek Novembra!<br><br>
+                Ekipa Razrednega Časopisa</b>
+
+               
+            </ul>
+            </span>
+           
+            
+            
+                </div>
+            </div>
+   
+    </article>
+
+
+
+
+<!--Pop-ups and other HTML code-->
+<div id="maintenance-warning">
+  <p id="maintenance-message"></p>
+</div>
+
+<div id="maintenancePopup">
+    <div id="maintenancePopupContent">
+      <h1>POVEZAVA IZGUBLJENA</h1>
+      <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+      <button id="closeMaintenancePopupBtn">Osveži</button>
+    </div>  
+</div>
+
+
+<script src="../alerts.js"></script>
+<script type="module" src="../settings/settings.js"></script>
+</body>
+</html>
