@@ -26,29 +26,120 @@ let currentSessionId = null; // Variable to track the current session ID
 
 
 // Text generation logic moved from game.js
-async function fetchRandomWikipediaSnippet() {
 async function fetchRandomText() {
     const url = 'https://sl.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exchars=500&explaintext&generator=random&grnnamespace=0&origin=*';
     const response = await fetch(url);
     const data = await response.json();
+    const pages = data.query.pages;
+    const firstPage = Object.values(pages)[0];
+    return firstPage.extract;
+}
 
+function cleanText(text) {
+    return text
+        .replace(/[\r\n]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/[^\w\s,.!?čšžČŠŽ]/g, '');
+}
+
+function splitIntoSentences(text) {
+    const sentences = text.match(/[^.!?]*[.!?]/g) || [];
+    return sentences.slice(0, 5).join(' ');
+}
 
 async function generateRaceText() {
     const snippet = await fetchRandomWikipediaSnippet();
-    let gameText = cleanText(snippet);
-    gameText = splitIntoSentences(gameText);
-    return gameText;
     let raceText = cleanText(snippet);
     raceText = splitIntoSentences(raceText);
     return raceText;
 }
 
 // Function to show the matchmaking popup
+function showMatchmakingPopup() {
+    document.getElementById('matchmakingOverlay').style.display = 'block'; // Show overlay
+    document.getElementById('matchmakingPopup').style.display = 'block'; // Show popup
+
+    // Start matchmaking process when the popup is shown
+    startMatchmakingProcess();
+}
+
+// Function to hide the matchmaking popup
+function hideMatchmakingPopup() {
+    document.getElementById('matchmakingOverlay').style.display = 'none'; // Hide overlay
+    document.getElementById('matchmakingPopup').style.display = 'none'; // Hide popup
+}
+
+// Event listener for the matchmaking button
+document.getElementById('startPvpMatchmaking').addEventListener('click', showMatchmakingPopup);
+
+// Close button event
+document.getElementById('closeMatchmakingPopup').addEventListener('click', () => {
+    hideMatchmakingPopup(); // Hide the popup
+    // Remove matchmaking status from local storage
+    localStorage.removeItem('matchmakingStatus');
+    
+    // Check if there's a current session to update
+    if (currentSessionId) {
+        checkAndUpdateSession(currentSessionId);
+    }
+});
+
+
+// Function to start the matchmaking process
+function startMatchmakingProcess() {
+    const user = auth.currentUser; // Get the current user's UID
+    const matchmakingPopupText = document.querySelector('#matchmakingPopup p'); // Select the text element
+
+    // Check if the user is authenticated
+    const loadingCircle = document.querySelector('.loading-circle');
+    const loginWarningTitle = document.querySelector('.loginWarningTitle');
+    if (!user) {
+        if (matchmakingPopupText) {
+            matchmakingPopupText.textContent = "Prosimo prijavite se za sodelovanje na tem eventu."; // Change message
+        }
+        loadingCircle.style.display = "none";
+        loginWarningTitle.style.display = "block";
+        console.error('User not authenticated');
+        return; // Exit the function if the user is not authenticated
+    }
+
+    const playerId = user.uid; // Get the current user's UID
+    const requiredPlayers = 2; // Define how many players are required for a match
+
+    // Check if the user is already in a session
+    if (currentSessionId) {
+        console.log(User ${playerId} is already in session ${currentSessionId}.);
+        return; // Prevent creating a new session if already in one
+    }
+
+    // Create a query to find available sessions
+    const q = query(
+        matchmakingSessionsRef,
+        where('status', '==', 'waiting'),
+        where('totalPlayers', '<', requiredPlayers),
+        limit(1)
+    );
+
+    getDocs(q)
+        .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+                // No available session found, create a new one
+                createMatchmakingSession(playerId, requiredPlayers);
+            } else {
+                // Join the existing session
+                const sessionDoc = querySnapshot.docs[0];
+                joinMatchmakingSession(sessionDoc.id, playerId, requiredPlayers);
+            }
+        })
+        .catch((error) => {
+            console.error('Error finding matchmaking session:', error);
+        });
+}
 
 // Function to create a new matchmaking session
 async function createMatchmakingSession(playerId, requiredPlayers) {
     const sessionRef = doc(matchmakingSessionsRef); // Create a new document for the session
-    const gameText = await fetchRandomText(); // Fetch random Wikipedia text
     const raceText = await fetchRandomText(); // Fetch random Wikipedia text
     const newSession = {
         status: 'waiting',
@@ -61,7 +152,7 @@ async function createMatchmakingSession(playerId, requiredPlayers) {
 
     setDoc(sessionRef, newSession)
         .then(() => {
-            console.log(`Matchmaking session created for player ${playerId}`);
+            console.log(Matchmaking session created for player ${playerId});
             currentSessionId = sessionRef.id; // Store the session ID
             localStorage.setItem('matchmakingStatus', sessionRef.id); // Store session ID in local storage
             listenToMatchmaking(sessionRef.id); // Start listening to the session updates
@@ -81,7 +172,7 @@ function joinMatchmakingSession(sessionId, playerId, requiredPlayers) {
         totalPlayers: increment(1) // Using increment from Firestore v9
     })
         .then(() => {
-            console.log(`Player ${playerId} joined session ${sessionId}`);
+            console.log(Player ${playerId} joined session ${sessionId});
             currentSessionId = sessionId; // Store the session ID
             localStorage.setItem('matchmakingStatus', sessionId); // Store session ID in local storage
             listenToMatchmaking(sessionId); // Start listening to the session updates
@@ -105,7 +196,7 @@ function checkAndUpdateSession(sessionId) {
                 if (totalPlayers <= 1) { // If totalPlayers is 1 or lower, delete the session
                     deleteDoc(sessionRef)
                         .then(() => {
-                            console.log(`Matchmaking session ${sessionRef.id} deleted.`);
+                            console.log(Matchmaking session ${sessionRef.id} deleted.);
                             currentSessionId = null; // Clear current session ID
                         })
                         .catch((error) => {
@@ -117,7 +208,7 @@ function checkAndUpdateSession(sessionId) {
                         totalPlayers: increment(-1) // Decrease the total players by 1
                     })
                     .then(() => {
-                        console.log(`Player count decreased for session ${sessionId}.`);
+                        console.log(Player count decreased for session ${sessionId}.);
                     })
                     .catch((error) => {
                         console.error('Error updating player count:', error);
@@ -143,7 +234,7 @@ function listenToMatchmaking(sessionId) {
             const matchmakingPopupText = document.querySelector('#matchmakingPopup p');
             if (matchmakingPopupText) {
                 // Update the popup with the number of players found
-                matchmakingPopupText.textContent = `Igralci: ${totalPlayers}/${requiredPlayers}`;
+                matchmakingPopupText.textContent = Igralci: ${totalPlayers}/${requiredPlayers};
 
                 // Check if all players are found
                 if (totalPlayers === requiredPlayers) {

@@ -184,5 +184,5 @@ onAuthStateChanged(auth, (user) => {
     } else {
         console.log('No user is logged in');
         // Handle not logged in user
-    }
+    )
 });

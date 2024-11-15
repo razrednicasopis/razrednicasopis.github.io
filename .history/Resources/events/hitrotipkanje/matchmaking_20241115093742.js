@@ -31,7 +31,7 @@ async function fetchRandomText() {
     const url = 'https://sl.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exchars=500&explaintext&generator=random&grnnamespace=0&origin=*';
     const response = await fetch(url);
     const data = await response.json();
-
+@@ -50,9 +50,9
 
 async function generateRaceText() {
     const snippet = await fetchRandomWikipediaSnippet();
@@ -44,7 +44,7 @@ async function generateRaceText() {
 }
 
 // Function to show the matchmaking popup
-
+@@ -140,140 +140,140 @@
 // Function to create a new matchmaking session
 async function createMatchmakingSession(playerId, requiredPlayers) {
     const sessionRef = doc(matchmakingSessionsRef); // Create a new document for the session

@@ -44,7 +44,7 @@ async function generateRaceText() {
 }
 
 // Function to show the matchmaking popup
-
+@@ -140,140 +140,140 @@
 // Function to create a new matchmaking session
 async function createMatchmakingSession(playerId, requiredPlayers) {
     const sessionRef = doc(matchmakingSessionsRef); // Create a new document for the session
