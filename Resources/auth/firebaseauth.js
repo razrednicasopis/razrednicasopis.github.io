@@ -98,7 +98,6 @@ async function checkMaintenanceMode() {
 
 document.addEventListener('DOMContentLoaded', () => {
   handleToasts();
-  updateButtonVisibility();
   checkMaintenanceMode();
 
 
@@ -243,21 +242,6 @@ if (loginBtn) {
       }
     });
   }
-
-  function updateButtonVisibility() {
-    const prijavaLinkBtn = document.getElementById('loginHref');
-    const logoutBtn = document.getElementById('logoutBtn');
-  
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        if (logoutBtn) logoutBtn.style.display = 'block';
-        if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'none';
-      } else {
-        if (logoutBtn) logoutBtn.style.display = 'none';
-        if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'block';
-      }
-    });
-  }
 });
 
 
@@ -309,3 +293,4 @@ if (loginBtn) {
             alert("Prosimo vnesite veljaven e-poštni naslov.");
         }
     });
+
