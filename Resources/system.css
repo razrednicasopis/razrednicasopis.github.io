@@ -806,5 +806,131 @@ display: inline-block
   margin-left: 2%;
 }
 
-/* CSS for the "Under Maintenance" site countdown */
+/* CSS for the "Mail" System */
 
+/* Mail Icon */
+#mail-icon {
+  position: fixed;
+  top: 20px;
+  right: 55px;
+  cursor: pointer;
+  font-size: 20px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 50%;
+  padding: 10px;
+  text-align: center;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#unread-count {
+  background: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  padding: 2px 6px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Mail Dropdown */
+#mail-dropdown {
+  position: fixed;
+  top: 70px;
+  right: 10px;
+  width: 300px;
+  background: #fff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 10;
+}
+
+#mail-dropdown h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+#mail-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#mail-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#mail-list li:hover {
+  background-color: #f4f4f4;
+}
+
+#no-mails {
+  text-align: center;
+  color: #777;
+}
+
+/* Mail Popup */
+#mail-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background: white;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  z-index: 20;
+  display: none;
+}
+
+#mail-popup .popup-content {
+  padding: 20px;
+  position: relative;
+}
+
+#mail-popup h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+#mail-popup p {
+  font-size: 14px;
+  color: #555;
+  margin: 10px 0 20px 0;
+}
+
+#close-popup {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+#mark-as-read {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#mark-as-read:hover {
+  background-color: #2980b9;
+}

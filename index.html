@@ -12,7 +12,10 @@
 <div class="overlay"></div>
 
   <header>
-  <h1>Razredni Časopis</h1>
+  <h1>Razredni Časopis</h1> 
+  <!--<div id="mail-icon" onclick="toggleMailDropdown()">
+    📩 <span id="unread-count" class="hidden"></span>
+</div>-->
   <nav>
     <ul>
       <li><a href="Resources/index.html">Domov</a></li>
@@ -57,6 +60,24 @@
 
 
 <!-- Popups -->
+
+    <!-- Dropdown for Mails -->
+    <div id="mail-dropdown" class="hidden">
+      <h3>Sporočila</h3>
+      <ul id="mail-list"></ul>
+      <div id="no-mails" class="hidden">Ni novih sporočil.</div>
+  </div>
+
+  <!-- Popup for Detailed Mail -->
+  <div id="mail-popup" class="hidden">
+      <div class="popup-content">
+          <span id="close-popup" onclick="closeMailPopup()">×</span>
+          <h3 id="popup-subject">Naslov sporočila</h3>
+          <p id="popup-content">Vsebina sporočila se bo pojavila tukaj.</p>
+          <button id="mark-as-read" onclick="markAsReadPopup()">Označi kot prebrano</button>
+      </div>
+  </div>
+
 <div id="popupContainer">
   <div id="popupContent">
     <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
@@ -83,5 +104,6 @@
 <script type="module" src="Resources/settings/settings.js"></script>
 <script type="module" src="Resources/auth/firebaseauth.js"></script>
 <script type="module" src="Resources/auth/loginStateChecker.js"></script>
+<script type="module" src="Resources/obvestila/firebasemodmail.js"></script>
 </body>
 </html>
