@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="/Resources/auth/firebaseauth.js"></script>
+    <link rel="stylesheet" href="/Resources/styless.css">
+    <link rel="stylesheet" href="/Resources/system.css">
+    <link rel="stylesheet" href="general.css">
+    <link rel="stylesheet" href="../eventsmain.css">
+    <link rel="stylesheet" href="../hitrotipkanje/typingRace.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Event hitro tipkanje - Razredni Časopis</title>
+</head>
+<body>
+
+<div class="overlay"></div>
+<div id="matchmakingOverlay" class="overlay"></div>
+<div id="eventEndedOverlay" class="overlay"></div>
+
+
+<div id="festivalIgerNavbar">
+    <a href="../../index.html">Domov</a>
+    <a href="../eventi.html">Nazaj</a>
+</div>
+
+
+
+<div class="game-icons">
+    <!-- Game 1 -->
+    <div class="game-icon" onclick="window.location.href='igre/slytherio.html';">
+        <div class="icon">🎮</div>
+        <p><b>Slyther.io</b></p>
+    </div>
+
+    <div class="game-icon" onclick="window.location.href='igre/';">
+        <div class="icon">🎮</div>
+        <p>Game 1</p>
+    </div>
+</div>
+
+
+
+
+<!-- Popup codes -->
+
+<!-- Event Has Ended Popup -->
+<div id="eventEndedPopupContainer" style="display: none;" class="popup"><
+    <div class="popup-content">
+        <h2>Dogodek je končan!</h2><br>
+        <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>
+        <button id="closeEventEndedPopup">Zapri</button>
+    </div>
+</div>
+
+<div id="popupContainer">
+    <div id="popupContent">
+        <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
+        <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+        <button id="closePopupBtn">V redu</button>
+    </div>
+</div>
+
+<div id="maintenance-warning">
+    <p id="maintenance-message"></p>
+</div>
+
+<div id="maintenancePopup">
+    <div id="maintenancePopupContent">
+        <h1>POVEZAVA IZGUBLJENA</h1>
+        <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+        <button id="closeMaintenancePopupBtn">Osveži</button>
+    </div>  
+</div>
+
+<script src="/Resources/alerts.js"></script>
+<script type="module" src="../eventServer.js"></script>
+<script type="module" src="../eventChecker.js"></script>
+<script type="module" src="../eventsmain.js"></script>
+<script type="module" src="/Resources/settings/settings.js"></script>
+<script type="module" src="../../auth/loginStateChecker.js"></script>
+</body>
+</html>

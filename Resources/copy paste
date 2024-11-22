@@ -334,3 +334,126 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="game">
+<h3>Cut the Rope</h3>
+<iframe src="https://cuttherope.com/play"></iframe>
+</div>
+
+<!-- HexGL -->
+<div class="game">
+<h3>HexGL</h3>
+<iframe src="https://hexgl.bkcore.com/"></iframe>
+</div>
+
+<!-- 10x10 -->
+<div class="game">
+<h3>10x10!</h3>
+<iframe src="https://10x10.fun/"></iframe>
+</div>
+
+<!-- Slither.io -->
+<div class="game">
+<h3>Slither.io</h3>
+<iframe src="http://slither.io/" scrolling="no"></iframe>
+</div>
+
+<!-- Pac-Man -->
+<div class="game">
+<h3>Pac-Man</h3>
+<iframe src="https://www.google.com/doodles/30th-anniversary-of-pac-man"></iframe>
+</div>
+
+<!-- 2048 -->
+<div class="game">
+<h3>2048</h3>
+<iframe src="https://play2048.co/"></iframe>
+</div>
+
+<!-- Fancy Pants Adventure -->
+<div class="game">
+<h3>Fancy Pants Adventure</h3>
+<iframe src="https://www.crazygames.com/game/fancy-pants-adventures-world-1"></iframe>
+</div>
+
+<!-- Happy Wheels -->
+<div class="game">
+<h3>Happy Wheels</h3>
+<iframe src="https://www.totaljerkface.com/happy_wheels.tjf"></iframe>
+</div>
+
+<!-- Bloons Tower Defense 5 -->
+<div class="game">
+<h3>Bloons Tower Defense 5</h3>
+<iframe src="https://ninjakiwi.com/Games/Tower-Defense/Play/Bloons-Tower-Defense-5.html"></iframe>
+</div>
+
+<!-- Raft Wars -->
+<div class="game">
+<h3>Raft Wars</h3>
+<iframe src="https://www.crazygames.com/game/raft-wars"></iframe>
+</div>
+
+<!-- Skribbl.io -->
+<div class="game">
+<h3>Skribbl.io</h3>
+<a href="https://skribbl.io/" target="_blank">Play Skribbl.io</a>
+</div>
+
+<!-- Agar.io -->
+<div class="game">
+<h3>Agar.io</h3>
+<iframe src="http://agar.io/"></iframe>
+</div>
+
+<!-- Diep.io -->
+<div class="game">
+<h3>Diep.io</h3>
+<iframe src="http://diep.io/"></iframe>
+</div>
+
+<!-- Flappy Bird -->
+<div class="game">
+<h3>Flappy Bird</h3>
+<iframe src="https://flappybird.io/"></iframe>
+</div>
+
+<!-- Geometry Dash -->
+<div class="game">
+<h3>Geometry Dash</h3>
+<iframe src="https://geometry-dash.co/"></iframe>
+</div>
+
+<!-- Tetris -->
+<div class="game">
+<h3>Tetris</h3>
+<iframe src="https://tetris.com/play-tetris"></iframe>
+</div>
+
+<!-- Minesweeper -->
+<div class="game">
+<h3>Minesweeper</h3>
+<iframe src="https://minesweeperonline.com/"></iframe>
+</div>

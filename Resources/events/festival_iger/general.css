@@ -1,0 +1,87 @@
+#festivalIgerNavbar {
+    display: flex; /* Aligns items horizontally by default */
+    height: 20%;
+    align-items: center; /* Centers items vertically */
+    flex-direction: row; /* Ensures links stay in a row */
+    position: relative;
+    top: 10px; /* Moves the navbar slightly down */
+    gap: 25px; /* Adds space between links */
+    padding: 10px 20px; /* Adds padding inside the navbar */
+    border-radius: 5px; /* Optional: Add rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for a better look */
+}
+
+#festivalIgerNavbar a {
+    font-size: 20px; /* Adjusts font size */
+    color: #333; /* Sets text color */
+    transition: color 0.3s; /* Smooth color transition on hover */
+}
+
+#festivalIgerNavbar a:hover {
+    color: #007bff; /* Changes link color on hover */
+}
+
+
+/* Container for game icons */
+.game-icons {
+    display: flex;
+    justify-content: flex-start; /* Aligns icons to the left */
+    gap: 10px; /* Reduces the space between the icons */
+    flex-wrap: nowrap; /* Ensures the icons stay in a single line */
+    margin-top: 100px;
+    margin-left: 50px;
+}
+
+/* Styling for individual game icons */
+.game-icon {
+    text-align: center;
+    width: 100px;
+    cursor: pointer;
+}
+
+.icon {
+    width: 60px;
+    height: 60px;
+    background-color: #ddd;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 30px;
+    transition: background-color 0.3s ease;
+}
+
+.game-icon p {
+    font-size: 14px;
+    margin-right: 40px;
+    color: #333;
+}
+
+/* Hover effect */
+.game-icon:hover .icon {
+    background-color: #3c555f;
+}
+
+.game-icon:hover {
+    cursor: pointer;
+}
+
+/* SLYTHER.IO Game */
+
+/* Container for the iframe */
+#slytherContainer {
+    width: 100%;
+    height: 705px; /* Set a fixed height for the container */
+    position: relative;
+    overflow: hidden; /* Prevents scrolling */
+}
+
+/* SLYTHER.IO Game */
+#slytherIOIframe {
+    width: 100%;  /* Full width of the container */
+    height: 100%; /* Full height of the container */
+    border: 0;
+}
+
+
