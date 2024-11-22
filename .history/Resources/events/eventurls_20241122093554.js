@@ -5,7 +5,7 @@ export const eventUrls = {
   ],
   "Festival Iger": [
     "https://razrednicasopis.github.io/Resources/events/festival_iger/domov.html"
-    "https://razrednicasopis.github.io/Resources/events/festival_iger/igre/slitherio.html"
+    "https://razrednicasopis.github.io/Resources/events/festival_iger/domov.html"
     "http://127.0.0.1:5500/Resources/events/festival_iger/domov.html", 
     "http://127.0.0.1:5500/Resources/events/festival_iger/igre/slytherio.html"
   ], // Add your specific URLs for guessingGame event
