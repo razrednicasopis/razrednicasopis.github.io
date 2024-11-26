@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function () {
         switch (command) {
             case '/maintenance':
                 if (userRole !== 'admin' && userRole !== 'owner') {
-                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
     
@@ -265,13 +265,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (action === 'disable') {
                     await disableChatMaintenance();
                 } else {
-                    sendPrivateMessage('SERVER: Usage: /maintenance <enable|disable>');
+                    sendPrivateMessage('SERVER: Uporaba: /maintenance <enable|disable>');
                 }
                 break;
 
             case '/deletemsg':
                 if (userRole !== 'admin' && userRole !== 'owner') {
-                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
                 const messageId = commandArgs[1];
@@ -280,15 +280,16 @@ document.addEventListener('DOMContentLoaded', function () {
     
             case '/chatpurge':
                 if (userRole !== 'admin' && userRole !== 'owner') {
-                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
                 await purgeChat();
                 break;
+
     
             case '/mute':
                 if (userRole !== 'admin' && userRole !== 'owner') {
-                    sendPrivateMessage('SERVER: You do not have sufficient permissions to execute this command.');
+                    sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
                 // Implement the mute functionality
@@ -316,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
             messageSendBtn.classList.add('chatMaintenance');
             chatBox.placeholder = 'Napaka pri povezavi z strežnikom. Prosimo poskusite kasneje.';
         } catch (error) {
-            sendPrivateMessage('SERVER: Could not enable maintenance.');
+            sendPrivateMessage('SERVER: Napaka pri vklopu vzdrževanja.');
         }
     }
     
@@ -328,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
             messageSendBtn.classList.remove('chatMaintenance');
             chatBox.placeholder = 'Vnesi sporočilo...';
         } catch (error) {
-            sendPrivateMessage('SERVER: Could not disable maintenance.');
+            sendPrivateMessage('SERVER: Napaka pri izklopu vzdrževanja.');
         }
     }
     
@@ -343,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             await deleteDoc(doc(db, 'messages', messageId));
         } catch (error) {
-            sendPrivateMessage('SERVER: Could not delete the message.');
+            sendPrivateMessage('SERVER: Napaka pri brisanju sporočila.');
         }
     }
 
@@ -357,9 +358,9 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             await Promise.all(deletePromises);
-            sendPrivateMessage('SERVER: Chat purged successfully.');
+            sendPrivateMessage('SERVER: Klepet je bil uspešno izpraznjen.');
         } catch (error) {
-            sendPrivateMessage('SERVER: Failed to purge chat.');
+            sendPrivateMessage('SERVER: Napaka pri praznjenju klepeta.');
         }
     }
 

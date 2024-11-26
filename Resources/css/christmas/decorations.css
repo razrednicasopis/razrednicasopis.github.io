@@ -1,0 +1,91 @@
+.snowflake {
+    color: #fff;
+    font-size: 1.5em;
+    position: absolute;
+    top: -10%;
+    animation: snowfall 10s linear infinite;
+    transition: opacity 5s ease; /* Add this line */
+}
+
+@keyframes snowfall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.3;
+    }
+}
+
+.snowflake:nth-child(odd) {
+    animation-duration: 12s;
+    font-size: 1.2em;
+}
+
+.snowflake:nth-child(even) {
+    animation-duration: 8s;
+    font-size: 1.8em;
+}
+
+
+/* Christmas Lights */
+
+/* Container for the lights */
+.christmas-lights {
+    position: fixed;
+    top: 0; /* Stick to the top of the screen */
+    left: 0;
+    width: 100%;
+    height: 50px; /* Adjust this value for wire height */
+    z-index: 9999; /* Make sure it's above everything else */
+    pointer-events: none; /* Allow clicks to go through */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Keep lights aligned to the top */
+}
+
+/* Wire styling (curved C shapes) */
+.wire {
+    position: fixed;  /* Use absolute positioning to move the wire above the header */
+    top: 0;              /* Keep it at the top */
+    left: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+/* Each "C" shaped piece of the wire (wide and curved) */
+.wire-piece {
+    position: relative;
+    width: 550px;  /* Increased width of each C shape */
+    height: 80px;   /* Increased height of each C shape */
+    border-top: 5px solid rgba(128, 128, 128, 0.2); /* Reduced opacity for slight visibility */
+    border-radius: 50% 50% 0 0;  /* Creates the "C" shape curve */
+    transform: rotate(180deg) translateY(50px);  /* Flipping upside down and raising */
+}
+
+/* Lightbulb styling */
+.light {
+    position: fixed;
+    width: 15px;
+    height: 15px;
+    background: transparent; /* Invisible initially */
+    border-radius: 50%;
+    transition: background-color 2.5s ease, box-shadow 2.5s ease;
+    margin-top: 12px;
+}
+
+/* Glowing effect when turned on */
+.light.on {
+    box-shadow: 0 0 50px currentColor;
+}
+
+/* Make the light colors vary */
+.light.red { background-color: red; }
+.light.green { background-color: green; }
+.light.blue { background-color: blue; }
+.light.yellow { background-color: yellow; }
+.light.orange { background-color: orange; }
+

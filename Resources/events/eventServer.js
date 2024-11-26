@@ -11,6 +11,7 @@ const firebaseConfig = {
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
 
+const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 
 // Function to check server status and navigate accordingly
