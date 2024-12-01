@@ -67,6 +67,10 @@
     cursor: pointer;
 }
 
+.game-icon a {
+    text-decoration: none;
+}
+
 #countdownTimer {
     font-weight: bold;
     font-size: 25px;
