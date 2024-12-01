@@ -67,6 +67,14 @@
     cursor: pointer;
 }
 
+#countdownTimer {
+    font-weight: bold;
+    font-size: 25px;
+    margin-top: 50px;
+    margin-right: 50px;
+    text-align: center;
+}
+
 /* SLYTHER.IO Game */
 
 /* Container for the iframe */

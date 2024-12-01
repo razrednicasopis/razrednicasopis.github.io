@@ -29,6 +29,7 @@
             <li><a href="/Resources/vsebine.html">Vsebine </a></li>
             <li><a href="/Resources/obvestila.html">Obvestila</a></li>
             <li id="chatLink" class=""><a href="/Resources/utills/klepet.html">Klepet</a></li>
+            <li><a href="#">Eventi</a></li>
             <li><a href="/Resources/kontakt.html">Kontakt</a></li>
             <li class="prijavaLink" id="loginHref"><a href="/Resources/prijava.html" style="display: block;">Prijava</a></li>
             <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
@@ -37,47 +38,70 @@
     </nav>
 </header>
 
+
 <div id="available-events">
     <h2>Dosegljivi Eventi</h2>
     <div id="noEventsNotif" style="display:none">Ni trenutno dosegljivih eventov.</div>
     <div id="available-container" class="events-container">
-        <!-- Event box for typingRace -->
-        <div class="event-box available" data-event-name="typingRace">
-            <div class="event-header">
-                <div class="event-title">Hitro Tipkanje</div>
-                <div class="event-countdown" id="countdown-typingRace"></div>
-                <div class="event-description">Tekmujte v tipkanju proti robotu!</div>
-            </div>
-            <button class="join-event-btn checkEventServerStatus" data-href="./hitrotipkanje/domov.html">Join Event</button>
-        </div>
-
-        <!-- Event box for guessingGame -->
+        <!-- Event box for gamesFestival -->
         <div class="event-box available" data-event-name="gamesFestival">
             <div class="event-header">
                 <div class="event-title">Festival iger</div>
                 <div class="event-countdown"></div>
                 <div class="event-description">Igrajte razne spletne igre!</div>
             </div>
+            <button class="join-event-btn checkServerStatus">Join Event</button>
+        </div>
+
+
+        <div class="event-box available" data-event-name="luckyWheelEvent">
+            <div class="event-header">
+                <div class="event-title">Kolo Sreče</div>
+                <div class="event-countdown"></div>
+                <div class="event-description">Zavrti kolo in preizkusi svojo srečo!</div>
+            </div>
             <button class="join-event-btn">Join Event</button>
-        </div>    
+        </div>
+
+
+        <div class="event-box available" data-event-name="typingRace">
+            <div class="event-header">
+                <div class="event-title">???</div>
+                <div class="event-countdown"></div>
+                <div class="event-description">err_eventDescription</div>
+            </div>
+            <button class="join-event-btn checkServerStatus">Join Event</button>
+        </div>
+
+
     </div>
 </div>
 
 <div id="unavailable-events">
     <h2>Nedosegljivi Eventi</h2>
     <div id="unavailable-container" class="events-container">
-        <!-- Event box for typingRace -->
-        <div class="event-box unavailable" data-event-name="typingRace">
+        <!-- Event box for gamesFestival -->
+        <div class="event-box unavailable" data-event-name="gamesFestival">
             <div class="event-header">
-                <div class="event-title">Hitro Tipkanje</div>
+                <div class="event-title">Festival Iger</div>
                 <div class="eventUnavailableContent">
                     <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
                 </div>
             </div>
         </div>
 
-        <!-- Event box for guessingGame -->
-        <div class="event-box unavailable" data-event-name="gamesFestival">
+
+        <div class="event-box unavailable" data-event-name="luckyWheelEvent">
+            <div class="event-header">
+                <div class="event-title">Kolo Sreče</div>
+                <div class="eventUnavailableContent">
+                    <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="event-box unavailable" data-event-name="typingRace">
             <div class="event-header">
                 <div class="event-title">???</div>
                 <div class="eventUnavailableContent">
@@ -85,9 +109,9 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
-
 <!-- Popup codes -->
 <div id="popupContainer">
     <div id="popupContent">
@@ -112,7 +136,7 @@
 
 <script src="/Resources/alerts.js"></script>
 <script type="module" src="eventServer.js"></script>
-<script type="module" src="/Resources/settings/settings.js"></script>
+<script type="module" src="/Resources/setting/settings.js"></script>
 <script type="module" src="./eventsmain.js"></script>
 </body>
 </html>

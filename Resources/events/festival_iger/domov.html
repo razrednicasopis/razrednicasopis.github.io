@@ -15,7 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <title>Event hitro tipkanje - Razredni Časopis</title>
+    <script type="module" src="gameStatus.js"></script>
+    <title>Festival Iger - Razredni Časopis</title>
 </head>
 <body>
 
@@ -29,18 +30,50 @@
     <a href="../eventi.html">Nazaj</a>
 </div>
 
+<div id="countdownTimer" class="hidden">
+    <p>Naslednja igra bo na voljo čez: <span id="timeLeft"></span></p>
+</div>
 
-
+<!-- Games Section -->
 <div class="game-icons">
-    <!-- Game 1 -->
-    <div class="game-icon" onclick="window.location.href='igre/deipio.html';">
+    <div class="game-icon" id="game-deipio"onclick="window.open('igre/deipio.html', '_blank')">
         <div class="icon">🎮</div>
         <p><b>Deip.io</b></p>
     </div>
 
-    <div class="game-icon" onclick="window.location.href='igre/';">
+    <div class="game-icon" id="game-slitherio"onclick="window.open('https:slither.io', '_blank')">
         <div class="icon">🎮</div>
-        <p>Game 1</p>
+        <p><b>Slither.io</b></p>
+    </div>
+
+    <div class="game-icon" id="game-tRex" onclick="window.open('https:dinorunner.com', '_blank')">
+        <div class="icon">🎮</div>
+        <p><b>T-Rex</b></p>
+    </div>
+
+    <div class="game-icon" id="game-agario"onclick="window.open('https:agar.io', '_blank')">
+        <div class="icon">🎮</div>
+        <p><b>Agar.io</b></p>
+    </div>
+
+    <div class="game-icon" id="game-shellshock"onclick="window.open('https:shellshock.io', '_blank')">
+        <div class="icon">🎮</div>
+        <p><b>Shell Shockers</b></p>
+    </div>
+
+    <div class="game-icon" id="game-krunkerio"onclick="window.open('https:krunker.io', '_blank')">
+        <div class="icon">🎮</div>
+        <p><b>Krunker.io</b></p>
+    </div>
+    
+    <div class="game-icon" id="game-happywheels"onclick="window.open('https:totaljerkface.com/happy_wheels.tjf', '_blank')">
+        <div class="icon">🎮</div>
+        <p><b>Happy Wheels</b></p>
+    </div>
+
+    <div class="game-icon" id="game-crossyroad"onclick="window.open('https:poki.com/en/g/crossy-road', '_blank')">
+        <div class="icon">🎮</div>
+        <p><b>Crossy Road</b></p>
     </div>
 </div>
 
