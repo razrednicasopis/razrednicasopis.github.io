@@ -1,3 +1,4 @@
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getFirestore, collection, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { eventUrls } from './eventurls.js'; // Import eventUrls
 
@@ -10,6 +11,9 @@ const firebaseConfig = {
     messagingSenderId: "294018128318",
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
+
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
 
 // Initialize Firebase Firestore
