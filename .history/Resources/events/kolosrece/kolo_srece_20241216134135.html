@@ -6,46 +6,46 @@
     <script type="module" src="/Resources/auth/firebaseauth.js"></script>
     <link rel="stylesheet" href="/Resources/styless.css">
     <link rel="stylesheet" href="/Resources/system.css">
-    <link rel="stylesheet" href="/Resources/events/hitrotipkanje/typingRace.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="general.css">
+    <link rel="stylesheet" href="../eventsmain.css">
+    <link rel="stylesheet" href="../hitrotipkanje/typingRace.css">
+    <link rel="stylesheet" href="../../css/christmas/decorations.css">
+    <script type="module" href="../../js/christmas/christmasLights.js"></script>
+    <script type="module" href="../../js/christmas/snowstorm.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <title>Event hitro tipkanje - Razredni Časopis</title>
+    <script type="module" src="gameStatus.js"></script>
+    <title>Kolo Sreče - Razredni Časopis</title>
 </head>
 <body>
 
 <div class="overlay"></div>
 <div id="matchmakingOverlay" class="overlay"></div>
 <div id="eventEndedOverlay" class="overlay"></div>
-<header>
-    <h1>Hitro Tipkanje - Razredni Časopis</h1>
-    <nav>
-        <ul>
-            <li><a href="/Resources/events/eventi.html">Nazaj</a></li>
-            <li><a href="/Resources/index.html">Domov</a></li>
-            <li class="prijavaLink" id="loginHref"><a href="/Resources/prijava.html" style="display: block;">Prijava</a></li>
-            <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
-            <li class="prijavaLink"><a href="/Resources/registracija.html">Registracija</a></li>
-        </ul>
-    </nav>
-</header>
 
-<button id="startPvpMatchmaking">Search</button>
+
+
+<!-- Lucky Wheel Section -->
+
+<div class="wheel-container">
+    <div id="wheel">
+        <div class="wheel-segment">10</div>
+        <div class="wheel-segment">20</div>
+        <div class="wheel-segment">50</div>
+        <div class="wheel-segment">100</div>
+        <div class="wheel-segment">200</div>
+    </div>
+</div>
+<button id="spinButton">Spin the Wheel</button>
+<p id="spinMessage"></p>
+
+
 
 <!-- Popup codes -->
 
-<!-- Matchmaking Popup -->
-<div id="matchmakingPopup" class="popup">
-    <div class="popup-content">
-        <div class="loading-circle"></div>
-        <p>Iskanje igralcev...</p>
-        <button id="closeMatchmakingPopup">Zapri</button>
-    </div>
-</div>
-
 <!-- Event Has Ended Popup -->
-<div id="eventEndedPopupContainer" style="display: none;" class="popup">
+<div id="eventEndedPopupContainer" style="display: none;" class="popup"><
     <div class="popup-content">
         <h2>Dogodek je končan!</h2><br>
         <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>
@@ -77,7 +77,9 @@
 <script src="/Resources/alerts.js"></script>
 <script type="module" src="../eventServer.js"></script>
 <script type="module" src="../eventChecker.js"></script>
+<script type="module" src="../eventsmain.js"></script>
 <script type="module" src="/Resources/settings/settings.js"></script>
-<script type="module" src="./matchmaking.js"></script>
+<script type="module" src="../../auth/loginStateChecker.js"></script>
+<script type="module" src=""
 </body>
 </html>
