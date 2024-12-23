@@ -1,6 +1,6 @@
 // Import Firebase modules
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, increment, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, increment, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 
 // Firebase configuration
@@ -23,16 +23,23 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userId = user.uid;
         const userEventRef = doc(db, "lbEventData", userId);
-        const userSnapshot = await getDoc(userEventRef);
 
-        if (!userSnapshot.exists()) {
-            await setDoc(userEventRef, { free_spins: 1, tokens: 0 });
-        }
+        // Set up real-time listener
+        onSnapshot(userEventRef, async (userSnapshot) => {
+            if (!userSnapshot.exists()) {
+                // Initialize data if doesn't exist
+                await setDoc(userEventRef, { free_spins: 1, tokens: 0 });
+            }
 
-        const userData = userSnapshot.data();
-        if (userData.free_spins <= 0) {
-            displayCountdownUntilNextSpin();
-        }
+            const userData = userSnapshot.data();
+            if (userData.free_spins <= 0) {
+                displayCountdownUntilNextSpin();
+            } else {
+                // Update UI based on the available spins
+                document.getElementById("spinButton").style.display = "block"; // Show button if spins are available
+                document.querySelector('.countdown-message').style.display = "none";
+            }
+        });
     }
 });
 
@@ -105,43 +112,44 @@ async function startSpinAnimation(userEventRef) {
             free_spins: increment(-1)
         });
 
-       // Display the reward message
-document.getElementById("spinMessage").innerHTML = `
-<div class="reward-message">
-    <p>Čestitke! 🎉 Zmagali ste <span class="reward-amount">${reward} kovancev</span>.</p>
-    <p>Prosimo vrnite se čez <span id="nextSpinCountdown"></span> za vaš naslednji vrtljaj.</p>
-</div>
-`;
+        // Display the reward message
+        document.getElementById("spinMessage").innerHTML = `
+            <div class="reward-message">
+                <p>Čestitke! 🎉 Zmagali ste <span class="reward-amount">${reward} kovancev</span>.</p>
+                <button id="confirmButton" class="confirm-button">Potrdi</button>
+            </div>
+        `;
 
-        // Start the countdown timer
-        startCountdownTimer();
+        // Add event listener to "Potrdi" button to refresh the page
+        document.getElementById("confirmButton").addEventListener("click", () => {
+            location.reload();
+        });
 
-        // Enable the spin button after the spin
+        // Hide the spin button
         document.getElementById("spinButton").style.display = "none";
     }, 6000); // Match the animation duration
 }
 
-
 function displayCountdownUntilNextSpin() {
     const spinMessage = document.getElementById("spinMessage");
 
-    // Prikaz stiliziranega sporočila
+    // Display the formatted countdown message
     spinMessage.innerHTML = `
         <div class="countdown-message">
             <p>Ponovno lahko zavrtite čez <span id="nextSpinCountdown" class="countdown-timer"></span> </p>
         </div>
     `;
 
-    startCountdownTimer(); // Začetek odštevanja
-    document.getElementById("spinButton").style.display = "none"; // Skrij gumb za vrtenje
+    startCountdownTimer(); // Start the countdown
+    document.getElementById("spinButton").style.display = "none"; // Hide the spin button
 }
 
 
-// Start Countdown Timer
+// Start Countdown Timer Function from Old Code
 function startCountdownTimer() {
     const countdownElement = document.getElementById("nextSpinCountdown");
     const resetTime = new Date();
-    resetTime.setHours(24, 0, 0, 0);
+    resetTime.setHours(24, 0, 0, 0); // Reset time set to midnight
 
     const interval = setInterval(() => {
         const now = new Date();
@@ -149,16 +157,24 @@ function startCountdownTimer() {
 
         if (diff <= 0) {
             clearInterval(interval);
-            countdownElement.textContent = "0:00:00";
-            document.getElementById("spinButton").style.display = "block";
+            countdownElement.textContent = "0s";
+            document.getElementById("spinButton").style.display = "block"; // Show button when countdown ends
         } else {
             const hours = Math.floor(diff / 3600000);
             const minutes = Math.floor((diff % 3600000) / 60000);
             const seconds = Math.floor((diff % 60000) / 1000);
-            countdownElement.textContent = `${hours}:${minutes}:${seconds}`;
+
+            if (hours > 0) {
+                countdownElement.textContent = `${hours}h ${minutes}m`;
+            } else if (minutes > 0) {
+                countdownElement.textContent = `${minutes}m ${seconds}s`;
+            } else {
+                countdownElement.textContent = `${seconds}s`;
+            }
         }
     }, 1000);
 }
+
 
 // Reset Free Spins at Midnight
 async function resetFreeSpins() {
@@ -179,42 +195,3 @@ async function resetFreeSpins() {
 
 // Initialize Midnight Reset
 resetFreeSpins();
-
-
-
-
-// Prikaži Leaderboard
-async function displayLeaderboard() {
-    const leaderboardBody = document.getElementById("leaderboardBody");
-
-    // Pridobi vse uporabnike iz Firestore
-    const usersSnapshot = await getDocs(collection(db, "lbEventData"));
-
-    // Pretvori uporabniške podatke v array in jih sortira po številu kovancev
-    const usersData = [];
-    usersSnapshot.forEach(doc => {
-        const data = doc.data();
-        usersData.push({ username: doc.id, tokens: data.tokens || 0 });
-    });
-
-    usersData.sort((a, b) => b.tokens - a.tokens); // Sortiraj po kovancih (padajoče)
-
-    // Počisti trenutno vsebino Leaderboard-a
-    leaderboardBody.innerHTML = "";
-
-    // Dodaj uporabniške podatke v tabelo
-    usersData.forEach((user, index) => {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${index + 1}</td> <!-- Mesto v Leaderboard-u -->
-            <td>${user.username}</td> <!-- Uporabniško ime -->
-            <td>${user.tokens}</td> <!-- Število kovancev -->
-        `;
-
-        leaderboardBody.appendChild(row);
-    });
-}
-
-// Pokliči funkcijo za prikaz Leaderboard-a ob nalaganju strani
-document.addEventListener("DOMContentLoaded", displayLeaderboard);

@@ -2,7 +2,7 @@
     position: relative;
     width: 300px;
     height: 300px;
-    margin: 270px auto;
+    margin: 50px auto;
 }
 
 .spinInfoSection {
@@ -207,4 +207,78 @@
 
 .leaderboard-table tr:nth-child(even) {
     background-color: #f2f2f2;
+}
+
+
+
+
+/* Styling the Header Container */
+.lbEventHeader {
+    display: flex; /* Arrange links horizontally */
+    justify-content: center; /* Center align the links */
+    gap: 15px; /* Add space between the links */
+    padding: 10px; /* Padding around the header */
+    background-color: #f9f9f9; /* Light background for the header */
+    border-bottom: 2px solid #ddd; /* Subtle border at the bottom */
+  }
+  
+  /* Styling Links as Buttons */
+  .lbEventHeader a {
+    text-decoration: none; /* Remove underline */
+    font-weight: bold;
+    padding: 10px 20px; /* Add padding for a button-like appearance */
+    border: 2px solid transparent; /* Border for hover effect */
+    border-radius: 5px; /* Rounded corners for buttons */
+    color: #333; /* Default text color */
+    background-color: #fff; /* Default background color */
+    transition: all 0.3s ease; /* Smooth hover and focus effects */
+    font-family: Arial, sans-serif; /* Consistent font style */
+    font-size: 20px; /* Standard text size */
+  }
+  
+  /* Hover Effect */
+  .lbEventHeader a:hover {
+    background-color: #d3d3d3; /* Gray background on hover */
+    color: #000; /* Darker text color on hover */
+    transform: scale(1.05); /* Slight enlargement on hover */
+    border-color: #ccc; /* Add border color on hover */
+  }
+  
+  /* Selected Link */
+  .lbEventHeader a.selected {
+    background-color: #a9a9a9; /* Distinct background for the selected link */
+    border-color: #000; /* Black border for the selected link */
+    font-weight: bold; /* Bold text for the selected link */
+    transform: scale(1.1); /* Larger scale for the selected link */
+    font-style: italic;
+  }
+  
+
+  .reward-message {
+    display: flex;
+    justify-content: center; /* Centers the content horizontally */
+    align-items: center; /* Centers the content vertically */
+    flex-direction: column; /* Stack the content vertically */
+    text-align: center; /* Ensures the text is centered */
+    padding: 20px;
+    border-radius: 10px; /* Optional: rounded corners */
+    width: 100%; /* Optional: makes the box take up full width */
+    max-width: 400px; /* Optional: controls maximum width */
+    margin: 20px auto; /* Optional: centers the box on the page */
+}
+
+.confirm-button {
+    margin-right: 65px;
+    background-color: #333; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none;
+     border-radius: 5px; 
+     cursor: pointer; 
+     font-size: 16px; 
+     font-weight: bold; 
+     margin-top: 20px; 
+     margin-left: 75px; 
+     width: 150px; 
+     height: 50px;
 }
