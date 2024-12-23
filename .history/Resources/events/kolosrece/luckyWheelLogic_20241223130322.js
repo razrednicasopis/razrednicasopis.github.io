@@ -62,80 +62,87 @@ document.getElementById("spinButton").addEventListener("click", async () => {
     }
 });
 
-// Start Spin Animation
 async function startSpinAnimation(userEventRef) {
     const wheel = document.getElementById("wheel");
     const sectors = [
-        { color: "#f82", label: "10" },
-        { color: "#0bf", label: "20" },
-        { color: "#fb0", label: "30" },
-        { color: "#0fb", label: "40" },
-        { color: "#b0f", label: "50" },
-        { color: "#f0b", label: "60" },
-        { color: "#bf0", label: "70" },
-        { color: "#0f0", label: "80" }
-    ]; // Rewards: 10, 20, 30, 40, 50, 60, 70, 80
+        { color: "#f82", label: "10" }, // Rdeča
+        { color: "#0bf", label: "20" }, // Modra
+        { color: "#fb0", label: "30" }, // Rumena
+        { color: "#0fb", label: "40" }, // Cijan
+        { color: "#b0f", label: "50" }, // Vijolična
+        { color: "#f0b", label: "60" }, // Roza
+        { color: "#bf0", label: "70" }, // Rumeno-zelena
+        { color: "#0f0", label: "80" }  // Zelena
+    ];
+
+    const rewardsByColor = {
+        "#f82": 10, // Rdeča
+        "#0bf": 20, // Modra
+        "#fb0": 30, // Rumena
+        "#0fb": 40, // Cijan
+        "#b0f": 50, // Vijolična
+        "#f0b": 60, // Roza
+        "#bf0": 70, // Rumeno-zelena
+        "#0f0": 80  // Zelena
+    };
 
     const totalSectors = sectors.length;
     const sectorAngle = 360 / totalSectors;
 
-    // Generate a random sector index
+    // Generiraj naključni indeks sektorja
     const randomIndex = Math.floor(Math.random() * totalSectors);
 
-    // Calculate the angle to land in the center of the chosen sector
+    // Izračunaj kot, da pristaneš na izbranem sektorju
     const stopAngle = (randomIndex * sectorAngle) + (sectorAngle / 2);
 
-    // Calculate the total spin degrees, including extra full rotations for visual effect
-    const spinDegrees = 360 * 5 + stopAngle; // 5 full rotations + the stop angle
+    // Celoten kot vrtenja (5 polnih krogov + kot za izbran sektor)
+    const spinDegrees = 360 * 5 + stopAngle;
 
-    // Apply the CSS transformation to the wheel to make it spin
+    // Nastavi animacijo vrtenja
     wheel.style.transition = "transform 6s cubic-bezier(0.25, 0.1, 0.25, 1)";
     wheel.style.transform = `rotate(${spinDegrees}deg)`;
 
-    // Disable the spin button during the spin
+    // Onemogoči gumb za vrtenje med animacijo
     document.getElementById("spinButton").disabled = true;
 
     setTimeout(async () => {
-        // Determine the reward based on the final position (randomIndex)
-        const reward = parseInt(sectors[randomIndex].label, 10);
+        // Pridobi barvo sektorja, kjer je kolo pristalo
+        const finalSectorIndex = Math.floor((stopAngle % 360) / sectorAngle);
+        const finalColor = sectors[finalSectorIndex].color;
 
-        // Update Firestore with the reward and decrement free spins
+        // Pridobi nagrado na podlagi barve
+        const reward = rewardsByColor[finalColor];
+
+        // Posodobi Firestore z nagrado in zmanjšaj brezplačne vrtljaje
         await updateDoc(userEventRef, {
             tokens: increment(reward),
             free_spins: increment(-1)
         });
 
-       // Display the reward message
-document.getElementById("spinMessage").innerHTML = `
-<div class="reward-message">
-    <p>Čestitke! 🎉 Zmagali ste <span class="reward-amount">${reward} kovancev</span>.</p>
-    <p>Prosimo vrnite se čez <span id="nextSpinCountdown"></span> za vaš naslednji vrtljaj.</p>
-</div>
-`;
+        // Prikaži sporočilo z nagrado
+        document.getElementById("spinMessage").innerHTML = `
+            Čestitke! Zmagali ste <span style="color:${finalColor};">${reward} kovancev</span>. 
+            Prosimo vrnite se čez <span id="nextSpinCountdown"></span> za vaš naslednji vrtljaj.
+        `;
 
-        // Start the countdown timer
+        // Začni odštevalnik časa za naslednji vrtljaj
         startCountdownTimer();
 
-        // Enable the spin button after the spin
+        // Skrij gumb za vrtenje po zaključku
         document.getElementById("spinButton").style.display = "none";
-    }, 6000); // Match the animation duration
+    }, 6000); // Trajanje animacije
 }
 
 
+
+
+// Display Countdown Until Next Spin
 function displayCountdownUntilNextSpin() {
     const spinMessage = document.getElementById("spinMessage");
-
-    // Prikaz stiliziranega sporočila
-    spinMessage.innerHTML = `
-        <div class="countdown-message">
-            <p>Ponovno lahko zavrtite čez <span id="nextSpinCountdown" class="countdown-timer"></span> </p>
-        </div>
-    `;
-
-    startCountdownTimer(); // Začetek odštevanja
-    document.getElementById("spinButton").style.display = "none"; // Skrij gumb za vrtenje
+    spinMessage.textContent = "Čestitke! Prosimo vrnite se čez <span id='nextSpinCountdown'></span> za naslednji vrtljaj.";
+    startCountdownTimer();
+    document.getElementById("spinButton").style.display = "none";
 }
-
 
 // Start Countdown Timer
 function startCountdownTimer() {
@@ -163,7 +170,7 @@ function startCountdownTimer() {
 // Reset Free Spins at Midnight
 async function resetFreeSpins() {
     const midnight = new Date();
-    midnight.setHours(24, 0, 0, 0);
+    midnight.setHours(13, 3, 0, 0);
 
     const timeUntilMidnight = midnight - Date.now();
 
@@ -179,42 +186,3 @@ async function resetFreeSpins() {
 
 // Initialize Midnight Reset
 resetFreeSpins();
-
-
-
-
-// Prikaži Leaderboard
-async function displayLeaderboard() {
-    const leaderboardBody = document.getElementById("leaderboardBody");
-
-    // Pridobi vse uporabnike iz Firestore
-    const usersSnapshot = await getDocs(collection(db, "lbEventData"));
-
-    // Pretvori uporabniške podatke v array in jih sortira po številu kovancev
-    const usersData = [];
-    usersSnapshot.forEach(doc => {
-        const data = doc.data();
-        usersData.push({ username: doc.id, tokens: data.tokens || 0 });
-    });
-
-    usersData.sort((a, b) => b.tokens - a.tokens); // Sortiraj po kovancih (padajoče)
-
-    // Počisti trenutno vsebino Leaderboard-a
-    leaderboardBody.innerHTML = "";
-
-    // Dodaj uporabniške podatke v tabelo
-    usersData.forEach((user, index) => {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${index + 1}</td> <!-- Mesto v Leaderboard-u -->
-            <td>${user.username}</td> <!-- Uporabniško ime -->
-            <td>${user.tokens}</td> <!-- Število kovancev -->
-        `;
-
-        leaderboardBody.appendChild(row);
-    });
-}
-
-// Pokliči funkcijo za prikaz Leaderboard-a ob nalaganju strani
-document.addEventListener("DOMContentLoaded", displayLeaderboard);

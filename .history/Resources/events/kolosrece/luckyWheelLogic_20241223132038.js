@@ -128,7 +128,8 @@ function displayCountdownUntilNextSpin() {
     // Prikaz stiliziranega sporočila
     spinMessage.innerHTML = `
         <div class="countdown-message">
-            <p>Ponovno lahko zavrtite čez <span id="nextSpinCountdown" class="countdown-timer"></span> </p>
+            <p>Čestitke! 🎉</p>
+            <p>Prosimo vrnite se čez <span id="nextSpinCountdown" class="countdown-timer"></span> za naslednji vrtljaj.</p>
         </div>
     `;
 
@@ -179,42 +180,3 @@ async function resetFreeSpins() {
 
 // Initialize Midnight Reset
 resetFreeSpins();
-
-
-
-
-// Prikaži Leaderboard
-async function displayLeaderboard() {
-    const leaderboardBody = document.getElementById("leaderboardBody");
-
-    // Pridobi vse uporabnike iz Firestore
-    const usersSnapshot = await getDocs(collection(db, "lbEventData"));
-
-    // Pretvori uporabniške podatke v array in jih sortira po številu kovancev
-    const usersData = [];
-    usersSnapshot.forEach(doc => {
-        const data = doc.data();
-        usersData.push({ username: doc.id, tokens: data.tokens || 0 });
-    });
-
-    usersData.sort((a, b) => b.tokens - a.tokens); // Sortiraj po kovancih (padajoče)
-
-    // Počisti trenutno vsebino Leaderboard-a
-    leaderboardBody.innerHTML = "";
-
-    // Dodaj uporabniške podatke v tabelo
-    usersData.forEach((user, index) => {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${index + 1}</td> <!-- Mesto v Leaderboard-u -->
-            <td>${user.username}</td> <!-- Uporabniško ime -->
-            <td>${user.tokens}</td> <!-- Število kovancev -->
-        `;
-
-        leaderboardBody.appendChild(row);
-    });
-}
-
-// Pokliči funkcijo za prikaz Leaderboard-a ob nalaganju strani
-document.addEventListener("DOMContentLoaded", displayLeaderboard);

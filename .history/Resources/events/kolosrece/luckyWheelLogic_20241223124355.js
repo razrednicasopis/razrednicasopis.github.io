@@ -105,13 +105,11 @@ async function startSpinAnimation(userEventRef) {
             free_spins: increment(-1)
         });
 
-       // Display the reward message
-document.getElementById("spinMessage").innerHTML = `
-<div class="reward-message">
-    <p>Čestitke! 🎉 Zmagali ste <span class="reward-amount">${reward} kovancev</span>.</p>
-    <p>Prosimo vrnite se čez <span id="nextSpinCountdown"></span> za vaš naslednji vrtljaj.</p>
-</div>
-`;
+        // Display the reward message
+        document.getElementById("spinMessage").innerHTML = `
+            Čestitke! Zmagali ste ${reward} kovancev. 
+            Prosimo vrnite se čez <span id="nextSpinCountdown"></span> za vaš naslednji vrtljaj.
+        `;
 
         // Start the countdown timer
         startCountdownTimer();
@@ -122,20 +120,13 @@ document.getElementById("spinMessage").innerHTML = `
 }
 
 
+// Display Countdown Until Next Spin
 function displayCountdownUntilNextSpin() {
     const spinMessage = document.getElementById("spinMessage");
-
-    // Prikaz stiliziranega sporočila
-    spinMessage.innerHTML = `
-        <div class="countdown-message">
-            <p>Ponovno lahko zavrtite čez <span id="nextSpinCountdown" class="countdown-timer"></span> </p>
-        </div>
-    `;
-
-    startCountdownTimer(); // Začetek odštevanja
-    document.getElementById("spinButton").style.display = "none"; // Skrij gumb za vrtenje
+    spinMessage.textContent = "Čestitke! Prosimo vrnite se čez <span id='nextSpinCountdown'></span> za naslednji vrtljaj.";
+    startCountdownTimer();
+    document.getElementById("spinButton").style.display = "none";
 }
-
 
 // Start Countdown Timer
 function startCountdownTimer() {
@@ -179,42 +170,3 @@ async function resetFreeSpins() {
 
 // Initialize Midnight Reset
 resetFreeSpins();
-
-
-
-
-// Prikaži Leaderboard
-async function displayLeaderboard() {
-    const leaderboardBody = document.getElementById("leaderboardBody");
-
-    // Pridobi vse uporabnike iz Firestore
-    const usersSnapshot = await getDocs(collection(db, "lbEventData"));
-
-    // Pretvori uporabniške podatke v array in jih sortira po številu kovancev
-    const usersData = [];
-    usersSnapshot.forEach(doc => {
-        const data = doc.data();
-        usersData.push({ username: doc.id, tokens: data.tokens || 0 });
-    });
-
-    usersData.sort((a, b) => b.tokens - a.tokens); // Sortiraj po kovancih (padajoče)
-
-    // Počisti trenutno vsebino Leaderboard-a
-    leaderboardBody.innerHTML = "";
-
-    // Dodaj uporabniške podatke v tabelo
-    usersData.forEach((user, index) => {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${index + 1}</td> <!-- Mesto v Leaderboard-u -->
-            <td>${user.username}</td> <!-- Uporabniško ime -->
-            <td>${user.tokens}</td> <!-- Število kovancev -->
-        `;
-
-        leaderboardBody.appendChild(row);
-    });
-}
-
-// Pokliči funkcijo za prikaz Leaderboard-a ob nalaganju strani
-document.addEventListener("DOMContentLoaded", displayLeaderboard);

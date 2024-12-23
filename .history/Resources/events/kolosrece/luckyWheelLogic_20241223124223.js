@@ -77,16 +77,12 @@ async function startSpinAnimation(userEventRef) {
     ]; // Rewards: 10, 20, 30, 40, 50, 60, 70, 80
 
     const totalSectors = sectors.length;
-    const sectorAngle = 360 / totalSectors;
 
-    // Generate a random sector index
-    const randomIndex = Math.floor(Math.random() * totalSectors);
+    // Generate a random number of steps (how far the wheel will travel)
+    const randomSteps = Math.floor(Math.random() * totalSectors);
 
-    // Calculate the angle to land in the center of the chosen sector
-    const stopAngle = (randomIndex * sectorAngle) + (sectorAngle / 2);
-
-    // Calculate the total spin degrees, including extra full rotations for visual effect
-    const spinDegrees = 360 * 5 + stopAngle; // 5 full rotations + the stop angle
+    // Calculate the rotation angle based on the random steps
+    const spinDegrees = 360 * (5 + randomSteps); // Spin 5 full rotations + random steps
 
     // Apply the CSS transformation to the wheel to make it spin
     wheel.style.transition = "transform 6s cubic-bezier(0.25, 0.1, 0.25, 1)";
@@ -95,9 +91,12 @@ async function startSpinAnimation(userEventRef) {
     // Disable the spin button during the spin
     document.getElementById("spinButton").disabled = true;
 
+    // Calculate where the wheel will stop (final sector)
+    const stopIndex = randomSteps % totalSectors;
+
     setTimeout(async () => {
-        // Determine the reward based on the final position (randomIndex)
-        const reward = parseInt(sectors[randomIndex].label, 10);
+        // Determine the reward based on the final position (stopIndex)
+        const reward = parseInt(sectors[stopIndex].label, 10);
 
         // Update Firestore with the reward and decrement free spins
         await updateDoc(userEventRef, {
@@ -105,37 +104,27 @@ async function startSpinAnimation(userEventRef) {
             free_spins: increment(-1)
         });
 
-       // Display the reward message
-document.getElementById("spinMessage").innerHTML = `
-<div class="reward-message">
-    <p>Čestitke! 🎉 Zmagali ste <span class="reward-amount">${reward} kovancev</span>.</p>
-    <p>Prosimo vrnite se čez <span id="nextSpinCountdown"></span> za vaš naslednji vrtljaj.</p>
-</div>
-`;
+        // Display the reward message
+        document.getElementById("spinMessage").innerHTML = `
+            Čestitke! Zmagali ste ${reward} kovancev. 
+            Prosimo vrnite se čez <span id="nextSpinCountdown"></span> za vaš naslednji vrtljaj.
+        `;
 
         // Start the countdown timer
         startCountdownTimer();
 
-        // Enable the spin button after the spin
+        // Hide the spin button after the spin
         document.getElementById("spinButton").style.display = "none";
     }, 6000); // Match the animation duration
 }
 
-
+// Display Countdown Until Next Spin
 function displayCountdownUntilNextSpin() {
     const spinMessage = document.getElementById("spinMessage");
-
-    // Prikaz stiliziranega sporočila
-    spinMessage.innerHTML = `
-        <div class="countdown-message">
-            <p>Ponovno lahko zavrtite čez <span id="nextSpinCountdown" class="countdown-timer"></span> </p>
-        </div>
-    `;
-
-    startCountdownTimer(); // Začetek odštevanja
-    document.getElementById("spinButton").style.display = "none"; // Skrij gumb za vrtenje
+    spinMessage.textContent = "Čestitke! Prosimo vrnite se čez <span id='nextSpinCountdown'></span> za naslednji vrtljaj.";
+    startCountdownTimer();
+    document.getElementById("spinButton").style.display = "none";
 }
-
 
 // Start Countdown Timer
 function startCountdownTimer() {
@@ -179,42 +168,3 @@ async function resetFreeSpins() {
 
 // Initialize Midnight Reset
 resetFreeSpins();
-
-
-
-
-// Prikaži Leaderboard
-async function displayLeaderboard() {
-    const leaderboardBody = document.getElementById("leaderboardBody");
-
-    // Pridobi vse uporabnike iz Firestore
-    const usersSnapshot = await getDocs(collection(db, "lbEventData"));
-
-    // Pretvori uporabniške podatke v array in jih sortira po številu kovancev
-    const usersData = [];
-    usersSnapshot.forEach(doc => {
-        const data = doc.data();
-        usersData.push({ username: doc.id, tokens: data.tokens || 0 });
-    });
-
-    usersData.sort((a, b) => b.tokens - a.tokens); // Sortiraj po kovancih (padajoče)
-
-    // Počisti trenutno vsebino Leaderboard-a
-    leaderboardBody.innerHTML = "";
-
-    // Dodaj uporabniške podatke v tabelo
-    usersData.forEach((user, index) => {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${index + 1}</td> <!-- Mesto v Leaderboard-u -->
-            <td>${user.username}</td> <!-- Uporabniško ime -->
-            <td>${user.tokens}</td> <!-- Število kovancev -->
-        `;
-
-        leaderboardBody.appendChild(row);
-    });
-}
-
-// Pokliči funkcijo za prikaz Leaderboard-a ob nalaganju strani
-document.addEventListener("DOMContentLoaded", displayLeaderboard);
