@@ -1,7 +1,9 @@
 export const eventUrls = {
-  "Hitro Tipkanje": [
-      "https://razrednicasopis.github.io/Resources/events/hitrotipkanje/domov.html", // Live URL
-      "http://127.0.0.1:5500/Resources/events/hitrotipkanje/domov.html" // Localhost URL
+  "Kolo Sreče": [
+      "https://razrednicasopis.github.io/Resources/events/kolosrece/kolo_srece.html", // Live URL
+      "http://127.0.0.1:5500/Resources/events/kolosrece/kolo_srece.html", // Localhost URL
+      "http://127.0.0.1:5500/Resources/events/kolosrece/sezonske_stopnicke.html",
+      "https://razrednicasopis.github.io/Resources/events/kolosrece/sezonske_stopnicke.html"
   ],
   "Festival Iger": [
     "https://razrednicasopis.github.io/Resources/events/festival_iger/domov.html",

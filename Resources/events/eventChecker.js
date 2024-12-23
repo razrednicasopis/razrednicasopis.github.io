@@ -38,10 +38,14 @@ async function checkEventEndTime() {
             // Check if the event is past the end time or before the start time
             if (currentTime >= endTime && !popupDisplayed) {
                 // Check if the current URL matches the event URL
-                if (eventUrls[eventTitle] && eventUrls[eventTitle].some(url => window.location.href.includes(url))) {
-                    showEventEndedPopup(eventTitle); // Show popup if the event has ended and the URL matches
-                    popupDisplayed = true; // Set the flag to prevent multiple popups
-                    clearInterval(checkInterval); // Stop checking once a popup is displayed
+                if (eventUrls[eventTitle]) {
+                    console.log("URLs for", eventTitle, eventUrls[eventTitle]);
+                    if (eventUrls[eventTitle].some(url => window.location.href.includes(url))) {
+                        console.log("URL match found for", eventTitle);
+                        showEventEndedPopup(eventTitle); // Show popup if the event has ended and the URL matches
+                        popupDisplayed = true; // Set the flag to prevent multiple popups
+                        clearInterval(checkInterval); // Stop checking once a popup is displayed
+                    }
                 }
             } 
         });
