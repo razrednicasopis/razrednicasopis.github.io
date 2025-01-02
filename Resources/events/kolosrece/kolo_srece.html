@@ -24,13 +24,11 @@
 <div id="matchmakingOverlay" class="overlay"></div>
 <div id="eventEndedOverlay" class="overlay"></div>
 
-
 <div class="lbEventHeader">
     <a class="lbEventHome" href="/Resources/index.html">Domov</a>
     <a class="lbEventsPageRedirect" href="../eventi.html">Nazaj</a>
     <a class="lbSeasonalLeaderboard" href="sezonske_stopnicke.html">Sezonske lestvice</a>
 </div>
-
 
 <!-- Lucky Wheel Section -->
 
@@ -62,6 +60,10 @@
             <div class="wheel-segment-content">20</div>
         </div>        
     </div>
+    <!-- Spin Count Display -->
+<div id="spinCountSection">
+    <span id="userSpins"></span> <!-- Set initial spins here -->
+</div>
     <div class="spinInfoSection">
     <button id="spinButton">Zavrti kolo</button>
     <div id="spinMessage"></div>
@@ -69,14 +71,10 @@
 </div>
 
 
-
-
-
-
 <!-- Popup codes -->
 
 <!-- Event Has Ended Popup -->
-<div id="eventEndedPopupContainer" style="display: none;" class="popup"><
+<div id="eventEndedPopupContainer" style="display: none;" class="popup">
     <div class="popup-content">
         <h2>Dogodek je končan!</h2><br>
         <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>

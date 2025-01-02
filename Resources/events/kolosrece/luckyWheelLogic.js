@@ -18,7 +18,7 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Check User Data on Page Load
+// Real-time Listener for User Spins
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userId = user.uid;
@@ -32,10 +32,21 @@ onAuthStateChanged(auth, async (user) => {
             }
 
             const userData = userSnapshot.data();
+            const userSpinsElement = document.getElementById("userSpins");
+
+            if (userData.free_spins > 0) {
+                // Display the number of spins
+                userSpinsElement.style.display = "block";
+                userSpinsElement.textContent = `Preostali vrtljaji: ${userData.free_spins}`;
+            } else {
+                // Hide the text if no spins are available
+                userSpinsElement.style.display = "none";
+            }
+
+            // Update other UI elements based on spin availability
             if (userData.free_spins <= 0) {
                 displayCountdownUntilNextSpin();
             } else {
-                // Update UI based on the available spins
                 document.getElementById("spinButton").style.display = "block"; // Show button if spins are available
                 document.querySelector('.countdown-message').style.display = "none";
             }
