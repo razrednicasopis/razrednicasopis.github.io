@@ -180,7 +180,7 @@ function startCountdownTimer() {
 async function resetFreeSpins() {
     const now = new Date();
     const midnight = new Date(now);
-    midnight.setHours(2, 45, 0, 0); // Set to next midnight
+    midnight.setHours(24, 0, 0, 0); // Set to next midnight
 
     const timeUntilMidnight = midnight - now;
 
