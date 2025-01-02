@@ -110,6 +110,7 @@ async function handleCountdownEnd(countdownId) {
     await makeGameAvailable(gameId);
 
     // Trigger the next countdown event, if any (you can set a next step here if needed)
+
 }
 
 // Function to set a game as available in Firestore
