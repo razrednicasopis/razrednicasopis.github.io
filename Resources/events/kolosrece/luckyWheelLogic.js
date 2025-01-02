@@ -178,20 +178,25 @@ function startCountdownTimer() {
 
 // Reset Free Spins at Midnight
 async function resetFreeSpins() {
-    const midnight = new Date();
-    midnight.setHours(24, 0, 0, 0);
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(2, 35, 0, 0); // Set to next midnight
 
-    const timeUntilMidnight = midnight - Date.now();
+    const timeUntilMidnight = midnight - now;
 
+    // Set the timeout to run reset at midnight
     setTimeout(async () => {
+        // Query all users and set their free spins to 1
         const usersSnapshot = await getDocs(collection(db, "lbEventData"));
-        usersSnapshot.forEach(async (doc) => {
-            await updateDoc(doc.ref, { free_spins: 1 });
+        usersSnapshot.forEach(async (userDoc) => {
+            const userRef = userDoc.ref;
+            await updateDoc(userRef, { free_spins: 1 });
         });
 
-        resetFreeSpins(); // Reinitialize the midnight reset
+        // Reinitialize the midnight reset to ensure it runs every day
+        resetFreeSpins(); // Call again after midnight for next day
     }, timeUntilMidnight);
 }
 
-// Initialize Midnight Reset
+// Start the reset process immediately on page load
 resetFreeSpins();
