@@ -28,18 +28,33 @@ onAuthStateChanged(auth, async (user) => {
         onSnapshot(userEventRef, async (userSnapshot) => {
             if (!userSnapshot.exists()) {
                 // Initialize data if doesn't exist
-                await setDoc(userEventRef, { free_spins: 1, tokens: 0 });
+                await setDoc(userEventRef, { free_spins: 1, tokens: 0, lastSpinDate: null, hasSpunToday: false });
             }
 
             const userData = userSnapshot.data();
             const userSpinsElement = document.getElementById("userSpins");
 
+            // Check for lastSpinDate and hasSpunToday
+            const today = new Date();
+            const lastSpinDate = userData.lastSpinDate ? userData.lastSpinDate.toDate() : null;
+            const isSameDay = lastSpinDate && lastSpinDate.getDate() === today.getDate() &&
+                              lastSpinDate.getMonth() === today.getMonth() &&
+                              lastSpinDate.getFullYear() === today.getFullYear();
+
+            // Reset spins if the user has not spun today
+            if (!isSameDay) {
+                await updateDoc(userEventRef, {
+                    free_spins: 1,
+                    hasSpunToday: false,
+                    lastSpinDate: new Date() // Set to current date
+                });
+            }
+
+            // Update UI based on free spins
             if (userData.free_spins > 0) {
-                // Display the number of spins
                 userSpinsElement.style.display = "block";
                 userSpinsElement.textContent = `Preostali vrtljaji: ${userData.free_spins}`;
             } else {
-                // Hide the text if no spins are available
                 userSpinsElement.style.display = "none";
             }
 
@@ -68,7 +83,7 @@ document.getElementById("spinButton").addEventListener("click", async () => {
     const userSnapshot = await getDoc(userEventRef);
 
     if (!userSnapshot.exists()) {
-        await setDoc(userEventRef, { free_spins: 1, tokens: 0 });
+        await setDoc(userEventRef, { free_spins: 1, tokens: 0, lastSpinDate: null, hasSpunToday: false });
     }
 
     const userData = userSnapshot.data();
@@ -117,10 +132,12 @@ async function startSpinAnimation(userEventRef) {
         // Determine the reward based on the final position (randomIndex)
         const reward = parseInt(sectors[randomIndex].label, 10);
 
-        // Update Firestore with the reward and decrement free spins
+        // Update Firestore with the reward, decrement free spins, and update last spin data
         await updateDoc(userEventRef, {
             tokens: increment(reward),
-            free_spins: increment(-1)
+            free_spins: increment(-1),
+            hasSpunToday: true, // Set to true as user has spun
+            lastSpinDate: new Date() // Update last spin date
         });
 
         // Display the reward message
@@ -191,22 +208,27 @@ function startCountdownTimer() {
 async function resetFreeSpins() {
     const now = new Date();
     const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0); // Set to next midnight
+    midnight.setHours(23, 59, 59, 999); // Set to next midnight
 
     const timeUntilMidnight = midnight - now;
 
     // Set the timeout to run reset at midnight
     setTimeout(async () => {
-        // Query all users and set their free spins to 1
+        console.log("Resetting free spins for all users at: ", new Date());
+
+        // Query all users and set their free spins to 1 and reset hasSpunToday to false
         const usersSnapshot = await getDocs(collection(db, "lbEventData"));
-        usersSnapshot.forEach(async (userDoc) => {
+        const updatePromises = usersSnapshot.docs.map(userDoc => {
             const userRef = userDoc.ref;
-            await updateDoc(userRef, { free_spins: 1 });
+            return updateDoc(userRef, { free_spins: 1, hasSpunToday: false });
         });
+
+        // Wait for all updates to finish
+        await Promise.all(updatePromises);
 
         // Reinitialize the midnight reset to ensure it runs every day
         resetFreeSpins(); // Call again after midnight for next day
-    }, timeUntilMidnight);
+    }, timeUntilMidnight > 0 ? timeUntilMidnight : 86400000); // Use 1 day if it's already past midnight
 }
 
 // Start the reset process immediately on page load

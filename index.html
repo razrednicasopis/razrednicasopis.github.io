@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="Resources/styless.css">
   <link rel="stylesheet" href="Resources/system.css">
+  <script type="module" src="Resources/obvestila/firebasemodmail.js"></script>
   <script type="module" src="/Resources/js/christmas/snowstorm.js"></script>
   <script type="module" src="/Resources/js/christmas/christmasLights.js"></script>
   <link rel="stylesheet" href="/Resources/css/christmas/decorations.css">
@@ -14,13 +15,13 @@
 
 <div class="overlay"></div>
 
+
   <header>
   <h1>Razredni Časopis</h1> 
-  <!--<div id="mail-icon" onclick="toggleMailDropdown()">
-    📩 <span id="unread-count" class="hidden"></span>
-</div>-->
   <nav>
     <ul>
+      <!-- Mail Icon Button -->
+      <button id="mailIcon" class="mail-icon">📧</button>
       <li><a href="Resources/index.html">Domov</a></li>
       <li><a href="Resources/ura.html">Točna Ura</a></li>
       <li><a href="Resources/o-nas.html">O nas</a></li>
@@ -35,6 +36,8 @@
     </ul>
   </nav>
 </header>
+
+
 
 <main>
   <section class="novice">
@@ -64,21 +67,27 @@
 
 
 <!-- Popups -->
-
-    <!-- Dropdown for Mails -->
-    <div id="mail-dropdown" class="hidden">
-      <h3>Sporočila</h3>
-      <ul id="mail-list"></ul>
-      <div id="no-mails" class="hidden">Ni novih sporočil.</div>
+<!-- Mail Window (Hidden by Default) -->
+<div id="mailWindow" class="mail-window" style="display:none;">
+  <div id="mailMessagesContainer">
+    <!-- Dynamically Loaded Mail Messages -->
   </div>
+  <button id="closeMailWindow">Close</button>
+</div>
 
-  <!-- Popup for Detailed Mail -->
-  <div id="mail-popup" class="hidden">
+
+<div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 30px; z-index: 100; width: 300px; height: 500px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+  <div id="popupContent"></div>
+  <button id="popupClose" style="display: none;">Close</button>
+</div>
+
+
+    <div id="fullMessagePopup" class="popup">
       <div class="popup-content">
-          <span id="close-popup" onclick="closeMailPopup()">×</span>
-          <h3 id="popup-subject">Naslov sporočila</h3>
-          <p id="popup-content">Vsebina sporočila se bo pojavila tukaj.</p>
-          <button id="mark-as-read" onclick="markAsReadPopup()">Označi kot prebrano</button>
+          <h3 id="fullMessageTitle"></h3>
+          <p id="fullMessageBody"></p>
+          <button id="claimReward" class="hidden">Prevzemi nagrado</button>
+          <button id="closeFullMessage">Zapri</button>
       </div>
   </div>
 

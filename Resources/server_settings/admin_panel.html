@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module" src="/Resources/auth/firebaseauth.js"></script>
+  <link rel="stylesheet" href="/Resources/styless.css">
+  <link rel="stylesheet" href="/Resources/system.css">
+  <link rel="stylesheet" href="/Resources/css/christmas/decorations.css">
+  <link rel="stylesheet" href="adminOnly.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> 
+  <title>Razredni Časopis</title>
+</head>
+<body>
+
+
+<div class="overlay"></div>
+
+
+<div id="adminPanel">
+    <h2>Dodaj novo obvestilo</h2>
+    <form id="notificationForm">
+        <label for="title">Naslov:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="description">Opis:</label>
+        <textarea id="description" name="description" required></textarea>
+
+        <label for="fullMessage">Celotno sporočilo:</label>
+        <textarea id="fullMessage" name="fullMessage" rows="4" placeholder="Vnesi celotno sporočilo - podpira tudi HTML kot je <b>bold</b>)"></textarea>
+
+        <label for="expiration">Datum izteka sporočila:</label>
+        <input type="datetime-local" id="expiration" name="expiration" required>
+
+        <label for="type">Vrsta:</label>
+        <select id="type" name="type">
+            <option value="announcement">Obvestilo</option>
+            <option value="reward">Nagrada</option>
+        </select>
+
+        <label for="userIds">UIDs uporabnikov (pusti prazno za javno obvestilo):</label>
+        <input type="text" id="userIds" name="userIds" placeholder="vnesite uporabniške ID-je (ločeni z vejico)">
+
+        <div id="rewardSection">
+            <label for="insertReward">
+            <label for="rewardItem">Izberite nagrado:</label>
+            <select id="rewardItem" name="rewardItem">
+                <option value="vrtljaji">Spini iz dogodka</option>
+            </select>
+
+            <label for="rewardAmount">Količina nagrade:</label>
+            <input type="number" id="rewardAmount" name="rewardAmount" placeholder="vnesite količino">
+        </div>
+
+        <button type="submit">Dodaj obvestilo</button>
+    </form>
+</div>
+
+<!--Od tu naprej je koda za razne stvari kot so popupi-->
+
+<div id="popupContainer">
+  <div id="popupContent">
+      <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
+      <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+      <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+      <button id="closePopupBtn">V redu</button>
+  </div>
+</div>
+
+<div id="maintenance-warning">
+  <p id="maintenance-message"></p>
+</div>
+
+<div id="maintenancePopup">
+    <div id="maintenancePopupContent">
+      <h1>POVEZAVA IZGUBLJENA</h1>
+      <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+      <button id="closeMaintenancePopupBtn">Osveži</button>
+    </div>  
+</div>
+
+<script type="module" src="mailCreator.js"></script>
+<script src="/Resources/alerts.js"></script>
+<script type="module" src="/Resources/auth/loginStateChecker.js"></script>
+</body>
+</html>
