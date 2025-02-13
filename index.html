@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="Resources/styless.css">
   <link rel="stylesheet" href="Resources/system.css">
+  <link rel="stylesheet" href="Resources/events/eventsmain.css">
   <script type="module" src="Resources/obvestila/firebasemodmail.js"></script>
   <script type="module" src="/Resources/js/christmas/snowstorm.js"></script>
   <script type="module" src="/Resources/js/christmas/christmasLights.js"></script>
@@ -14,6 +15,9 @@
 <body>
 
 <div class="overlay"></div>
+<div class="matchmakingOverlay"></div>
+<div class="overlay" id="mailOverlay" style="display: none;"></div>
+
 
 
   <header>
@@ -21,7 +25,7 @@
   <nav>
     <ul>
       <!-- Mail Icon Button -->
-      <button id="mailIcon" class="mail-icon hidden">📧</button>
+      <button id="mailIcon" class="mail-icon hidde">📧</button>
       <li><a href="Resources/index.html">Domov</a></li>
       <li><a href="Resources/ura.html">Točna Ura</a></li>
       <li><a href="Resources/o-nas.html">O nas</a></li>
@@ -82,14 +86,15 @@
 </div>
 
 
-    <div id="fullMessagePopup" class="popup">
-      <div class="popup-content">
-          <h3 id="fullMessageTitle"></h3>
-          <p id="fullMessageBody"></p>
-          <button id="claimReward" class="hidden">Prevzemi nagrado</button>
-          <button id="closeFullMessage">Zapri</button>
-      </div>
+<div id="fullMessagePopup" class="popup" style="display: none;">
+  <div class="popup-content">
+      <h3 id="fullMessageTitle"></h3>
+      <p id="fullMessageBody"></p>
+      <button id="claimReward" class="hidden">Prevzemi nagrado</button>
+      <button id="closeFullMessage">Zapri</button>
   </div>
+</div>
+
 
 <div id="popupContainer">
   <div id="popupContent">
