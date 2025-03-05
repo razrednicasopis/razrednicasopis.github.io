@@ -79,12 +79,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 document.addEventListener('DOMContentLoaded', function () {
     let maintenanceNotified = false;
 
+    // Local state to cache the maintenance data
+    let cachedMaintenanceMode = null;
+    let cachedMaintenanceEndTime = null;
+
+    // Cache for checking the maintenance status
+    let lastChecked = 0;
+
+    // Optimized check for maintenance status with debounce
     async function checkMaintenanceStatus() {
+        const now = Date.now();
+        if (now - lastChecked < 60000) return; // Avoid checking more than once every minute
+
         try {
             const maintenanceRef = doc(db, 'settings', 'maintenanceMode');
             const nextMaintenanceRef = doc(db, 'settings', 'nextMaintenance');
-            
-            // Fetch both documents
+
+            // Fetch both documents in parallel
             const [maintenanceSnap, nextMaintenanceSnap] = await Promise.all([
                 getDoc(maintenanceRef),
                 getDoc(nextMaintenanceRef)
@@ -94,29 +105,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 const maintenanceData = maintenanceSnap.data();
                 const nextMaintenanceData = nextMaintenanceSnap.data();
 
-                const now = new Date();
                 const maintenanceStartTime = nextMaintenanceData.maintenanceStartTime.toDate();
                 const maintenanceEndTime = maintenanceData.maintenanceEndTime.toDate();
                 const manualOverride = maintenanceData.manualOverride || false;
-                
-                // Only update maintenance mode if manualOverride is false
-                if (!manualOverride) {
-                    if (now >= maintenanceStartTime && now <= maintenanceEndTime) {
-                        await updateDoc(maintenanceRef, { maintenanceMode: true });
-                        if (!maintenanceNotified) {
-                            notifyMaintenanceStart(maintenanceEndTime);
-                            maintenanceNotified = true;
+
+                // If the status has changed, update the UI
+                if (cachedMaintenanceMode !== maintenanceData.maintenanceMode || cachedMaintenanceEndTime !== maintenanceEndTime) {
+                    cachedMaintenanceMode = maintenanceData.maintenanceMode;
+                    cachedMaintenanceEndTime = maintenanceEndTime;
+
+                    if (!manualOverride) {
+                        const now = new Date();
+                        if (now >= maintenanceStartTime && now <= maintenanceEndTime) {
+                            if (!maintenanceNotified) {
+                                notifyMaintenanceStart(maintenanceEndTime);
+                                maintenanceNotified = true;
+                            }
+                            toggleMaintenancePopup(true, formatEndTime(maintenanceEndTime));
+                        } else {
+                            if (maintenanceNotified) {
+                                maintenanceNotified = false;
+                            }
+                            toggleMaintenancePopup(false);
                         }
-                    } else {
-                        await updateDoc(maintenanceRef, { maintenanceMode: false });
-                        maintenanceNotified = false;
                     }
                 }
-                
-                listenForMaintenanceUpdates();
             } else {
                 console.log('One or both documents are missing.');
             }
+
+            lastChecked = now;
         } catch (error) {
             console.error('Error checking maintenance status:', error);
         }
@@ -126,18 +144,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const maintenanceRef = doc(db, 'settings', 'maintenanceMode');
         const nextMaintenanceRef = doc(db, 'settings', 'nextMaintenance');
 
-        // Listen for changes in both documents
+        // Real-time listeners for changes in both documents
         onSnapshot(maintenanceRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 const maintenanceMode = data.maintenanceMode;
                 const manualOverride = data.manualOverride || false;
                 const formattedEndTime = formatEndTime(data.maintenanceEndTime?.toDate());
-                toggleMaintenancePopup(maintenanceMode, formattedEndTime);
-                
-                if (maintenanceMode && !maintenanceNotified && !manualOverride) {
-                    notifyMaintenanceStart(data.maintenanceEndTime?.toDate());
-                    maintenanceNotified = true;
+
+                // Only update the UI if the maintenance status has actually changed
+                if (maintenanceMode !== cachedMaintenanceMode) {
+                    toggleMaintenancePopup(maintenanceMode, formattedEndTime);
+                    cachedMaintenanceMode = maintenanceMode;
+
+                    if (maintenanceMode && !maintenanceNotified && !manualOverride) {
+                        notifyMaintenanceStart(data.maintenanceEndTime?.toDate());
+                        maintenanceNotified = true;
+                    }
                 }
             }
         });
@@ -184,9 +207,10 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = '/Resources/maintenance/popravila.html';
     });
 
+    // Initial call to check maintenance status
     checkMaintenanceStatus();
+    listenForMaintenanceUpdates();
 });
-
 
 
 // Maintenance Warning

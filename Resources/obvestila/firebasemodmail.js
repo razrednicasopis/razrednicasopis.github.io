@@ -1,88 +1,70 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, doc, getDocs, collection, deleteDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, doc, collection, updateDoc, getDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
     authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
     projectId: "razrednicasopisdatabase-29bad",
-    storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
+    storageBucket: "razrednicasopisdatabase-29bad",
     messagingSenderId: "294018128318",
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
 
-// Initialize Firebase
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
 const mailIcon = document.getElementById('mailIcon');
 const mailWindow = document.getElementById('mailWindow');
-const closeMailWindowBtn = document.getElementById('closeMailWindow');
 const mailMessagesContainer = document.getElementById('mailMessagesContainer');
-const popup = document.getElementById('popup'); // Popup container
-const popupContent = document.getElementById('popupContent'); // Popup content
-const popupCloseBtn = document.getElementById('popupClose'); // Close button for popup
-const claimRewardButton = document.getElementById('claimReward'); // Claim reward button
-const closeFullMessageButton = document.getElementById('closeFullMessage'); // Close button for full message popup
-const overlay = document.querySelector('.mailOverlay'); // Overlay for popup
+const popup = document.getElementById('popup');
+const popupContent = document.getElementById('popupContent');
+const claimRewardButton = document.getElementById('claimReward');
+const overlay = document.getElementById('mailOverlay');
+const closeButton = document.createElement('button');
+const closeMailWindowButton = document.getElementById('closeMailWindow');
 
-// Ensure the mail messages container is scrollable with a maximum height
-mailMessagesContainer.style.overflowY = "auto";
-mailMessagesContainer.style.maxHeight = "400px"; // Prevents overflow, allows scrolling
-
+// Event listener for opening the mail window
 mailIcon.addEventListener('click', () => {
     mailWindow.style.display = 'block';
-    loadMessages();
+    setupRealTimeUpdates();  // Replace loadMessages with real-time updates
 });
 
-closeMailWindowBtn.addEventListener('click', () => {
+// Event listener to close the mail window
+closeMailWindowButton.addEventListener('click', () => {
     mailWindow.style.display = 'none';
+    overlay.style.display = 'none'; // Close the overlay
 });
 
-// Close popup
-popupCloseBtn.addEventListener('click', closePopup);
-
-// Close full message popup
-closeFullMessageButton.addEventListener('click', closePopup);
-
-async function loadMessages() {
+function setupRealTimeUpdates() {
     const user = auth.currentUser;
     if (!user) {
         mailMessagesContainer.innerHTML = '<p><b>Prosimo prijavite se za ogled sporočil.</b></p>';
         return;
     }
 
-    const querySnapshot = await getDocs(collection(db, 'notifications'));
-    mailMessagesContainer.innerHTML = '';
+    // Real-time listener for 'notifications' collection
+    onSnapshot(collection(db, 'notifications'), (querySnapshot) => {
+        mailMessagesContainer.innerHTML = '';
+        let hasVisibleMessages = false;
 
-    if (querySnapshot.empty) {
-        mailMessagesContainer.innerHTML = '<p><b>Ni trenutnih sporočil.</b></p>';
-    } else {
         querySnapshot.forEach(async (docSnapshot) => {
             const mail = docSnapshot.data();
             const mailId = docSnapshot.id;
             const targetUsers = mail.targetUsers || [];
             const isPublic = targetUsers.length === 0 || targetUsers.includes(user.uid);
+            const userDeletedMails = mail.hasDeletedMail || [];
+
+            if (userDeletedMails.includes(user.uid)) return;
 
             if (isPublic) {
+                hasVisibleMessages = true;
                 const mailDiv = document.createElement('div');
                 mailDiv.classList.add('mail-message');
 
-                const titleContainer = document.createElement('div');
-                titleContainer.style.display = "flex";
-                titleContainer.style.justifyContent = "space-between";
-                titleContainer.style.alignItems = "center";
-
                 const title = document.createElement('h3');
                 title.textContent = mail.title;
-
-                // Expiration Date Display
-                const expirationText = document.createElement('span');
-                expirationText.style.fontSize = "12px";
-                expirationText.style.color = "#888";
-                expirationText.style.fontWeight = "bold";
-                expirationText.textContent = mail.expiration ? `Exp: ${new Date(mail.expiration.toDate()).toLocaleString()}` : "No Expiration";
 
                 const description = document.createElement('p');
                 description.textContent = mail.description || 'Brez opisa';
@@ -90,104 +72,114 @@ async function loadMessages() {
                 description.style.textOverflow = 'ellipsis';
                 description.style.whiteSpace = 'nowrap';
 
-                titleContainer.appendChild(title);
-                titleContainer.appendChild(expirationText);
-                mailDiv.appendChild(titleContainer);
-                mailDiv.appendChild(description); // Add description to mail div
-
-                // "Preberi več" link to show popup
                 const readMoreLink = document.createElement('a');
                 readMoreLink.href = "#";
                 readMoreLink.textContent = "Preberi več";
                 readMoreLink.addEventListener('click', (e) => {
-                    e.preventDefault(); // Prevent default anchor behavior
-                    openPopup(mail, mailId); // Open the popup with the mail content
+                    e.preventDefault();
+                    openPopup(mail, mailId);
                 });
-                mailDiv.appendChild(readMoreLink);
 
-                // Delete option
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = "Izbriši";
-                deleteButton.style.color = "white"; // White text
-                deleteButton.style.backgroundColor = "red"; // Red background
-                deleteButton.style.marginLeft = "10px"; // Move slightly to the right
+                deleteButton.style.marginLeft = "10px";
+                deleteButton.style.backgroundColor = "red";
+                deleteButton.style.color = "white";
                 deleteButton.addEventListener('click', async () => {
                     const claimedArray = mail.claimed || [];
-                    if (claimedArray.length === 0) { // Only allow deletion if no claims
-                        await deleteDoc(doc(db, 'notifications', mailId));
-                        mailDiv.remove(); // Remove the mail message from the UI
-                    } else {
-                        alert('Ne morete izbrisati, dokler je nagrada neprevzeta.');
+                    const user = auth.currentUser;
+                
+                    // Check if the current user has claimed the reward before allowing them to delete the mail
+                    if (mail.type === "reward" && !claimedArray.includes(user.uid)) {
+                        alert('Najprej morate prevzeti nagrado, preden jo izbrišete.');
+                        return;
+                    }
+                
+                    // Allow deletion if the current user has claimed the reward or if it's not a reward mail
+                    const hasDeletedMail = mail.hasDeletedMail || [];
+                    hasDeletedMail.push(user.uid);
+                    await updateDoc(doc(db, 'notifications', mailId), { hasDeletedMail });
+                    mailDiv.remove();
+                
+                    if (!mailMessagesContainer.hasChildNodes()) {
+                        mailMessagesContainer.innerHTML = '<p><b>Ni trenutnih sporočil.</b></p>';
                     }
                 });
-                mailDiv.appendChild(deleteButton);
 
+                // Check if the expiration timestamp has passed
+                const expirationTimestamp = mail.expiration;
+                if (expirationTimestamp && expirationTimestamp <= Date.now() / 1000) {
+                    // Document expired, delete it
+                    await deleteDoc(doc(db, 'notifications', mailId));
+                    return; // Skip adding the expired mail to the list
+                }
+
+                mailDiv.appendChild(title);
+                mailDiv.appendChild(description);
+                mailDiv.appendChild(readMoreLink);
+                mailDiv.appendChild(deleteButton);
                 mailMessagesContainer.appendChild(mailDiv);
             }
         });
-    }
+
+        if (!hasVisibleMessages) {
+            mailMessagesContainer.innerHTML = '<p><b>Ni trenutnih sporočil.</b></p>';
+        }
+    });
 }
 
-// Function to open the popup
-async function openPopup(mail, mailId) {
-    popupContent.innerHTML = '';
-    popupContent.setAttribute('data-mail-id', mailId);
+function openPopup(mail, mailId) {
+    popupContent.innerHTML = `<h3 style="margin-bottom: 20px;">${mail.title}</h3><p style="margin-top: 15px; margin-bottom: 20px;">${mail.fullMessage || 'Ni vsebine.'}</p>`;
+    popup.style.display = 'block';
+    overlay.style.display = 'block';
 
-    const title = document.createElement('h3');
-    title.textContent = mail.title || 'No title available';
-    title.style.textAlign = 'center';
-    title.style.marginTop = '20px';
-    popupContent.appendChild(title);
-
-    const fullMessage = document.createElement('p');
-    fullMessage.innerHTML = mail.fullMessage || 'No message content available';
-    fullMessage.style.wordWrap = 'break-word';
-    fullMessage.style.whiteSpace = 'normal';
-    popupContent.appendChild(fullMessage);
-
-    // Check if it's a reward mail and if the user has already claimed it
-    const user = auth.currentUser;
-    if (mail.type === "reward" && mail.reward) {
-        const claimedArray = mail.claimed || [];
-        if (claimedArray.includes(user.uid)) {
-            const claimedText = document.createElement('p');
-            claimedText.textContent = "Nagrada je bila že prevzeta.";
-            claimedText.style.color = "red"; // Optional styling
-            popupContent.appendChild(claimedText);
-        } else {
-            claimRewardButton.classList.remove("hidden");
-            claimRewardButton.style.backgroundColor = "green"; // Style for green button
-            claimRewardButton.style.color = "white"; // White text for button
-            claimRewardButton.onclick = () => claimReward(mailId);
-            popupContent.appendChild(claimRewardButton);
-        }
+    if (mail.type === "reward") {
+        claimRewardButton.classList.remove("hidden");
+        claimRewardButton.onclick = () => claimReward(mailId);
+        claimRewardButton.style.backgroundColor = '#4CAF50';
+        claimRewardButton.style.color = '#fff';
+        claimRewardButton.style.padding = '15px';
+        claimRewardButton.style.marginBottom = '10px'; // Reduced bottom margin
+        claimRewardButton.style.fontSize = '16px';
+        claimRewardButton.style.width = '100%';
+        claimRewardButton.style.display = 'block';
+        claimRewardButton.style.cursor = 'pointer';
+        claimRewardButton.textContent = 'Prevzemi nagrado';
+        claimRewardButton.onmouseover = function () {
+            claimRewardButton.style.backgroundColor = '#66BB6A';
+        };
+        claimRewardButton.onmouseout = function () {
+            claimRewardButton.style.backgroundColor = '#4CAF50';
+        };
+        popupContent.appendChild(claimRewardButton);
+    } else {
+        claimRewardButton.classList.add("hidden");
     }
 
-    const closeButton = document.createElement('button');
-    closeButton.textContent = 'Zapri';
-    closeButton.style.backgroundColor = '#f44336';
-    closeButton.style.color = '#fff';
-    closeButton.style.padding = '15px 20px';
-    closeButton.style.fontSize = '16px';
-    closeButton.style.fontWeight = 'bold';
-    closeButton.style.cursor = 'pointer';
-    closeButton.style.border = 'none';
-    closeButton.style.borderRadius = '8px';
-    closeButton.style.marginTop = '20px'; // Move down from main text
-    closeButton.style.width = '100%';
-    closeButton.style.boxSizing = 'border-box';
-    closeButton.addEventListener('click', closePopup);
-    popupContent.appendChild(closeButton);
-
-    popup.style.display = 'block';
-    overlay.style.display = 'block'; // Show overlay
-    document.body.style.overflow = 'hidden'; // Disable body scroll
+    if (!popupContent.contains(closeButton)) {
+        closeButton.textContent = 'Zapri';
+        closeButton.style.backgroundColor = '#f44336';
+        closeButton.style.color = '#fff';
+        closeButton.style.padding = '15px';
+        closeButton.style.marginBottom = '10px'; // Reduced bottom margin
+        closeButton.style.fontSize = '16px';
+        closeButton.style.width = '100%';
+        closeButton.style.display = 'block';
+        closeButton.style.cursor = 'pointer';
+        closeButton.onmouseover = function () {
+            closeButton.style.backgroundColor = '#FF7961';
+        };
+        closeButton.onmouseout = function () {
+            closeButton.style.backgroundColor = '#f44336';
+        };
+        closeButton.addEventListener('click', closePopup);
+        popupContent.appendChild(closeButton);
+    }
 }
 
 function closePopup() {
     popup.style.display = 'none';
-    overlay.style.display = 'none'; // Hide overlay
-    document.body.style.overflow = 'auto'; // Enable body scroll
+    overlay.style.display = 'none';
 }
 
 async function claimReward(mailId) {
@@ -205,13 +197,42 @@ async function claimReward(mailId) {
         const claimedArray = mailData.claimed || [];
 
         if (claimedArray.includes(user.uid)) {
+            alert('Nagrada je bila že prevzeta!');
             console.log('Reward already claimed by user.');
             return;
         }
 
-        claimedArray.push(user.uid); // Add user ID to claimed array
+        claimedArray.push(user.uid);
         await updateDoc(mailRef, { claimed: claimedArray });
+
+        const rewardItem = mailData.reward?.item;
+        const rewardAmount = parseInt(mailData.reward?.amount, 10); // Convert amount to a number
+
+        if (rewardItem === "vrtljaji" && !isNaN(rewardAmount)) {
+            const userEventRef = doc(db, 'lbEventData', user.uid);
+            const userEventDoc = await getDoc(userEventRef);
+
+            if (userEventDoc.exists()) {
+                const userData = userEventDoc.data();
+                const currentSpins = userData.free_spins || 0;
+                const newSpins = currentSpins + rewardAmount;
+
+                try {
+                    await updateDoc(userEventRef, { free_spins: newSpins });
+                    console.log("Successfully updated the spins in Firestore.");
+                } catch (error) {
+                    console.error("Error updating spins:", error);
+                }
+            } else {
+                console.log("User document not found in lbEventData.");
+            }
+        } else {
+            console.log("No reward item 'vrtljaji' found or invalid amount.");
+        }
+
         alert('Nagrada uspešno prevzeta!');
-        closePopup(); // Close the popup after claiming
+        closePopup();
+    } else {
+        console.log("Mail document not found.");
     }
 }
