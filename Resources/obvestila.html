@@ -13,12 +13,16 @@
             <body>
 
               <div class="overlay"></div>
+              <div class="overlay" id="mailOverlay" style="display: none;"></div>
+
+
 
                 <div id="vrstica">
                     <header>
                       <h1>Obvestila - Razredni Časopis</h1>
                       <nav>
                         <ul>
+                          <button id="mailIcon" class="mail-icon hidde">📧</button>
                           <li><a href="index.html">Domov</a></li>
                           <li><a href="ura.html">Točna Ura</a></li>
                           <li><a href="o-nas.html">O nas</a></li>
@@ -41,7 +45,13 @@
           <section class="obvestilnatabla">
             <h1>OBVESTILA RAZVIJALCEV STRANI</h1><br>
             <article>
-              <h2>Predvideno vzdrževanje strani - NOVO!</h2>
+              <h2>Verzija 3.1 - Novo!</h2>
+              <small>Objavljeno: Četrtek, 6.3.2025, ob 20:00</small>
+              <p>Novo dodane vsebine v verziji 3.1</p>
+              <a href="obvestila/obvestilo9.html">Preberi več</a>
+            </article>
+            <article>
+              <h2>Predvideno vzdrževanje strani</h2>
               <small>Objavljeno: Četrtek, 6.3.2025, ob 1:30</small>
               <p>Napoved pričakovanega prihajajočega vzdrževanja.</p>
               <a href="obvestila/obvestilo8.html">Preberi več</a>
@@ -98,6 +108,31 @@
 
 
 <!--Pop-ups and other HTML-->
+
+<div id="mailWindow" class="mail-window" style="display:none;">
+  <div id="mailMessagesContainer">
+    <!-- Dynamically Loaded Mail Messages -->
+  </div>
+  <button id="closeMailWindow">Close</button>
+</div>
+
+
+<div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 30px; z-index: 100; width: 300px; height: 500px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+  <div id="popupContent"></div>
+  <button id="popupClose" style="display: none;">Close</button>
+</div>
+
+
+<div id="fullMessagePopup" class="popup" style="display: none;">
+  <div class="popup-content">
+      <h3 id="fullMessageTitle"></h3>
+      <p id="fullMessageBody"></p>
+      <button id="claimReward" class="hidden">Prevzemi nagrado</button>
+      <button id="closeFullMessage">Zapri</button>
+  </div>
+</div>
+
+
 <div id="popupContainer">
   <div id="overlay"></div>
   <div id="popupContent">
@@ -121,7 +156,7 @@
     </div>  
 </div>
 
-      
+          <script type="module" src="obvestila/firebasemodmail.js"></script>
           <script src="alerts.js"></script>
           <script type="module" src="settings/settings.js"></script>
           <script type="module" src="auth/loginStateChecker.js"></script>
