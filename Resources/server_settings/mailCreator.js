@@ -27,7 +27,6 @@ document.getElementById("type").addEventListener("change", (e) => {
     }
 });
 
-
 // Handle form submission
 document.getElementById("notificationForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -84,9 +83,8 @@ document.getElementById("notificationForm").addEventListener("submit", async (e)
         // Add the new notification to Firestore
         const notificationRef = await addDoc(collection(db, "notifications"), newNotification);
 
-        // If it's a reward notification and the item is spins, update user spins
-        if (rewardItem === "vrtljaji" && userIds.length > 0) {
-            // Loop through all the user IDs who have claimed the reward
+        // Handle reward updates (spins or diamonds)
+        if ((rewardItem === "vrtljaji" || rewardItem === "diamanti") && userIds.length > 0) {
             userIds.forEach(async (uid) => {
                 // Check if the user has claimed the reward
                 if (newNotification.claimed.includes(uid)) {
@@ -99,13 +97,22 @@ document.getElementById("notificationForm").addEventListener("submit", async (e)
 
                     // Check if the user document exists
                     if (userDoc.exists()) {
-                        const currentFreeSpins = userDoc.data().free_spins || 0; // Get current spins (defaults to 0 if not set)
-                        const spinsToAdd = parseInt(rewardAmount, 10); // Ensure rewardAmount is parsed as an integer
+                        let currentFreeSpins = userDoc.data().free_spins || 0; // Get current spins (defaults to 0 if not set)
+                        let currentDiamonds = userDoc.data().diamonds || 0; // Get current diamonds (defaults to 0 if not set)
 
-                        // Add the reward spins to the current spins
-                        await updateDoc(userDocRef, {
-                            free_spins: currentFreeSpins + spinsToAdd // Update the free_spins field correctly
-                        });
+                        const rewardAmountParsed = parseInt(rewardAmount, 10); // Ensure rewardAmount is parsed as an integer
+
+                        if (rewardItem === "vrtljaji") {
+                            // Update free spins
+                            await updateDoc(userDocRef, {
+                                free_spins: currentFreeSpins + rewardAmountParsed // Update the free_spins field correctly
+                            });
+                        } else if (rewardItem === "diamanti") {
+                            // Update diamonds
+                            await updateDoc(userDocRef, {
+                                diamonds: currentDiamonds + rewardAmountParsed // Update the diamonds field correctly
+                            });
+                        }
                     } else {
                         console.log(`User document with uid ${uid} does not exist.`);
                     }

@@ -221,6 +221,7 @@ if (loginBtn) {
           uid: user.uid,
           isAdmin: false, // Default admin status
           IP_Address: userIp, // Store user's IP address
+          premiumBalance: 0,
         });
 
         // Send email verification
@@ -244,34 +245,49 @@ if (loginBtn) {
 });
 
 
-    // Password Reset System
-    const resetPasswordLink = document.getElementById("resetPassword");
-    const resetPasswordPopup = document.getElementById("resetPasswordPopup");
-    const overlay = document.getElementById("resetPasswordOverlay");
-    const closeResetPopupBtn = document.getElementById("closeResetPopupBtn");
-    const confirmEmailBtn = document.getElementById("confirmEmailBtn");
-    const resetEmailField = document.getElementById("resetEmail");
 
-    // Open the reset password popup
-    resetPasswordLink.addEventListener("click", () => {
-        resetPasswordPopup.style.display = "block";
-        overlay.style.display = "block";
-    });
 
-    // Close the reset password popup
-    closeResetPopupBtn.addEventListener("click", () => {
-        resetPasswordPopup.style.display = "none";
-        overlay.style.display = "none";
-    });
+// Password Reset System
 
-    // Handle password reset request
-    confirmEmailBtn.addEventListener("click", () => {
-        const email = resetEmailField.value;
-        
-        if (email) {
+const resetPasswordLink = document.getElementById("resetPassword");
+const resetPasswordPopup = document.getElementById("resetPasswordPopup");
+const overlay = document.getElementById("resetPasswordOverlay");
+const closeResetPopupBtn = document.getElementById("closeResetPopupBtn");
+const confirmEmailBtn = document.getElementById("confirmEmailBtn");
+const resetEmailField = document.getElementById("resetEmail");
+const resetPasswordMessage = document.getElementById("resetPasswordMessage");  // Reference to the p tag
+
+// Open the reset password popup
+resetPasswordLink.addEventListener("click", () => {
+    resetPasswordPopup.style.display = "block";
+    overlay.style.display = "block";
+});
+
+// Close the reset password popup
+closeResetPopupBtn.addEventListener("click", () => {
+    resetPasswordPopup.style.display = "none";
+    overlay.style.display = "none";
+});
+
+// Handle password reset request
+confirmEmailBtn.addEventListener("click", async () => {
+    const email = resetEmailField.value;
+
+    if (email) {
+        // Reset the error message and color when user starts typing a new email
+        resetPasswordMessage.style.color = "black";
+        resetPasswordMessage.textContent = "Vnesite svoj e-poštni naslov za ponastavitev gesla:";
+
+        // Query Firestore to check if the email exists in the users collection
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("Email", "==", email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            // If the email exists, send the password reset email
             sendPasswordResetEmail(auth, email)
                 .then(() => {
-                    // Change popup content after sending the email
+                    // If the email is valid and exists, send the reset link
                     resetPasswordPopup.innerHTML = `
                         <div class="popupContent">
                             <h2>Resetiranje gesla</h2>
@@ -285,11 +301,19 @@ if (loginBtn) {
                     });
                 })
                 .catch((error) => {
-                    // Handle errors, for example, if the email is invalid or not registered
+                    // Handle errors, for example network issues or Firebase errors
+                    console.error("Error sending reset email: ", error);
                     alert("Napaka pri pošiljanju e-pošte. Prosimo preverite vneseni e-poštni naslov.");
                 });
         } else {
-            alert("Prosimo vnesite veljaven e-poštni naslov.");
+            // If the email doesn't exist in the users collection, show error message
+            resetPasswordMessage.style.color = "red";  // Change color to red
+            resetPasswordMessage.textContent = "Račun s to e-pošto ni registriran. Poskusite znova.";  // Change message
         }
-    });
+    } else {
+        alert("Prosimo vnesite veljaven e-poštni naslov.");
+    }
+});
+
+ 
 

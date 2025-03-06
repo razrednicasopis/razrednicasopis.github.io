@@ -15,9 +15,7 @@
 </head>
 <body>
 
-
 <div class="overlay"></div>
-
 
 <div id="adminPanel">
     <h2>Dodaj novo obvestilo</h2>
@@ -29,7 +27,7 @@
         <textarea id="description" name="description" required></textarea>
 
         <label for="fullMessage">Celotno sporočilo:</label>
-        <textarea id="fullMessage" name="fullMessage" rows="4" placeholder="Vnesi celotno sporočilo - podpira tudi HTML kot je <b>bold</b>)"></textarea>
+        <textarea id="fullMessage" name="fullMessage" rows="4" placeholder="Vnesi celotno sporočilo - podpira tudi HTML kot je <b>bold</b>"></textarea>
 
         <label for="expiration">Datum izteka sporočila:</label>
         <input type="datetime-local" id="expiration" name="expiration" required>
@@ -45,26 +43,28 @@
 
         <div id="rewardSection">
             <label for="insertReward">
-            <label for="rewardItem">Izberite nagrado:</label>
-            <select id="rewardItem" name="rewardItem">
-                <option value="vrtljaji">Spini iz dogodka</option>
-            </select>
+                <label for="rewardItem">Izberite nagrado:</label>
+                <select id="rewardItem" name="rewardItem">
+                    <option value="vrtljaji">Spini iz dogodka</option>
+                    <option value="diamanti">Diamanti</option> <!-- Added Diamonds option -->
+                </select>
 
-            <label for="rewardAmount">Količina nagrade:</label>
-            <input type="number" id="rewardAmount" name="rewardAmount" placeholder="vnesite količino">
+                <label for="rewardAmount">Količina nagrade:</label>
+                <input type="number" id="rewardAmount" name="rewardAmount" placeholder="vnesite količino">
+            </label>
         </div>
 
         <button type="submit">Dodaj obvestilo</button>
     </form>
 </div>
 
-<!--Od tu naprej je koda za razne stvari kot so popupi-->
+<!-- Od tu naprej je koda za razne stvari kot so popupi -->
 
 <div id="popupContainer">
   <div id="popupContent">
       <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
-      <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
-      <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+      <p>Te vsebine bodo na voljo v naslednjih verzijah strani.</p>
+      <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.</p><br>
       <button id="closePopupBtn">V redu</button>
   </div>
 </div>

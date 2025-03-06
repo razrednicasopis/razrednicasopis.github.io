@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, updateDoc, doc, Timestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -38,6 +38,12 @@ async function updateUserDocsWithUIDAndCreationDate() {
             console.log(`Creation date added for user: ${userId}`);
         }
 
+        // If premiumBalance is not set, add it with value 0
+        if (!userData.premiumBalance) {
+            updateData.premiumBalance = 0;
+            console.log(`premiumBalance added for user: ${userId}`);
+        }
+
         // If there are any fields to update, perform the update
         if (Object.keys(updateData).length > 0) {
             await updateDoc(doc(db, "users", userId), updateData);
@@ -45,7 +51,7 @@ async function updateUserDocsWithUIDAndCreationDate() {
         }
     });
 
-    alert("All user documents have been updated with UID and creation date (if missing).");
+    alert("All user documents have been updated with UID, creation date, and premiumBalance (if missing).");
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -129,10 +129,17 @@ function setupRealTimeUpdates() {
 }
 
 function openPopup(mail, mailId) {
-    popupContent.innerHTML = `<h3 style="margin-bottom: 20px;">${mail.title}</h3><p style="margin-top: 15px; margin-bottom: 20px;">${mail.fullMessage || 'Ni vsebine.'}</p>`;
+    // Display title (still plain text)
+    popupContent.innerHTML = `<h3 style="margin-bottom: 20px;">${mail.title}</h3>`;
+
+    // Display full message, allowing HTML tags to render correctly
+    const fullMessage = mail.fullMessage || 'Ni vsebine.';
+    popupContent.innerHTML += `<p style="margin-top: 15px; margin-bottom: 20px;">${fullMessage}</p>`;
+
     popup.style.display = 'block';
     overlay.style.display = 'block';
 
+    // Handle reward section if mail is a reward type
     if (mail.type === "reward") {
         claimRewardButton.classList.remove("hidden");
         claimRewardButton.onclick = () => claimReward(mailId);
@@ -156,6 +163,7 @@ function openPopup(mail, mailId) {
         claimRewardButton.classList.add("hidden");
     }
 
+    // Add close button if it doesn't exist yet
     if (!popupContent.contains(closeButton)) {
         closeButton.textContent = 'Zapri';
         closeButton.style.backgroundColor = '#f44336';
@@ -209,6 +217,7 @@ async function claimReward(mailId) {
         const rewardAmount = parseInt(mailData.reward?.amount, 10); // Convert amount to a number
 
         if (rewardItem === "vrtljaji" && !isNaN(rewardAmount)) {
+            // Handle spins reward
             const userEventRef = doc(db, 'lbEventData', user.uid);
             const userEventDoc = await getDoc(userEventRef);
 
@@ -226,8 +235,27 @@ async function claimReward(mailId) {
             } else {
                 console.log("User document not found in lbEventData.");
             }
+        } else if (rewardItem === "diamanti" && !isNaN(rewardAmount)) {
+            // Handle diamonds reward
+            const userRef = doc(db, 'users', user.uid);
+            const userDoc = await getDoc(userRef);
+
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const currentPremiumBalance = userData.premiumBalance || 0; // Get the current premium balance (defaults to 0 if not set)
+                const newPremiumBalance = currentPremiumBalance + rewardAmount;
+
+                try {
+                    await updateDoc(userRef, { premiumBalance: newPremiumBalance });
+                    console.log("Successfully updated the premium balance in Firestore.");
+                } catch (error) {
+                    console.error("Error updating premium balance:", error);
+                }
+            } else {
+                console.log("User document not found in users collection.");
+            }
         } else {
-            console.log("No reward item 'vrtljaji' found or invalid amount.");
+            console.log("No reward item found or invalid amount.");
         }
 
         alert('Nagrada uspešno prevzeta!');

@@ -811,6 +811,7 @@ display: inline-block
 
 /* Mail Icon Style */
 /* Mail Icon Style */
+
 .mail-icon {
   position: absolute;
   top: 20px;
@@ -886,6 +887,23 @@ display: inline-block
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
   z-index: 50; /* Lower z-index than the popup */
 }
+
+
+/* ACCOUNT BALANCE STYLES */
+
+#accountBalanceText {
+  position: absolute;
+  top: 77px;
+  right: 210px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 25px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
 
 
 
