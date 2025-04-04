@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, addDoc, collection, query, orderBy, onSnapshot, where, getDocs, deleteDoc, updateDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, addDoc, collection, query, orderBy, deleteField, onSnapshot, where, getDocs, deleteDoc, updateDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -137,8 +137,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 const messageData = change.doc.data();
 
                 if (change.type === 'added') {
-                    displayMessage(messageId, messageData.username, messageData.text, messageData.timestamp.toDate(), messageData.role);
-                } else if (change.type === 'removed') {
+                    getUserColor(messageData.username).then(customColor => {
+                        displayMessage(
+                            messageId,
+                            messageData.username,
+                            messageData.text,
+                            messageData.timestamp.toDate(),
+                            messageData.role,
+                            customColor
+                        );
+                    });                } else if (change.type === 'removed') {
                     removeMessageDiv(messageId);
                 }
             });
@@ -146,6 +154,22 @@ document.addEventListener('DOMContentLoaded', function () {
             messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
         });
     }
+
+
+
+    async function getUserColor(username) {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('Username', '==', username));
+        const querySnapshot = await getDocs(q);
+    
+        if (!querySnapshot.empty) {
+            const userData = querySnapshot.docs[0].data();
+            return userData.customColor || null;
+        }
+        return null;
+    }
+
+
 
     function formatTimestamp(timestamp) {
         const date = new Date(timestamp);
@@ -162,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${day}, ${hours}:${minutes}:${seconds} ${ampm}`;
     }
 
-    function displayMessage(messageId, username, text, timestamp, role) {
+    function displayMessage(messageId, username, text, timestamp, role, customColor) {
         const messagesDiv = document.getElementById('messages');
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
@@ -171,9 +195,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const timestampElement = document.createElement('span');
         timestampElement.classList.add('timestamp');
         timestampElement.textContent = formatTimestamp(timestamp);
-
         const usernameElement = document.createElement('span');
         usernameElement.classList.add('username');
+        
+        // Apply custom color if available and user has a valid role
+        if ((role === 'owner' || role === 'co-owner' || role === 'admin') && customColor) {
+            usernameElement.style.color = customColor;
+        }   
 
         if (role === 'owner') {
             usernameElement.textContent = '[OWNER] ' + username + ': ';
@@ -233,7 +261,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 text: text,
                 timestamp: new Date(),
                 ip: userIp,
-                role: role
+                role: role,
+                customColor: userDoc.data().customColor || null
             });
             messageInput.value = '';
         } catch (error) {
@@ -245,17 +274,40 @@ document.addEventListener('DOMContentLoaded', function () {
         const commandArgs = commandText.split(' ');
         const command = commandArgs[0].toLowerCase();
     
-        // Fetch user data from the 'users' collection to check role
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
     
-        if (!userDoc.exists) {
-            sendPrivateMessage('SERVER: User data not found.');
+        if (!userDocSnap.exists()) {
+            sendPrivateMessage('SERVER: Uporabniški podatki niso najdeni.');
             return;
         }
     
-        const userRole = userDoc.data().role;
+        const userData = userDocSnap.data();
+        const userRole = userData.role;
     
         switch (command) {
+            case '/color':
+                if (userRole !== 'owner' && userRole !== 'co-owner' && userRole !== 'admin') {
+                    sendPrivateMessage('SERVER: Nimaš dovoljenja za uporabo tega ukaza.');
+                    break;
+                }
+    
+                const colorInput = commandArgs[1];
+    
+                if (!colorInput) {
+                    sendPrivateMessage('SERVER: Uporaba: /barva <barva> ali /barva reset');
+                    break;
+                }
+    
+                if (colorInput.toLowerCase() === 'reset') {
+                    await updateDoc(userDocRef, { customColor: deleteField() });
+                    sendPrivateMessage('SERVER: Barva je bila ponastavljena.');
+                } else {
+                    await updateDoc(userDocRef, { customColor: colorInput });
+                    sendPrivateMessage(`SERVER: Barva nastavljena na "${colorInput}".`);
+                }
+                break;
+    
             case '/maintenance':
                 if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'co-owner') {
                     sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
@@ -271,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sendPrivateMessage('SERVER: Uporaba: /maintenance <enable|disable>');
                 }
                 break;
-
+    
             case '/deletemsg':
                 if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'co-owner') {
                     sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
@@ -288,22 +340,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 await purgeChat();
                 break;
-
     
             case '/mute':
                 if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'co-owner') {
                     sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
-                // Implement the mute functionality
-                break;
-    
-            case '/clearchat':
-                if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'co-owner') {
-                    sendPrivateMessage('SERVER: Neznan ukaz.');
-                    break;
-                }
-                await clearChat();
+                // Mute logika sem
                 break;
     
             default:
