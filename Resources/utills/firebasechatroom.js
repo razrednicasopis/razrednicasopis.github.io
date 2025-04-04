@@ -200,8 +200,13 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // Apply custom color if available and user has a valid role
         if ((role === 'owner' || role === 'co-owner' || role === 'admin') && customColor) {
-            usernameElement.style.color = customColor;
-        }   
+            if (customColor === 'rainbow') {
+                usernameElement.classList.add('rainbow-name');
+            } else {
+                usernameElement.style.color = customColor;
+            }
+        }
+        
 
         if (role === 'owner') {
             usernameElement.textContent = '[OWNER] ' + username + ': ';

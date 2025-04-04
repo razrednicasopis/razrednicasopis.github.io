@@ -219,9 +219,45 @@ footer {
   margin-right: 5px;
 }
 
-.coowner-tag {
-  background: linear-gradient(90deg, #ff00ff, /* Neon magenta */ #ff1493, /* Deep pink */ #ff3399, /* Bright pink */ #00ffff, /* Neon cyan */ #00ff00, /* Neon zelena */ #ffff00, /* Neon rumena */ #ff8c00, /* Neon oranžna */ #ff0000, /* Neon rdeča */ #8e44ad, /* Svetlo vijolična (grafitna) */ #2980b9 /* Neonsko modra */ ); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; font-size: 1.4rem; /* Ohranjen obstoječi velikost */ text-transform: capitalize; /* Prva črka vsake besede z veliko začetnico */ text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.7), -4px -4px 8px rgba(255, 255, 255, 0.3), 2px 2px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 0, 255, 0.7); /* Grafitne sence z nepravilnimi robovi */ letter-spacing: 2px; /* Razmikanje med črkami za večjo izraženost */ font-family: 'Courier New', Courier, monospace; /* Pisava za ulični videz */
+@keyframes rainbowAnimation {
+  0% {
+    background-position: 0% 50%;
+    color: black;
+  }
+  10% {
+    color: transparent;
+  }
+  50% {
+    background-position: 100% 50%;
+    color: transparent;
+  }
+  90% {
+    color: transparent;
+  }
+  100% {
+    background-position: 0% 50%;
+    color: black;
+  }
 }
+
+.rainbow-name {
+  background-image: linear-gradient(
+    90deg,
+    red,
+    orange,
+    yellow,
+    green,
+    cyan,
+    blue,
+    violet,
+    red
+  );
+  background-size: 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbowAnimation 6s linear infinite;
+}
+
 
 .text {
   word-wrap: break-word;
