@@ -346,19 +346,61 @@ document.addEventListener('DOMContentLoaded', function () {
                 await purgeChat();
                 break;
     
-            case '/mute':
-                if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'co-owner') {
-                    sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
+                case '/mute':
+                    if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'co-owner') {
+                        sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
+                        break;
+                    }
+        
+                    const targetUsername = commandArgs[1];
+                    if (!targetUsername) {
+                        sendPrivateMessage('SERVER: Uporaba: /mute <username>');
+                        break;
+                    }
+        
+                    // Mute logic
+                    const targetUserRef = await getUserByUsername(targetUsername);
+                    if (!targetUserRef) {
+                        sendPrivateMessage('SERVER: Uporabnik ni najden.');
+                        break;
+                    }
+        
+                    const targetUserDocRef = doc(db, 'users', targetUserRef.id);
+                    await updateDoc(targetUserDocRef, { muted: true });
+        
+                    sendPublicServerMessage(`SERVER: Uporabnik ${targetUsername} je bil utišan.`);
+        
+                    // Update UI to disable input field
+                    disableChatInput();
                     break;
-                }
-                // Mute logika sem
-                break;
-    
-            default:
-                sendPrivateMessage('SERVER: Neznan ukaz.');
-                break;
+        
+                default:
+                    sendPrivateMessage('SERVER: Neznan ukaz.');
+                    break;
+
         }
     }
+
+    async function getUserByUsername(username) {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('Username', '==', username));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.empty ? null : querySnapshot.docs[0];
+    }
+    
+    // Function to disable the chat input and apply the muted effect
+    function disableChatInput() {
+        messageSendBtn.disabled = true;
+        chatBox.placeholder = 'Ti si utišan. Počakaj, da te odmutirajo.';
+    }
+    
+    // Function to enable the chat input again
+    function enableChatInput() {
+        messageSendBtn.disabled = false;
+        chatBox.placeholder = 'Vnesi sporočilo...';
+    }
+
+
 
     async function enableChatMaintenance() {
         try {
@@ -439,8 +481,22 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.key === 'Enter' && !event.shiftKey && chatBox.value.trim()) {
             handleMessageSend();
         }
-    });
 
+        onAuthStateChanged(auth, async user => {
+            if (user) {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+                if (userDocSnap.exists()) {
+                    const userData = userDocSnap.data();
+                    if (userData.muted) {
+                        disableChatInput(); // Disable input if user is muted
+                    } else {
+                        enableChatInput(); // Enable input if user is unmuted
+                    }
+                }
+            }
+        });
+    });
 });
 
 
