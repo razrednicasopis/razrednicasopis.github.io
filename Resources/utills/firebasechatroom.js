@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
         switch (command) {
             case '/maintenance':
-                if (userRole !== 'admin' && userRole !== 'owner') {
+                if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'coowner') {
                     sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
 
             case '/deletemsg':
-                if (userRole !== 'admin' && userRole !== 'owner') {
+                if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'coowner') {
                     sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
     
             case '/clearchat':
-                if (userRole !== 'admin' && userRole !== 'owner') {
+                if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'coowner') {
                     sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
             case '/mute':
-                if (userRole !== 'admin' && userRole !== 'owner') {
+                if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'coowner') {
                     sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
                 }
@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
     
             case '/clearchat':
-                if (userRole !== 'admin' && userRole !== 'owner') {
+                if (userRole !== 'admin' && userRole !== 'owner' && userRole !== 'coowner') {
                     sendPrivateMessage('SERVER: Neznan ukaz.');
                     break;
                 }
