@@ -176,8 +176,11 @@ document.addEventListener('DOMContentLoaded', function () {
         usernameElement.classList.add('username');
 
         if (role === 'owner') {
-            usernameElement.textContent = '[Lastnik] ' + username + ': ';
+            usernameElement.textContent = '[OWNER] ' + username + ': ';
             usernameElement.classList.add('owner');
+        } else if (role === 'co-owner') {
+            usernameElement.textContent = '[CO OWNER] ' + username + ': ';
+            usernameElement.classList.add('coowner');
         } else if (role === 'admin') {
             usernameElement.textContent = '[Admin] ' + username + ': ';
             usernameElement.classList.add('admin');
@@ -278,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 await deleteMessage(messageId);
                 break;
     
-            case '/chatpurge':
+            case '/clearchat':
                 if (userRole !== 'admin' && userRole !== 'owner') {
                     sendPrivateMessage('SERVER: Primanjkujejo vam zahtevana dovoljenja za uporabo tega ukaza.');
                     break;
