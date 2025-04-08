@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prijava - Razredni Časopis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="system.css">
+    <link rel="stylesheet" href="styless.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="./auth/firebaseauth.js"></script>
+    <script type="module" src="/Resources/js/christmas/snowstorm.js"></script>
+    <script type="module" src="/Resources/js/christmas/christmasLights.js"></script>
+    <link rel="stylesheet" href="/Resources/css/christmas/decorations.css">
+</head>
+<body>
+
+<div class="overlay"></div>
+<div id="resetPasswordOverlay" class="overlay"></div>
+<div class="overlay" id="mailOverlay" style="display: none;"></div>
+
+<header>
+    <h1>Razredni Časopis</h1>
+    <nav>
+        <ul>
+            <button id="mailIcon" class="mail-icon">📧</button>
+            <li><a href="index.html">Domov</a></li>
+            <li><a href="ura.html">Točna Ura</a></li>
+            <li><a href="o-nas.html">O nas</a></li>
+            <li><a href="vsebine.html">Vsebine</a></li>
+            <li><a href="obvestila.html">Obvestila</a></li>
+            <li id="chatLink" class=""><a href="utills/klepet.html">Klepet</a></li>
+            <li><a href="/Resources/events/eventi.html">Eventi</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+            <li class="prijavaLink" id="loginHref"><a href="prijava.html">Prijava</a></li>
+            <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
+            <li class="prijavaLink"><a href="registracija.html">Registracija</a></li>
+        </ul>
+    </nav>
+</header>
+<div id="login-form" class="form-container">
+    <h2>PRIJAVA V RAZREDNI ČASOPIS</h2><br>
+    <input type="email" id="email" placeholder="E-mail" required><br>
+    <input type="password" id="password" placeholder="Geslo" required><br>
+    <div id="resetPasswordContainer">
+    <a id="resetPassword" href="#" >Pozabljeno geslo?</a>
+    </div>
+    <button class="blob-btn" id="prijavaBtn">Prijava
+        <span class="blob-btn__inner">
+            <span class="blob-btn__blobs">
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+            </span>
+        </span>
+    </button>
+</div>
+
+
+<!-- Pop-ups -->
+
+<div id="mailWindow" class="mail-window" style="display:none;">
+    <div id="mailMessagesContainer">
+      <!-- Dynamically Loaded Mail Messages -->
+    </div>
+    <button id="closeMailWindow">Close</button>
+  </div>
+  
+  
+  <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 30px; z-index: 100; width: 300px; height: 500px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+    <div id="popupContent"></div>
+    <button id="popupClose" style="display: none;">Close</button>
+  </div>
+  
+  
+  <div id="fullMessagePopup" class="popup" style="display: none;">
+    <div class="popup-content">
+        <h3 id="fullMessageTitle"></h3>
+        <p id="fullMessageBody"></p>
+        <button id="claimReward" class="hidden">Prevzemi nagrado</button>
+        <button id="closeFullMessage">Zapri</button>
+    </div>
+  </div>
+
+
+<div id="maintenance-warning">
+    <p id="maintenance-message"></p>
+</div>
+<div id="maintenancePopup">
+    <div id="maintenancePopupContent">
+        <h1>POVEZAVA IZGUBLJENA</h1>
+        <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+        <button id="closeMaintenancePopupBtn">Osveži</button>
+    </div>  
+</div>
+
+<!-- Password Reset Popup -->
+<div id="resetPasswordPopup" class="popup">
+    <div class="popupContent">
+        <h2>Resetiranje gesla</h2>
+        <p id="resetPasswordMessage">Vnesite svoj e-poštni naslov za ponastavitev gesla:</p>
+        <input type="email" id="resetEmail" placeholder="E-mail" required><br>
+        <button id="confirmEmailBtn">Potrdi</button>
+        <button id="closeResetPopupBtn">Zapri</button>
+    </div>
+</div>
+
+
+<script type="module" src="obvestila/firebasemodmail.js"></script>
+<script src="alerts.js"></script>
+<script type="module" src="settings/settings.js"></script>
+<script type="module" src="auth/loginStateChecker.js"></script>
+</body>
+</html>
