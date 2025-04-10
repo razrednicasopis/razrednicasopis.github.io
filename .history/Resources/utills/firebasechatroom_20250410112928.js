@@ -157,6 +157,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
+
+
             setTimeout(() => {
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }, 0);

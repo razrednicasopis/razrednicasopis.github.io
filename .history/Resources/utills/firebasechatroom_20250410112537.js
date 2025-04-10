@@ -131,11 +131,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         onSnapshot(messagesQuery, (snapshot) => {
             const messagesDiv = document.getElementById('messages');
-        
+
             snapshot.docChanges().forEach((change) => {
                 const messageId = change.doc.id;
                 const messageData = change.doc.data();
-        
+
                 if (change.type === 'added') {
                     getUserColor(messageData.username).then(customColor => {
                         displayMessage(
@@ -146,11 +146,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             messageData.role,
                             customColor
                         );
-        
-                        // Move scroll to bottom after adding message
-                        setTimeout(() => {
-                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        }, 100); // Small delay to ensure the DOM renders the message
                     });
                 } else if (change.type === 'removed') {
                     removeMessageDiv(messageId);

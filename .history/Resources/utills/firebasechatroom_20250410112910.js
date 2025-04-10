@@ -156,6 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     removeMessageDiv(messageId);
                 }
             });
+      
+            });
 
             setTimeout(() => {
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;

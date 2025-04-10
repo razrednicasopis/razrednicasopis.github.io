@@ -127,42 +127,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function loadMessages() {
         const messagesRef = collection(db, 'messages');
-        const messagesQuery = query(messagesRef, orderBy('timestamp'));
+        const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
 
-        onSnapshot(messagesQuery, (snapshot) => {
-            const messagesDiv = document.getElementById('messages');
-        
-            snapshot.docChanges().forEach((change) => {
-                const messageId = change.doc.id;
-                const messageData = change.doc.data();
-        
-                if (change.type === 'added') {
-                    getUserColor(messageData.username).then(customColor => {
-                        displayMessage(
-                            messageId,
-                            messageData.username,
-                            messageData.text,
-                            messageData.timestamp.toDate(),
-                            messageData.role,
-                            customColor
-                        );
-        
-                        // Move scroll to bottom after adding message
-                        setTimeout(() => {
-                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        }, 100); // Small delay to ensure the DOM renders the message
-                    });
-                } else if (change.type === 'removed') {
-                    removeMessageDiv(messageId);
-                }
+onSnapshot(messagesQuery, (snapshot) => {
+    const messagesDiv = document.getElementById('messages');
+
+    snapshot.docChanges().forEach((change) => {
+        const messageId = change.doc.id;
+        const messageData = change.doc.data();
+
+        if (change.type === 'added') {
+            getUserColor(messageData.username).then(customColor => {
+                displayMessage(
+                    messageId,
+                    messageData.username,
+                    messageData.text,
+                    messageData.timestamp.toDate(),
+                    messageData.role,
+                    customColor
+                );
             });
+        } else if (change.type === 'removed') {
+            removeMessageDiv(messageId);
+        }
+    });
 
-            setTimeout(() => {
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 0);
+    // Defer scroll to bottom to ensure messages are rendered first
+    setTimeout(() => {
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 0);
+});
+
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
         });
     }
-
 
 
 

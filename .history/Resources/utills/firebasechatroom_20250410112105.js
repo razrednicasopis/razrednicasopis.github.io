@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function loadMessages() {
         const messagesRef = collection(db, 'messages');
-        const messagesQuery = query(messagesRef, orderBy('timestamp'));
+        const messagesQuery = query(messagesRef, orderBy('timestamp', 'asc'));
 
         onSnapshot(messagesQuery, (snapshot) => {
             const messagesDiv = document.getElementById('messages');
@@ -146,23 +146,22 @@ document.addEventListener('DOMContentLoaded', function () {
                             messageData.role,
                             customColor
                         );
-        
-                        // Move scroll to bottom after adding message
-                        setTimeout(() => {
-                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        }, 100); // Small delay to ensure the DOM renders the message
                     });
                 } else if (change.type === 'removed') {
                     removeMessageDiv(messageId);
                 }
             });
-
+        
+            // Defer scroll to bottom to ensure messages are rendered first
             setTimeout(() => {
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }, 0);
         });
-    }
+        
 
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
+        });
+    }
 
 
 

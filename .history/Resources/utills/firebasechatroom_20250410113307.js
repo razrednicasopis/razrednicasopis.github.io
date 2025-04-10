@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Move scroll to bottom after adding message
                         setTimeout(() => {
                             messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        }, 100); // Small delay to ensure the DOM renders the message
+                        }, 200); // Small delay to ensure the DOM renders the message
                     });
                 } else if (change.type === 'removed') {
                     removeMessageDiv(messageId);
