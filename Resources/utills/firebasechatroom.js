@@ -128,38 +128,49 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadMessages() {
         const messagesRef = collection(db, 'messages');
         const messagesQuery = query(messagesRef, orderBy('timestamp'));
-
-        onSnapshot(messagesQuery, (snapshot) => {
-            const messagesDiv = document.getElementById('messages');
-        
-            snapshot.docChanges().forEach((change) => {
-                const messageId = change.doc.id;
-                const messageData = change.doc.data();
-        
-                if (change.type === 'added') {
-                    getUserColor(messageData.username).then(customColor => {
-                        displayMessage(
-                            messageId,
-                            messageData.username,
-                            messageData.text,
-                            messageData.timestamp.toDate(),
-                            messageData.role,
-                            customColor
-                        );
-        
-                        // Move scroll to bottom after adding message
-                        setTimeout(() => {
-                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        }, 100); // Small delay to ensure the DOM renders the message
-                    });
-                } else if (change.type === 'removed') {
-                    removeMessageDiv(messageId);
-                }
+    
+        const messagesDiv = document.getElementById('messages');
+        let allMessages = []; // Store all messages in memory for sorting
+    
+        onSnapshot(messagesQuery, async (snapshot) => {
+            allMessages = []; // Clear on each snapshot update
+    
+            const promises = snapshot.docs.map(async docSnap => {
+                const data = docSnap.data();
+                const customColor = await getUserColor(data.username);
+    
+                return {
+                    id: docSnap.id,
+                    username: data.username,
+                    text: data.text,
+                    timestamp: data.timestamp.toDate(),
+                    role: data.role,
+                    customColor
+                };
             });
-
+    
+            const resolvedMessages = await Promise.all(promises);
+            resolvedMessages.sort((a, b) => a.timestamp - b.timestamp);
+    
+            // Clear current messages
+            messagesDiv.innerHTML = '';
+    
+            // Append in correct order
+            resolvedMessages.forEach(msg => {
+                displayMessage(
+                    msg.id,
+                    msg.username,
+                    msg.text,
+                    msg.timestamp,
+                    msg.role,
+                    msg.customColor
+                );
+            });
+    
+            // Scroll to bottom
             setTimeout(() => {
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 0);
+            }, 100);
         });
     }
 
