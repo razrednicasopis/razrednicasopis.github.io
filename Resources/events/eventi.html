@@ -29,13 +29,13 @@
         <ul>
             <button id="mailIcon" class="mail-icon">📧</button>
             <li><a href="/Resources/index.html">Domov</a></li>
-            <li><a href="/Resources/ura.html">Točna Ura</a></li>
-            <li><a href="/Resources/o-nas.html">O nas</a></li>
-            <li><a href="/Resources/vsebine.html">Vsebine </a></li>
-            <li><a href="/Resources/obvestila.html">Obvestila</a></li>
-            <li id="chatLink" class=""><a href="/Resources/utills/klepet.html">Klepet</a></li>
-            <li><a href="#">Eventi</a></li>
-            <li><a href="/Resources/kontakt.html">Kontakt</a></li>
+            <li><a href="/Resources/ura.html" id="Ura">Točna Ura</a></li>
+            <li><a href="/Resources/o-nas.html" id="oNas">O nas</a></li>
+            <li><a href="/Resources/vsebine.html" id="Vsebine">Vsebine </a></li>
+            <li><a href="/Resources/obvestila.html" id="Obvestila">Obvestila</a></li>
+            <li><a href="/Resources/utills/klepet.html" id="Klepet">Klepet</a></li>
+            <li><a href="#" id="Eventi">Eventi</a></li>
+            <li><a href="/Resources/kontakt.html" id="Kontakt">Kontakt</a></li>
             <li class="prijavaLink" id="loginHref"><a href="/Resources/prijava.html " style="display: block;">Prijava</a></li>
             <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
             <li class="prijavaLink"><a href="/Resources/registracija.html">Registracija</a></li>
@@ -167,6 +167,20 @@
 </div>
 
 
+<!-- Page Specific Access Popup -->
+<div id="noAccessPagePopup" style="display: none; position: fixed; top: 0; left: 0; 
+    width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: white; 
+    justify-content: center; align-items: center; z-index: 9999;">
+  <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center;">
+    <h2 id="popupTitle">Stran je trenutno v vzdrževanju</h2>
+    <p id="popupMessage">Ta stran ni na voljo. Poskusite kasneje.</p>
+    <button onclick="history.back()" style="margin-top: 15px; padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer;">V redu</button>
+  </div>
+</div>
+
+
+
+<script type="module" src="../js/sys/contentLocker.js"></script>
 <script type="module" src="../obvestila/firebasemodmail.js"></script>
 <script src="/Resources/alerts.js"></script>
 <script type="module" src="eventServer.js"></script>
