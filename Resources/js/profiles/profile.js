@@ -38,7 +38,7 @@ async function loadUserProfile(uid) {
 
     if (userSnap.exists()) {
       const data = userSnap.data();
-      usernameEl.textContent = "@" + (data.username || "unknown");
+      usernameEl.textContent = " @ " + (data.Username || "unknown");
       bioEl.textContent = data.bio || "This user hasn't written a bio.";
       avatarEl.src = data.avatarURL || "default-avatar.png";
     } else {
