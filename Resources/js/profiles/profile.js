@@ -40,10 +40,11 @@ async function loadUserProfile(uid) {
       const data = userSnap.data();
       usernameEl.textContent = " @ " + (data.Username || "unknown");
       bioEl.textContent = data.bio || "This user hasn't written a bio.";
-      avatarEl.src = data.avatarURL || "default-avatar.png";
+      avatarEl.src = data.avatarURL || "avatarPFP.png";
     } else {
       usernameEl.textContent = "User not found";
       bioEl.textContent = "No user with that ID exists.";
+      avatarEl.remove();
     }
   } catch (error) {
     usernameEl.textContent = "Error loading profile";
