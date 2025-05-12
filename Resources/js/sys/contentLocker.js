@@ -1,5 +1,8 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+
+
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -14,6 +17,8 @@ const firebaseConfig = {
 // Initialize Firebase App
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth();
+
 
 // Mapping page filenames to Firestore fields and display names
 const pageNames = {
@@ -80,3 +85,33 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Page not found in pageNames mapping");
   }
 });
+
+
+
+/* Login Check for the Settings tab
+
+const navList = document.querySelector("nav ul");
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Check if already exists to prevent duplicates
+    if (!document.getElementById("nastavitveLink")) {
+      const settingsLi = document.createElement("li");
+      const settingsAnchor = document.createElement("a");
+
+      settingsAnchor.href = "../Resources/utills/nastavitve.html";
+      settingsAnchor.textContent = "Nastavitve";
+      settingsAnchor.id = "nastavitveLink";
+
+      settingsLi.appendChild(settingsAnchor);
+      navList.insertBefore(settingsLi, document.getElementById("loginHref")); // Insert before login
+    }
+  } else {
+    // Remove settings link on logout if it exists
+    const existingSettingsLink = document.getElementById("nastavitveLink");
+    if (existingSettingsLink && existingSettingsLink.parentElement) {
+      existingSettingsLink.parentElement.remove();
+    }
+  }
+});
+

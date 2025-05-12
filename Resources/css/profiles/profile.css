@@ -27,3 +27,89 @@
     color: #555;
     margin-top: 10px;
   }
+
+
+/* Friend Request Button CSS */
+
+.add-friend-btn {
+  margin-top: 20px;
+  margin-left: 85px;
+  width: 50%;
+  height: 20%;
+  transform: scale(0.8);
+  position: relative;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+  transition: transform 0.15s ease, background 0.4s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-friend-btn:hover {
+  background: linear-gradient(135deg, #3b82f6, #4f46e5);
+}
+
+.add-friend-btn:active {
+  transform: scale(0.95);
+}
+
+.add-friend-btn .icon {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.add-friend-btn:hover .icon {
+  transform: rotate(90deg) scale(1.2);
+}
+
+
+/* Cancel Button - Red */
+.cancel-request-btn {
+  margin-top: 20px;
+  margin-left: 85px;
+  width: 50%;
+  height: 20%;
+  transform: scale(0.8);
+  position: relative;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(192, 57, 43, 0.4);
+  transition: transform 0.15s ease, background 0.4s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  display: none; /* Hidden by default */
+}
+
+.cancel-request-btn:hover {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+}
+
+.cancel-request-btn:active {
+  transform: scale(0.95);
+}
+
+.cancel-request-btn .icon {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.cancel-request-btn:hover .icon {
+  transform: rotate(90deg) scale(1.2);
+}

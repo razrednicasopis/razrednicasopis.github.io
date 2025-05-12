@@ -163,6 +163,8 @@ if (loginBtn) {
   });
   }
 
+  
+
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async () => {
