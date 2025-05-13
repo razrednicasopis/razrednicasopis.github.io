@@ -113,4 +113,5 @@ onAuthStateChanged(auth, (user) => {
       existingSettingsLink.parentElement.remove();
     }
   }
-}); */
+});
+*/

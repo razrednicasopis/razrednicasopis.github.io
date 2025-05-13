@@ -1,13 +1,13 @@
 .settingsSelector {
-    display: grid;
+    display: inline-block;
     margin-top: 70px;
     margin-left: 50px;
-    width: 200px;
+    width: 100%
   }
   
   .settingsSelector a {
-    font-size: 18px;
-    margin: 10px;
+    font-size: 16px;
+    margin: 20px;
     font-weight: bold;
     text-decoration: none;
     color: black;
@@ -16,6 +16,5 @@
   #selectedSetting {
     background: #9a9a9a;
     border-radius: 25px;
-    padding: 5px 15px; /* Increase horizontal space inside */
+
   }
-  

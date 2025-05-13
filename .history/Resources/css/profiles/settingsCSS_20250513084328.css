@@ -3,11 +3,12 @@
     margin-top: 70px;
     margin-left: 50px;
     width: 200px;
+    gap: 
   }
   
   .settingsSelector a {
     font-size: 18px;
-    margin: 10px;
+    margin: 20px;
     font-weight: bold;
     text-decoration: none;
     color: black;

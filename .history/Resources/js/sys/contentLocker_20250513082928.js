@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-/* Login Check for the Settings tab
+ Login Check for the Settings tab
 
 const navList = document.querySelector("nav ul");
 
@@ -113,4 +113,4 @@ onAuthStateChanged(auth, (user) => {
       existingSettingsLink.parentElement.remove();
     }
   }
-}); */
+});

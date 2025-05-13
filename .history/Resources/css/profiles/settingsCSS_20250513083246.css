@@ -1,0 +1,17 @@
+.settingsSelector {
+    display: inline-block;
+    margin-top: 70px;
+    margin-left: 50px;
+  }
+  
+  .settingsSelector a {
+    font-size: 16px;
+    margin: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+  }
+
+  #selectedSetting {
+    background: #7D7D7D
+  }
