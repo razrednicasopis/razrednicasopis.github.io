@@ -91,34 +91,33 @@ function createFriendRequestCard(request, senderUsername) {
   container.appendChild(usernameDiv);
   container.appendChild(buttonsDiv);
 
-  acceptBtn.addEventListener("click", async () => {
-    acceptBtn.disabled = true;
-    rejectBtn.disabled = true;
+acceptBtn.addEventListener("click", async () => {
+  acceptBtn.disabled = true;
+  rejectBtn.disabled = true;
 
-    try {
-      const senderUid = request.senderUid;
-      const receiverUid = request.receiverUid;
-      const requestId = request.id;
+  try {
+    const senderUid = request.from;      
+    const receiverUid = request.to;
 
-      const senderRef = doc(db, "users", senderUid);
-      const receiverRef = doc(db, "users", receiverUid);
+    const senderRef = doc(db, "users", senderUid);
+    const receiverRef = doc(db, "users", receiverUid);
 
-      await updateDoc(senderRef, {
-        friends: arrayUnion(receiverUid)
-      });
-      await updateDoc(receiverRef, {
-        friends: arrayUnion(senderUid)
-      });
+    await updateDoc(senderRef, {
+      friends: arrayUnion(receiverUid)
+    });
+    await updateDoc(receiverRef, {
+      friends: arrayUnion(senderUid)
+    });
 
-      await deleteDoc(doc(db, "friendRequests", requestId));
-      container.remove();
-    } catch (err) {
-      console.error("Napaka pri sprejemanju prošnje:", err);
-      alert("Napaka pri sprejemanju prošnje, poskusi znova.");
-      acceptBtn.disabled = false;
-      rejectBtn.disabled = false;
-    }
-  });
+    await deleteDoc(doc(db, "friendRequests", request.id));  // <---- fixed here
+    container.remove();
+  } catch (err) {
+    console.error("Napaka pri sprejemanju prošnje:", err);
+    alert("Napaka pri sprejemanju prošnje, poskusi znova.");
+    acceptBtn.disabled = false;
+    rejectBtn.disabled = false;
+  }
+});
 
   rejectBtn.addEventListener("click", async () => {
     acceptBtn.disabled = true;
@@ -164,12 +163,12 @@ async function loadFriendRequests() {
 
     for (const docSnap of requestsSnapshot.docs) {
       const requestData = docSnap.data();
-      requestData.id = docSnap.id;
+      const requestId = docSnap.id;
 
       const senderDoc = await getDoc(doc(db, "users", requestData.from));
       const senderUsername = senderDoc.exists() ? senderDoc.data().Username || "Nepoznani uporabnik" : "Nepoznani uporabnik";
 
-      const card = createFriendRequestCard(requestData, senderUsername);
+      const card = createFriendRequestCard({...requestData, id: requestId}, senderUsername);
       requestsContainer.appendChild(card);
     }
   } catch (err) {
