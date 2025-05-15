@@ -43,7 +43,7 @@ color: black;
 /*  Username Change Button CSS */
 
 .change-username-btn {
-  background: linear-gradient(135deg, #2196f3, #64b5f6);
+  background: linear-gradient(135deg, #864caf, #9281c7);
   color: white;
   border: none;
   padding: 12px 25px;
@@ -55,7 +55,7 @@ color: black;
 }
 
 .change-username-btn:hover {
-  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  background: linear-gradient(135deg, #43a047, #66bb6a);
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }

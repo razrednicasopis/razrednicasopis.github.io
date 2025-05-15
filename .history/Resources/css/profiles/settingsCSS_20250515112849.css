@@ -25,8 +25,8 @@
 }
 
 .settingsSelector a.active-tab {
-background: #9a9a9a;
-color: black;
+  background: #9b9b9b;
+  color: white;
 }
 
 .settingsContent {
@@ -37,32 +37,4 @@ color: black;
   width: 500px;
   min-height: 200px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-
-/*  Username Change Button CSS */
-
-.change-username-btn {
-  background: linear-gradient(135deg, #2196f3, #64b5f6);
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  font-size: 16px;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.change-username-btn:hover {
-  background: linear-gradient(135deg, #1976d2, #42a5f5);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.change-username-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  color: #666;
-  box-shadow: none;
 }
