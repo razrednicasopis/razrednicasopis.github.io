@@ -113,3 +113,84 @@
 .cancel-request-btn:hover .icon {
   transform: rotate(90deg) scale(1.2);
 }
+
+
+/* User Lookup CSS */
+
+#searchResult {
+  max-width: 600px;         /* match your search bar width */
+  margin: 8px auto 0;       /* small top margin, auto left & right to center */
+  text-align: center;       /* center the text inside the div */
+  font-weight: 600;
+  font-size: 16px;
+  min-height: 24px;         /* keeps space reserved so page doesn't jump */
+  user-select: none;
+  /* Optional: smoother color transition */
+  transition: color 0.3s ease;
+}
+
+/* Container to center the search bar horizontally */
+#userSearchContainer {
+  max-width: 600px;  /* bigger width for the input+button container */
+  margin: 60px auto; /* center horizontally with some top margin */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+/* Search input styling */
+#userSearchInput {
+  flex-grow: 1;        /* input takes the remaining width */
+  height: 48px;        /* bigger input height */
+  font-size: 18px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1.5px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+#userSearchInput:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 8px rgba(79, 70, 229, 0.5);
+}
+
+/* Search button styling: smaller to fit inside the input height */
+#userSearchBtn {
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  border: none;
+  color: #ffffff;
+  padding: 0 24px;
+  height: 44px;           /* slightly smaller height than input */
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.6);
+  transition: transform 0.15s ease, background 0.4s ease, box-shadow 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+
+#userSearchBtn:hover {
+  background: linear-gradient(135deg, #3b82f6, #4f46e5);
+  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.8);
+  transform: scale(1.05);
+}
+
+#userSearchBtn:active {
+  transform: scale(0.95);
+  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5);
+}
+
+#userSearchBtn .icon {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+#userSearchBtn:hover .icon {
+  transform: rotate(90deg) scale(1.2);
+}

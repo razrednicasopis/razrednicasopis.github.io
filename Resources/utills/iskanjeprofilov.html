@@ -14,7 +14,8 @@
   <script type="module" src="/Resources/js/christmas/christmasLights.js"></script>
   <link rel="stylesheet" href="/Resources/css/christmas/decorations.css">
   <link rel="stylesheet" href="../css/profiles/settingsCSS.css">
-  <title>Razredni Časopis</title>
+  <link rel="stylesheet" href="../css/profiles/profile.css">
+  <title>Iskanje profilov - Razredni Časopis</title>
 </head>
 <body>
 
@@ -24,7 +25,7 @@
 
 
   <header>
-  <h1>Nastavitve - Razredni Časopis</h1>
+  <h1>Iskanje profilov - Razredni Časopis</h1>
   <nav>
     <ul>
       <button id="mailIcon" class="mail-icon">📧</button>
@@ -35,14 +36,14 @@
 </header>
 
 
-<div class="settingsWrapper">
-  <div class="settingsSelector">
-    <a id="profileTab" class="settings-tab" href="#">👤 Profil</a>
-    <a id="friendsTab" class="settings-tab" href="#">🤝 Prijatelji</a>
-  </div>
-
-  <div id="settingsContent" class="settingsContent"></div>
+<div id="userSearchContainer">
+    <input type="text" id="userSearchInput" placeholder="Vnesi uporabniško ime..." />
+    <button id="userSearchBtn" title="Išči">🔍</button>
 </div>
+
+
+
+<div id="searchResult"></div>
 
 
 
@@ -105,6 +106,7 @@
 
 
 
+<script type="module" src="../js/sys/userSearch.js"></script>
 <script type="module" src="../js/sys/settingsJS.js"></script>
 <script type="module" src="../obvestila/firebasemodmail.js"></script>
 <script type="module" src="../settings/settings.js"></script>
