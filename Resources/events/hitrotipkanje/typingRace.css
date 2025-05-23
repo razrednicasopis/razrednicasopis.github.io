@@ -118,6 +118,7 @@
     border-radius: 10px;
     background-color: #007bff;
     transition: width 0.3s ease-in-out; /* Smooth width transition */
+    margin-left: 15px;
 }
 
 span {
@@ -147,6 +148,17 @@ span {
     line-height: 1.5;
     word-wrap: break-word;
 }
+
+    #textToType span {
+    display: inline;      /* Ensure spans are inline, not block */
+    white-space: pre-wrap; /* Preserve spaces and wrap lines nicely */
+}
+
+.current-letter {
+    background-color: yellow; /* or any highlight color you prefer */
+    text-decoration: underline;
+}
+
 
 /* Typing Field */
 #typingField {
@@ -262,10 +274,12 @@ span.wpm {
 #submitButton {
     width: 300px;
     height: 50px;
-    margin-left: 100px;
+    margin-left: 20%;
+    margin-top: 25px;
     background-color: orange;
     border: none;
     cursor: pointer;
+
 }
 
 /* Style for difficulty buttons to look like matchmaking buttons */
@@ -317,4 +331,29 @@ span.wpm {
     color: white;
     font-size: 50px;
     font-weight: bold;
+}
+
+/* AI Race Ending Popup */
+
+#raceEndDialog {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  z-index: 1000;
+  border-radius: 10px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+}
+
+#raceEndDialog.show {
+  display: block;
+}
+
+.race-popup-content {
+  padding: 20px;
+  text-align: center;
 }
