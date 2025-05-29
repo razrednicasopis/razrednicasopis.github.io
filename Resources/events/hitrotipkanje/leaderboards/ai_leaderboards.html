@@ -6,13 +6,16 @@
     <script type="module" src="/Resources/auth/firebaseauth.js"></script>
     <link rel="stylesheet" href="/Resources/styless.css">
     <link rel="stylesheet" href="/Resources/system.css">
-    <link rel="stylesheet" href="typingRace.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="../../eventsmain.css">
+    <link rel="stylesheet" href="../typingRace.css">
+    <link rel="stylesheet" href="../../../css/christmas/decorations.css">
+    <script type="module" href="../../../js/christmas/christmasLights.js"></script>
+    <script type="module" href="../../../js/christmas/snowstorm.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<title>Igra - Hitro Tipkanje</title>
+    <script type="module" src="gameStatus.js"></script>
+    <title>Kolo Sreče - Razredni Časopis</title>
 </head>
 <body>
 
@@ -21,61 +24,38 @@
 <div id="eventEndedOverlay" class="overlay"></div>
 
 
+<div class="trLobbyHeader">
+  <a class="trLobbyHome" href="../../index.html">Domov</a>
+  <a class="trLobbyBack" href="../domov.html">Nazaj</a>
+  <a class="lbLobbyCurrent selected" href="leaderboards/ai_leaderboards.html">Lestvice</a>
+</div>
 
-<div id="playersProgress">
-    <div class="progress-container current-user">
-        <span class="player-name" id="yourName">Vi</span>
-        <div class="progress-bar-container">
-            <div id="user-progress" class="progress-bar"></div>
-            <div class="moving-lines" style="display:none;"></div>
-        </div>
-        <span id="user-progress-display" class="wpm">0%</span>
-    </div>
 
-    <div class="progress-container">
-        <span class="player-name">Računalnik</span>
-        <div class="progress-bar-container">
-            <div id="ai-progress" class="progress-bar"></div>
-            <div class="moving-lines" style="display:none;"></div>
-        </div>
-        <span id="ai-progress-display" class="wpm">0%</span>
+<!-- AI Leaderboard Section -->
+
+<div id="aiLeaderboard" class="leaderboard-container">
+    <h2>AI Lestvica</h2>
+    <table class="leaderboard-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Uporabniško ime</th>
+                <th>Zmage</th>
+            </tr>
+        </thead>
+        <tbody id="aiLeaderboardBody">
+            <!-- Leaderboard podatki bodo dodani tukaj -->
+        </tbody>
+    </table>
+    <div id="aiLeaderboardNoResults" style="display: none; text-align: center; padding: 20px; font-size: 18px; background-color: #f8d7da; color: #721c24;">
+        Ni rezultatov.
     </div>
 </div>
 
-<div id="textToType">Pridobivanje besedila...</div>
-
-<textarea id="typingField" placeholder="Začnite tipkati..."></textarea><br>
-
-<button id="leaveButton">Zapusti igro</button>
-
-<div class="submitBtnContainer">
-    <button id="submitButton">Submit</button>
-</div>
 
 
 
 <!-- Popup codes -->
-
-<!-- Matchmaking Popup -->
-<div id="matchmakingPopup" class="popup">
-    <div class="popup-content">
-        <div class="loginWarningTitle" style="font-weight: bold; display: none; font-size: 25px;">Prosimo prijavite se</div><br>
-        <div class="loading-circle"></div>
-        <p>Iskanje igralcev...</p>
-        <button id="closeMatchmakingPopup">Zapri</button>
-    </div>
-</div>
-
-
-<div id="raceEndDialog" class="popup">
-  <div class="race-popup-content">
-    <h2 id="raceEndMessage"></h2>
-    <p id="raceEndDetails"></p>
-    <button id="leaveRaceBtn">Zapusti dirko</button>
-  </div>
-</div>
-
-
 
 <!-- Event Has Ended Popup -->
 <div id="eventEndedPopupContainer" style="display: none;" class="popup"><
@@ -107,12 +87,14 @@
     </div>  
 </div>
 
+
+
+<script type="module" src="aiLeaderboards.js"></script>
 <script src="/Resources/alerts.js"></script>
 <script type="module" src="../eventServer.js"></script>
 <script type="module" src="../eventChecker.js"></script>
 <script type="module" src="../eventsmain.js"></script>
 <script type="module" src="/Resources/settings/settings.js"></script>
-<script type="module" src="./AIMatchmaking.js"></script>
-<script type="module" src="offlinegame.js"></script>
+<script type="module" src="../../auth/loginStateChecker.js"></script>
 </body>
 </html>

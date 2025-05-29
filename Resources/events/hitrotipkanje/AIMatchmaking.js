@@ -17,9 +17,8 @@ function startMatchmaking() {
     matchmakingOverlay.style.display = 'block';
 }
 
-// Handle difficulty selection
 function selectDifficulty(difficulty) {
-    // Set AI typing speed based on selected difficulty
+    // Set AI typing speed based on selected difficulty (optional for future use)
     switch (difficulty) {
         case 'easy':
             aiTypingSpeed = 30;
@@ -31,29 +30,31 @@ function selectDifficulty(difficulty) {
             aiTypingSpeed = 80;
             break;
         default:
-            aiTypingSpeed = 50;  // Default to medium if no valid selection
+            aiTypingSpeed = 50;
     }
 
-    // Hide difficulty popup and matchmaking overlay
+    // Hide popups
     difficultyPopup.style.display = 'none';
     matchmakingOverlay.style.display = 'none';
 
-    // Simulate matchmaking process and start the game
-    simulateMatchmaking();
+    // Redirect with difficulty
+    simulateMatchmaking(difficulty);
 }
 
+
 // Simulate matchmaking process
-function simulateMatchmaking() {
+// Simulate matchmaking process
+function simulateMatchmaking(selectedDifficulty) {
     // Show matchmaking popup
     matchmakingPopup.style.display = 'block';
     matchmakingOverlay.style.display = 'block';
 
-    // After a short delay, start the game
+    // After a short delay, redirect with difficulty param
     setTimeout(() => {
-        // Proceed with the game initialization (e.g., redirect or start the race)
-        window.location.href = "offlineigra.html";  // Adjust this if needed
-    }, 1000);  // Simulate a 1-second matchmaking time
+        window.location.href = `offlineigra.html?difficulty=${selectedDifficulty}`;
+    }, 1000); // Simulate a 1-second matchmaking time
 }
+
 
 // Event listener for start PvE matchmaking button
 if (startPveMatchmakingButton) {

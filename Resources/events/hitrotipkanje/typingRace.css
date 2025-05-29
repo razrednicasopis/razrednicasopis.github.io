@@ -1,3 +1,207 @@
+/* Lobby Header */
+
+.trLobbyHeader {
+  display: flex; /* Arrange links horizontally */
+  justify-content: center; /* Center align the links */
+  gap: 15px; /* Space between links */
+  padding: 10px; /* Padding around the header */
+  background-color: #f9f9f9; /* Light background */
+  border-bottom: 2px solid #ddd; /* Subtle bottom border */
+}
+
+/* Styling links as buttons */
+.trLobbyHeader a {
+  text-decoration: none; /* Remove underline */
+  font-weight: bold;
+  padding: 10px 20px; /* Button-like padding */
+  border: 2px solid transparent; /* Border for hover effect */
+  border-radius: 5px; /* Rounded corners */
+  color: #333; /* Default text color */
+  background-color: #fff; /* Default background */
+  transition: all 0.3s ease; /* Smooth hover/focus */
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+}
+
+/* Hover effect */
+.trLobbyHeader a:hover {
+  background-color: #d3d3d3; /* Gray background */
+  color: #000; /* Darker text */
+  transform: scale(1.05); /* Slight scale */
+  border-color: #ccc; /* Border color */
+}
+
+/* Selected link */
+.trLobbyHeader a.selected {
+  background-color: #a9a9a9; /* Distinct background */
+  border-color: #000; /* Black border */
+  font-weight: bold;
+  transform: scale(1.1); /* Larger scale */
+  font-style: italic;
+}
+
+
+/* Leaderboards CSS */
+
+.leaderboard-container {
+    margin: 20px auto;
+    max-width: 600px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.leaderboard-table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.leaderboard-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+
+
+/* Matchmaking Buttons CSS */
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Pushes content to the top */
+  height: 150px; /* You can reduce this from 80vh to pull content higher */
+  padding-top: 40px; /* Optional: add padding to control spacing from the top */
+  gap: 30px;
+}
+
+
+
+button {
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+.locked-button-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Disabled button style */
+button.locked:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.css-chain {
+  position: absolute;
+  width: 200px;       /* Make longer to reach edges */
+  height: 20px;       /* Thin height for chain */
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+  font-family: monospace;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+}
+
+.diagonal-chain {
+  transform: translate(-50%, -50%) rotate(9deg);
+}
+
+.diagonal-chain.reverse {
+  transform: translate(-50%, -50%) rotate(-9deg);
+}
+
+.css-chain::before {
+  content: '()–()–()–()–()–()–()–()';  /* Added more chain links */
+  display: block;
+  width: 100%;              /* Make text fill container */
+  color: #999;
+  opacity: 0.85;
+  text-shadow: 1px 1px 2px black;
+  font-size: 14px;
+  letter-spacing: -1px;
+  font-weight: bold;
+  transform: scaleX(1.4) scaleY(0.7);
+  white-space: nowrap;
+  text-align: center;
+}
+
+
+
+/* Tooltip cursor for locked wrapper */
+.locked-button-wrapper {
+  cursor: help;
+}
+
+
+/* Rules Section */
+
+.rules-section {
+  max-width: 1000px;
+  margin: 40px auto 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-left: 6px solid #4CAF50;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.rules-section h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 24px;
+  color: #2c3e50;
+}
+
+.rules-section ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.rules-section li {
+  margin: 8px 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+
+
+
 /* Overlay Style */
 #matchmakingOverlay {
     position: fixed;
@@ -336,24 +540,51 @@ span.wpm {
 /* AI Race Ending Popup */
 
 #raceEndDialog {
-  display: none;
-  position: fixed;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  z-index: 1000;
-  border-radius: 10px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 90%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem 3rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 90%;
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 #raceEndDialog.show {
-  display: block;
+    display: block;
+    opacity: 1;
 }
 
-.race-popup-content {
-  padding: 20px;
-  text-align: center;
+#raceEndMessage {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+#raceEndDetails {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+#leaveRaceBtn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#leaveRaceBtn:hover {
+    background-color: #2980b9;
 }

@@ -18,21 +18,48 @@
     <div class="overlay"></div>
     <div id="matchmakingOverlay" class="overlay"></div>
     <div id="eventEndedOverlay" class="overlay"></div>
-    <header>
-        <h1>Hitro Tipkanje - Razredni Časopis</h1>
-        <nav>
-            <ul>
-                <li><a href="/Resources/events/eventi.html">Nazaj</a></li>
-                <li><a href="/Resources/index.html">Domov</a></li>
-                <li class="prijavaLink" id="loginHref"><a href="/Resources/prijava.html" style="display: block;">Prijava</a></li>
-                <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
-                <li class="prijavaLink"><a href="/Resources/registracija.html">Registracija</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <button id="startPvpMatchmaking">Search</button><br>
-    <button id="startPveMatchmaking">Play against AI</button>
+
+<div class="trLobbyHeader">
+  <a class="trLobbyHome selected" href="../../index.html">Domov</a>
+  <a class="trLobbyBack" href="../eventi.html">Nazaj</a>
+  <a class="lbLobbyCurrent" href="leaderboards/ai_leaderboards.html">Lestvice</a>
+</div>
+
+
+
+<div class="button-container">
+  <div class="locked-button-wrapper" title="Ta funkcija bo na voljo v prihodnjih različicah.">
+    <button id="#" class="locked" disabled>
+      <i class="fas fa-lock"></i> Igraj proti igralcu
+    </button>
+    <div class="css-chain diagonal-chain"></div>
+    <div class="css-chain diagonal-chain reverse"></div>
+  </div>
+
+  <button id="startPveMatchmaking">
+    <i class="fas fa-robot"></i> Igraj proti AI
+  </button>
+</div>
+
+
+<div class="rules-section">
+  <h2>Pravila Tipkarskega Izziva</h2>
+  <ul>
+    <li>Tekmuješ proti robotskem nasprotniku.</li>
+    <li>Tvoj cilj je čim hitreje in čim bolj natančno natipkati prikazano besedilo.</li>
+    <li>Vsaka težavnost ima določen časovni rok v katerem bo robot zaključil besedilo:</li>
+    <ul>
+      <li><strong>Lahko: </strong>1 minuta in 30 sekund</li>
+      <li><strong>Srednje: </strong>45 sekund</li>
+      <li><strong>Težko: </strong>20 sekund</li>
+    </ul>
+    <li>Če uspešno končaš dirko prvi, se tvoja zmaga ubeleži na lestvice. Igralec z največ zmagami bodo ob koncu eventa prejeli nagrade preko sporočil.</li>
+    <li>Vso srečo!</li>
+  </ul>
+</div>
+
+
 
     <!-- Popup codes -->
 
