@@ -311,7 +311,6 @@ async function initializeTypingRace() {
         }
     }, 200);
 
-    
 submitButton.onclick = () => {
     if (typingField.disabled) return;
 

@@ -1,6 +1,6 @@
 // Import Firebase modules
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, getDocs, deleteDoc, query, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, getDocs, deleteDoc, query, limit } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 
 // Firebase configuration
@@ -21,11 +21,10 @@ const auth = getAuth(app);
 const seasonCountdownEl = document.getElementById("seasonTimeLeft");
 const seasonCountdownContainer = document.getElementById("seasonCountdown");
 
-let seasonResetInProgress = false; // <-- ADDED: flag to block submissions during reset
-
 async function displayLeaderboard() {
     const leaderboardBody = document.getElementById("aiLeaderboardBody");
     const seasonStatusDocRef = doc(db, "settings", "seasonStatus");
+
 
     // Fetch all users from Firestore collection "aiTRLeaderboards"
     const usersSnapshot = await getDocs(collection(db, "aiTRLeaderboards"));
@@ -153,18 +152,11 @@ async function startSeasonCountdown() {
                     // Show reset message
                     seasonCountdownEl.textContent = "Sezona se trenutno resetira...";
 
-                    // Mark reset as in progress
-                    seasonResetInProgress = true;  // <-- ADDED
-
                     // Delete the aiTRLeaderboards collection
                     clearAiTRLeaderboards().then(() => {
-                        // Refresh leaderboard immediately after clear
-                        displayLeaderboard();
-
                         // Wait 1 minute before moving to next season countdown
                         setTimeout(() => {
                             index++; // move to next season
-                            seasonResetInProgress = false; // reset flag here
                             runCountdown().then(resolve);
                         }, 60000);
                     });
@@ -186,38 +178,8 @@ async function startSeasonCountdown() {
     await runCountdown();
 }
 
-// --- NEW: Listen for changes in season end times to update leaderboard immediately ---
-function addSeasonResetListener() {
-    const seasonsDocRef = doc(db, "settings", "trSeasons");
-
-    onSnapshot(seasonsDocRef, (docSnap) => {
-        if (!docSnap.exists()) return;
-
-        const data = docSnap.data();
-
-        // Extract season end times, sorted ascending
-        const seasonEndTimes = Object.entries(data)
-            .filter(([key]) => key.toLowerCase().endsWith("endtime"))
-            .map(([key, timestamp]) => timestamp.toDate())
-            .sort((a, b) => a - b);
-
-        const now = new Date();
-
-        // If currently in the reset period (within 1 minute after any endTime in the past), update immediately
-        const isResetNow = seasonEndTimes.some(endTime => {
-            const diff = now - endTime; // ms
-            return diff >= 0 && diff < 60000; // less than 1 min after season end
-        });
-
-        if (isResetNow) {
-            displayLeaderboard();
-        }
-    });
-}
-
-// On DOMContentLoaded, start both leaderboard display, season countdown, and reset listener
+// On DOMContentLoaded, start both leaderboard display and season countdown
 document.addEventListener("DOMContentLoaded", () => {
     displayLeaderboard();
     startSeasonCountdown();
-    addSeasonResetListener();  // <-- ADDED
 });

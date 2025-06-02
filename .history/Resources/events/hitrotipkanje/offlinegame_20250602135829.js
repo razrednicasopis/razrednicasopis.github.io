@@ -260,8 +260,6 @@ async function initializeTypingRace() {
     userFinished = false;
     userPlace = 0;
     lowestAccuracy = 100;
-    winAwarded = false;
-
 
 
     updateProgressBar('user-progress', 0);
@@ -311,7 +309,6 @@ async function initializeTypingRace() {
         }
     }, 200);
 
-    
 submitButton.onclick = () => {
     if (typingField.disabled) return;
 
@@ -328,21 +325,40 @@ submitButton.onclick = () => {
         updateProgressBar('user-progress', 100);
         updateProgressDisplay('user-progress-display', 100);
         clearInterval(aiInterval);
+        showRaceEndPopup(true, userPlace);
+        updateWinsForUser().catch(console.error);
+    } else {
+        toastr.error('Prosim popravite napake, preden zaključite.', 'Napaka');
+         }
+    };
+}
 
+
+
+submitButton.onclick = async () => {
+    if (typingField.disabled) return;
+
+    let correctChars = 0;
+    for (let i = 0; i < currentInput.length; i++) {
+        if (currentInput[i] === raceText[i]) correctChars++;
+        else break;
+    }
+
+    if (correctChars === raceText.length) {
+        typingField.disabled = true;
+        userFinished = true;
+        userPlace = 1;
+        updateProgressBar('user-progress', 100);
+
+        // 🟩 Only add win if not already awarded
         if (!winAwarded) {
-            updateWinsForUser().catch(console.error);
+            await updateWinsForUser();
             winAwarded = true;
         }
 
         showRaceEndPopup(true, userPlace);
-    } else {
-        toastr.error('Prosim popravite napake, preden zaključite.', 'Napaka');
     }
 };
-
-}
-
-
 
 
 window.addEventListener('DOMContentLoaded', () => {

@@ -25,8 +25,6 @@ let currentInput = '';
 let aiProgressPercent = 0;
 let aiSpeed = 0.3;
 let typingField, textToTypeField, submitButton;
-let winAwarded = false; // Prevents multiple win increments per session
-
 
 let raceStartTime = null;
 let userFinished = false;
@@ -260,8 +258,6 @@ async function initializeTypingRace() {
     userFinished = false;
     userPlace = 0;
     lowestAccuracy = 100;
-    winAwarded = false;
-
 
 
     updateProgressBar('user-progress', 0);
@@ -311,7 +307,6 @@ async function initializeTypingRace() {
         }
     }, 200);
 
-    
 submitButton.onclick = () => {
     if (typingField.disabled) return;
 
@@ -328,21 +323,13 @@ submitButton.onclick = () => {
         updateProgressBar('user-progress', 100);
         updateProgressDisplay('user-progress-display', 100);
         clearInterval(aiInterval);
-
-        if (!winAwarded) {
-            updateWinsForUser().catch(console.error);
-            winAwarded = true;
-        }
-
         showRaceEndPopup(true, userPlace);
+        updateWinsForUser().catch(console.error);
     } else {
         toastr.error('Prosim popravite napake, preden zaključite.', 'Napaka');
-    }
-};
-
+         }
+    };
 }
-
-
 
 
 window.addEventListener('DOMContentLoaded', () => {
