@@ -194,3 +194,96 @@
 #userSearchBtn:hover .icon {
   transform: rotate(90deg) scale(1.2);
 }
+
+
+/* Posts Section CSS */
+
+/* Posts Section */
+#postsSection {
+  margin: 40px auto;
+  width: 90%;
+  max-width: 600px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+/* New Post Button */
+#newPostBtn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 25px;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#newPostBtn:hover {
+  background-color: #0056b3;
+}
+
+/* Popup Styles */
+#newPostPopup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 400px;
+  background: white;
+  transform: translate(-50%, -50%);
+  border-radius: 10px;
+  padding: 20px;
+  z-index: 999;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+#newPostPopup h3 {
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+/* Smaller text area */
+#postContent {
+  width: 100%;
+  height: 100px;
+  resize: vertical;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+/* Submit/Cancel Buttons */
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.popup-buttons button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 8px 0;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#submitPost {
+  background-color: #28a745;
+  color: white;
+}
+
+#cancelPost {
+  background-color: #dc3545;
+  color: white;
+}
+
