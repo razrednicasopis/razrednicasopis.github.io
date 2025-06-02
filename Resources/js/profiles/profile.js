@@ -23,9 +23,11 @@ const bioEl = document.getElementById("bio");
 const avatarEl = document.getElementById("avatar");
 const addFriendBtn = document.querySelector(".add-friend-btn");
 
-// Load profile data for any user
 async function loadUserProfile(uid) {
+  console.log("[loadUserProfile] UID:", uid);
+
   if (!uid) {
+    console.warn("No UID provided.");
     usernameEl.textContent = "Napaka pri iskanju računa";
     bioEl.textContent = "Prosimo podajte veljaven UID v URL brskalnika.";
     addFriendBtn?.remove();
@@ -36,19 +38,62 @@ async function loadUserProfile(uid) {
   try {
     const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);
+    console.log("[loadUserProfile] User document fetched");
 
-    if (userSnap.exists()) {
-      const data = userSnap.data();
-      usernameEl.textContent = " @ " + (data.Username || "unknown");
-      bioEl.textContent = data.bio || "Bio ne obstaja.";
-      avatarEl.src = data.avatarURL || "avatarPFP.png";
-    } else {
+    if (!userSnap.exists()) {
+      console.warn("User not found:", uid);
       usernameEl.textContent = "Napaka pri iskanju računa";
       bioEl.textContent = "Uporabnik s tem UID-jem ne obstaja.";
       addFriendBtn?.remove();
-      avatarEl?.remove();    
+      avatarEl?.remove();
+      return;
     }
+
+    const userData = userSnap.data();
+    console.log("[User Data]", userData);
+
+    usernameEl.textContent = " @ " + (userData.Username || "unknown");
+    bioEl.textContent = userData.bio || "Bio ne obstaja.";
+
+    // Load profile picture from pfpData
+    const pfpRef = doc(db, "pfpData", uid);
+    const pfpSnap = await getDoc(pfpRef);
+    console.log("[loadUserProfile] Profile picture document fetched");
+
+    if (pfpSnap.exists()) {
+      const pfpData = pfpSnap.data();
+      let base64 = pfpData.profilePicture;
+
+      console.log("[Profile Picture Base64]", base64?.substring(0, 30) + "...");
+
+      if (base64) {
+        if (!base64.startsWith("data:image")) {
+          base64 = `data:image/png;base64,${base64}`;
+        }
+
+        fetch(base64)
+          .then(res => res.blob())
+          .then(blob => {
+            const blobUrl = URL.createObjectURL(blob);
+            avatarEl.src = blobUrl;
+            avatarEl.onload = () => URL.revokeObjectURL(blobUrl);
+            console.log("[Avatar Set] Blob URL created");
+          })
+          .catch(err => {
+            console.error("Failed to load avatar from base64:", err);
+            avatarEl.src = "avatarPFP.png";
+          });
+      } else {
+        console.warn("Profile picture data was empty.");
+        avatarEl.src = "avatarPFP.png";
+      }
+    } else {
+      console.warn("No profile picture data found.");
+      avatarEl.src = "avatarPFP.png";
+    }
+
   } catch (error) {
+    console.error("Error loading profile:", error);
     usernameEl.textContent = "Napaka pri nalaganju profila";
     bioEl.textContent = error.message;
     addFriendBtn?.remove();
@@ -56,12 +101,51 @@ async function loadUserProfile(uid) {
   }
 }
 
-// Always load profile
+// Load profile on page load
 loadUserProfile(uid);
 
-// Then, check if we are logged in and viewing our own profile
-onAuthStateChanged(auth, (user) => {
-  if (user && user.uid === uid) {
+// Remove add friend button if viewing own profile
+onAuthStateChanged(auth, async (user) => {
+  if (!user || !uid) return;
+
+  if (user.uid === uid) {
+    console.log("Viewing own profile – hiding add friend button.");
     addFriendBtn?.remove();
+  } else {
+    try {
+      console.log("Checking friendship status...");
+      const myRef = doc(db, "users", user.uid);
+      const theirRef = doc(db, "users", uid);
+
+      const [mySnap, theirSnap] = await Promise.all([
+        getDoc(myRef),
+        getDoc(theirRef),
+      ]);
+
+      if (!mySnap.exists() || !theirSnap.exists()) {
+        console.warn("One of the user documents does not exist.");
+        addFriendBtn?.remove();
+        return;
+      }
+
+      const myData = mySnap.data();
+      const theirData = theirSnap.data();
+
+      const myFriends = myData.friends || [];
+      const theirFriends = theirData.friends || [];
+
+      const areMutualFriends = myFriends.includes(uid) && theirFriends.includes(user.uid);
+      console.log("Are mutual friends:", areMutualFriends);
+
+      if (areMutualFriends && addFriendBtn) {
+        addFriendBtn.disabled = true;
+        addFriendBtn.innerHTML = '✅ Prijatelja';
+        addFriendBtn.style.backgroundColor = '#28a745';
+        addFriendBtn.style.cursor = 'default';
+      }
+
+    } catch (err) {
+      console.error("Error checking friendship:", err);
+    }
   }
 });

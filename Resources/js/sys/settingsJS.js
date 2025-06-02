@@ -1,6 +1,6 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, getDocs, updateDoc, collection, query, where, deleteDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, getDocs, updateDoc, collection, query, where, deleteDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
@@ -194,6 +194,12 @@ profileTab.addEventListener("click", async (e) => {
     <textarea id="newBio" name="newBio" rows="4" cols="50" placeholder="Vnesi svoj opis tukaj..."></textarea><br><br>
     <button type="submit" class="change-username-btn">💬 Spremeni opis</button>
   </form>
+  <hr style="margin: 24px 0;">
+<h2>Sprememba profilne slike</h2>
+<input type="file" id="pfpUpload" accept="image/*"><br><br>
+<img id="pfpPreview" src="" style="display:none; max-width: 128px; border-radius: 8px; margin-bottom: 12px;"><br>
+<button id="uploadPfpBtn" class="change-username-btn" style="display:none;">⬆️ Naloži profilno sliko</button>
+
   `;
 
   if (uid) {
@@ -215,6 +221,63 @@ onAuthStateChanged(auth, async (user) => {
     profileTab.click();
   }
 });
+
+// Profile Picture Changing System
+
+document.addEventListener("change", async (e) => {
+  if (e.target.id === "pfpUpload") {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+      img.src = event.target.result;
+    };
+
+    img.onload = function () {
+      const canvas = document.createElement("canvas");
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext("2d");
+
+      // Resize and center image
+      const ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
+      const newWidth = img.width * ratio;
+      const newHeight = img.height * ratio;
+      const xOffset = (canvas.width - newWidth) / 2;
+      const yOffset = (canvas.height - newHeight) / 2;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, xOffset, yOffset, newWidth, newHeight);
+
+      const base64 = canvas.toDataURL("image/png");
+
+      const preview = document.getElementById("pfpPreview");
+      const uploadBtn = document.getElementById("uploadPfpBtn");
+
+      preview.src = base64;
+      preview.style.display = "block";
+      uploadBtn.style.display = "inline-block";
+
+      uploadBtn.onclick = async () => {
+        try {
+          const pfpRef = doc(db, "pfpData", uid);
+          await setDoc(pfpRef, {
+            profilePicture: base64
+          });
+          alert("Profilna slika je bila uspešno naložena.");
+        } catch (err) {
+          console.error("Napaka pri nalaganju slike:", err);
+          alert("Prišlo je do napake pri nalaganju slike.");
+        }
+      };
+    };
+
+    reader.readAsDataURL(file);
+  }
+});
+
 
 document.addEventListener("submit", async (e) => {
   if (e.target.id === "usernameForm") {

@@ -146,15 +146,23 @@ async function updateWinsForUser() {
         return;
     }
 
+    // Check if the system is currently resetting
+    const seasonSettingsRef = doc(db, "settings", "trSeasons");
+    const seasonSettingsSnap = await getDoc(seasonSettingsRef);
+
+    if (seasonSettingsSnap.exists() && seasonSettingsSnap.data().isResetting === true) {
+        console.log("Server je trenutno nedosegljiv zaradi resetiranja sezon. Vaša zmaga ne bo šteta.");
+        alert("Server je trenutno nedosegljiv zaradi resetiranja sezon. Vaša zmaga ne bo šteta.");
+        return;
+    }
+
     const userDocRef = doc(db, "aiTRLeaderboards", user.uid);
     const userDocSnap = await getDoc(userDocRef);
 
     if (!userDocSnap.exists()) {
-        // Create the document with winsNumber = 1
         await setDoc(userDocRef, { winsNumber: 1 });
         console.log("Created new leaderboard doc for user with 1 win.");
     } else {
-        // Increment winsNumber by 1
         await updateDoc(userDocRef, {
             winsNumber: increment(1)
         });
