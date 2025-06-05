@@ -1,0 +1,118 @@
+<ul class="auth-nav">
+
+  <li class="registracijaLink">
+    <a href="registracija.html">Registracija</a>
+  </li>
+  
+  <li class="prijavaLink" id="loginHref">
+    <a href="prijava.html">Prijava</a>
+  </li>
+
+  <!-- Dropdown for logged-in users -->
+  <li class="dropdown" id="userMenu" style="display: none; position: relative;">
+  <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">
+  Meni <span style="display:inline-block; transform: scaleX(1) scaleY(0.5);">▼</span>
+</a>    <div class="dropdown-content" id="userDropdown">
+      <div class="dropdown-username" id="currentUsername">Prijavljen kot: uporabnik</div>
+      <a href="utills/nastavitve.html">⚙️ Nastavitve</a>
+      <a href="#" id="logoutLink">🚪 Odjava</a>
+    </div>
+  </li>
+</ul>
+
+
+
+
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
+  authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
+  projectId: "razrednicasopisdatabase-29bad",
+  storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
+  messagingSenderId: "294018128318",
+  appId: "1:294018128318:web:31df9ea055eec5798e81ef"
+};
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+function updateButtonVisibility() {
+  const prijavaLinkBtn = document.getElementById('loginHref');
+  const registracijaLink = document.querySelector('.registracijaLink');
+  const userMenu = document.getElementById('userMenu');
+  const currentUsername = document.getElementById('currentUsername');
+  const logoutLink = document.getElementById('logoutLink');
+  const menuToggle = document.getElementById('menuToggle');
+  const userDropdown = document.getElementById('userDropdown');
+
+  // Toggle dropdown visibility when “Meni ⌄” is clicked
+  menuToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    userDropdown.style.display = (userDropdown.style.display === 'block') ? 'none' : 'block';
+  });
+
+  // Close dropdown if clicking outside
+  document.addEventListener('click', (e) => {
+    if (!userMenu.contains(e.target)) {
+      userDropdown.style.display = 'none';
+    }
+  });
+
+  // Show/hide links based on auth state
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // Hide “Prijava” only
+      if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'none';
+
+      // Show “Meni” dropdown
+      if (userMenu) userMenu.style.display = 'inline-block';
+
+      // Keep “Registracija” visible
+
+      // Fetch username from Firestore
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const username = userDocSnap.data().Username || user.email;
+          if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${username}`;
+        } else {
+          // Fallback if no user doc found
+          if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${user.email}`;
+        }
+      } catch (error) {
+        console.error("Napaka pri pridobivanju uporabniškega imena:", error);
+        if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${user.email}`;
+      }
+
+    } else {
+      // Show “Prijava” + “Registracija”
+      if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'inline-block';
+      if (registracijaLink) registracijaLink.style.display = 'inline-block';
+
+      // Hide “Meni” dropdown and its content
+      if (userMenu) userMenu.style.display = 'none';
+      if (userDropdown) userDropdown.style.display = 'none';
+    }
+  });
+
+  // Handle logout click inside dropdown
+  logoutLink.addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      await signOut(auth);
+      localStorage.setItem('toast', 'logout-success');
+      window.location.reload();
+    } catch (error) {
+      console.error('Napaka pri odjavi:', error);
+      toastr.error('Napaka pri odjavi.');
+    }
+  });
+}
+
+// Call it once on load
+document.addEventListener('DOMContentLoaded', updateButtonVisibility);
