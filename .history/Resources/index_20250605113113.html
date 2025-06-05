@@ -37,16 +37,11 @@
       <li id="chatLink" class=""><a href="utills/klepet.html">Klepet</a></li>
       <li><a href="/Resources/events/eventi.html">Eventi</a></li>
       <li><a href="kontakt.html">Kontakt</a></li>
-  <!-- Auth section (right side of nav) -->
-<ul class="auth-nav">
-  <li class="prijavaLink" id="loginHref">
-    <a href="prijava.html">Prijava</a>
-  </li>
-  <li class="registracijaLink">
-    <a href="registracija.html">Registracija</a>
-  </li>
-
-  <!-- Dropdown for logged-in users -->
+      <li class="prijavaLink" id="loginHref">
+ <!-- Show only when logged out -->
+<ul class="nav-right">
+  <li id="loginHref"><a href="prijava.html">Prijava</a></li>
+  <li class="registracijaLink"><a href="registracija.html">Registracija</a></li>
   <li class="dropdown" id="userMenu" style="display: none; position: relative;">
     <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni ⌄</a>
     <div class="dropdown-content" id="userDropdown">
@@ -56,6 +51,8 @@
     </div>
   </li>
 </ul>
+
+    </ul>
   </nav>
 </header>
 

@@ -36,29 +36,27 @@ const registracijaLink = document.querySelector('.registracijaLink');
   });
 
   // 3) Show/hide links based on auth state
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // Hide “Prijava” only
-    if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'none';
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // Hide “Prijava” + “Registracija”
+      if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'none';
+      if (registracijaLink) registracijaLink.style.display = 'none';
 
-    // Show “Meni” dropdown
-    if (userMenu) userMenu.style.display = 'inline-block';
+      // Show “Meni” dropdown button
+      if (userMenu) userMenu.style.display = 'inline-block';
 
-    // Keep “Registracija” visible (do NOT hide it anymore)
+      // Update the username in the dropdown
+      if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${user.email}`;
+    } else {
+      // Show “Prijava” + “Registracija”
+      if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'inline-block';
+      if (registracijaLink) registracijaLink.style.display = 'inline-block';
 
-    // Update the username in the dropdown
-    if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${user.email}`;
-  } else {
-    // Show “Prijava” + “Registracija”
-    if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'inline-block';
-    if (registracijaLink) registracijaLink.style.display = 'inline-block';
-
-    // Hide “Meni” dropdown and its content
-    if (userMenu) userMenu.style.display = 'none';
-    if (userDropdown) userDropdown.style.display = 'none';
-  }
-});
-
+      // Hide “Meni” dropdown and its content
+      if (userMenu) userMenu.style.display = 'none';
+      if (userDropdown) userDropdown.style.display = 'none';
+    }
+  });
 
   // 4) Handle logout click inside dropdown
   logoutLink.addEventListener('click', async (e) => {

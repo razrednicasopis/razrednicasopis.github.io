@@ -37,25 +37,26 @@
       <li id="chatLink" class=""><a href="utills/klepet.html">Klepet</a></li>
       <li><a href="/Resources/events/eventi.html">Eventi</a></li>
       <li><a href="kontakt.html">Kontakt</a></li>
-  <!-- Auth section (right side of nav) -->
-<ul class="auth-nav">
-  <li class="prijavaLink" id="loginHref">
-    <a href="prijava.html">Prijava</a>
-  </li>
-  <li class="registracijaLink">
-    <a href="registracija.html">Registracija</a>
-  </li>
+      <li class="prijavaLink" id="loginHref">
+  <a href="prijava.html" style="display: block;">Prijava</a>
+</li>
 
-  <!-- Dropdown for logged-in users -->
-  <li class="dropdown" id="userMenu" style="display: none; position: relative;">
-    <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni ⌄</a>
-    <div class="dropdown-content" id="userDropdown">
-      <div class="dropdown-username" id="currentUsername">Prijavljen kot: uporabnik</div>
-      <a href="settings.html">⚙️ Nastavitve</a>
-      <a href="#" id="logoutLink">🚪 Odjava</a>
+<li class="prijavaLink">
+  <a href="registracija.html">Registracija</a>
+</li>
+<li class="dropdown prijavaLink" id="userMenu" style="display: none; position: relative;">
+  <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni ⌄</a>
+  <div class="dropdown-content" id="userDropdown"
+       style="display: none; right: 0; top: 100%; background-color: white; position: absolute; z-index: 10;">
+    <div style="padding: 10px; font-weight: bold;" id="currentUsername">
+      Prijavljen kot: uporabnik
     </div>
-  </li>
-</ul>
+    <a href="settings.html">Nastavitve</a>
+    <a href="#" id="logoutLink">Odjava</a>
+  </div>
+</li>
+
+    </ul>
   </nav>
 </header>
 

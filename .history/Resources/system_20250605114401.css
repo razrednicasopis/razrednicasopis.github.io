@@ -964,9 +964,9 @@ ul.nav-right {
 
 
 .auth-nav {
-  right: 20px;
-  top: 88px;
+  right: auto;
   position: fixed;
+  : auto; /* Pushes this ul to the right */
   display: flex;
   gap: 15px; /* spacing between links */
   list-style: none;

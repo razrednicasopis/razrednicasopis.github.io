@@ -1,15 +1,3 @@
-      <li class="dropdown" id="userMenu" style="display: none; position: relative;">
-          <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni ⌄</a>
-  <div class="dropdown-content" id="userDropdown" style="display: none; right: 0; top: 100%; background-color: white; position: absolute; z-index: 10;">
-    <div style="padding: 10px; font-weight: bold;" id="currentUsername">Prijavljen kot: uporabnik</div>
-    <a href="settings.html">Nastavitve</a>
-    <a href="#" id="logoutLink">Odjava</a>
-  </div>
-</li>
-
-
-
-
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 

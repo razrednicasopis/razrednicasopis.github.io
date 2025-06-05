@@ -961,21 +961,3 @@ ul.nav-right {
   border-bottom: 1px solid #eee;
   pointer-events: none;
 }
-
-
-.auth-nav {
-  right: 20px;
-  top: 88px;
-  position: fixed;
-  display: flex;
-  gap: 15px; /* spacing between links */
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.auth-nav li {
-  /* Optional: to align vertically, if needed */
-  display: flex;
-  align-items: center;
-}

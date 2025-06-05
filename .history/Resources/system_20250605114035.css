@@ -931,7 +931,7 @@ ul.nav-right {
 
 .dropdown-content {
   display: none;
-  position: absolute;
+  position: absolute ;
   top: 100%;
   right: 0;
   background-color: white;
@@ -960,22 +960,4 @@ ul.nav-right {
   color: #555;
   border-bottom: 1px solid #eee;
   pointer-events: none;
-}
-
-
-.auth-nav {
-  right: 20px;
-  top: 88px;
-  position: fixed;
-  display: flex;
-  gap: 15px; /* spacing between links */
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.auth-nav li {
-  /* Optional: to align vertically, if needed */
-  display: flex;
-  align-items: center;
 }
