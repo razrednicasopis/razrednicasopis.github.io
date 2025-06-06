@@ -89,8 +89,8 @@ links.forEach(link => {
       link.style.display = "";
       link.style.margin = "";
       link.style.padding = "";
-             }
-          }
+    }
+  }
       });
     });
 

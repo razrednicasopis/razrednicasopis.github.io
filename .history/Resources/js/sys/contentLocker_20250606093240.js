@@ -67,30 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.keys(pageNames).forEach((filename) => {
       const { field } = pageNames[filename];
       const links = document.querySelectorAll(`a[href$="${filename}"]`);
-links.forEach(link => {
-  // Find closest parent container that affects layout — adjust the selector as needed
-  const container = link.closest("li") || link.closest("div") || link.parentElement;
-
-  if (data[field] === false) {
-    // Hide the container, not just the link, to remove space
-    if (container) {
-      container.style.display = "none";
-    } else {
-      // fallback to hiding the link only if no container found
-      link.style.display = "none";
-      link.style.margin = "0";
-      link.style.padding = "0";
-    }
-  } else {
-    // Show container or link again
-    if (container) {
-      container.style.display = "";
-    } else {
-      link.style.display = "";
-      link.style.margin = "";
-      link.style.padding = "";
-             }
-          }
+      links.forEach(link => {
+        if (data[field] === false) {
+          link.style.display = "none";
+          link.style.margin = "0";
+          link.style.padding = "0";
+        } else {
+          link.style.display = "";
+          link.style.margin = "";
+          link.style.padding = "";
+        }
       });
     });
 

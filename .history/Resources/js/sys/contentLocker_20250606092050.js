@@ -34,10 +34,6 @@ const path = window.location.pathname;
 const fileName = window.location.pathname.split("/").pop().split("?")[0].split("#")[0];
 const pageInfo = pageNames[fileName];
 const docRef = doc(db, "settings", "pageAccess");
-console.log("Detected path:", window.location.pathname);
-console.log("Extracted filename:", fileName);
-console.log("pageInfo:", pageInfo);
-
 
 // Function to show maintenance popup
 function showNoAccessPopup() {
@@ -63,38 +59,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const data = docSnap.data();
 
-    // Hide or show disabled links and fix spacing
+    // 1. Hide disabled links globally
     Object.keys(pageNames).forEach((filename) => {
       const { field } = pageNames[filename];
       const links = document.querySelectorAll(`a[href$="${filename}"]`);
-links.forEach(link => {
-  // Find closest parent container that affects layout — adjust the selector as needed
-  const container = link.closest("li") || link.closest("div") || link.parentElement;
-
-  if (data[field] === false) {
-    // Hide the container, not just the link, to remove space
-    if (container) {
-      container.style.display = "none";
-    } else {
-      // fallback to hiding the link only if no container found
-      link.style.display = "none";
-      link.style.margin = "0";
-      link.style.padding = "0";
-    }
-  } else {
-    // Show container or link again
-    if (container) {
-      container.style.display = "";
-    } else {
-      link.style.display = "";
-      link.style.margin = "";
-      link.style.padding = "";
-             }
-          }
+      links.forEach(link => {
+        if (data[field] === false) {
+          link.style.display = "none";
+        } else {
+          link.style.display = ""; // restore if enabled again
+        }
       });
     });
 
-    // Show popup if current page disabled
+    // 2. Show popup if the current page is disabled
     if (pageInfo && data[pageInfo.field] === false) {
       setTimeout(showNoAccessPopup, 100);
     }
@@ -102,3 +80,6 @@ links.forEach(link => {
 });
 
 
+console.log("Detected path:", window.location.pathname);
+console.log("Extracted filename:", fileName);
+console.log("pageInfo:", pageInfo);
