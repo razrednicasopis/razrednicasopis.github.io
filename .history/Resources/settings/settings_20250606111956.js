@@ -1,5 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, collection, getDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+import { getFirestore, collection, getDoc, updateDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
@@ -10,7 +10,7 @@ const firebaseConfig = {
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Maintenance clock
@@ -77,88 +77,175 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Maintenance Popup
 
 document.addEventListener('DOMContentLoaded', function () {
+    let maintenanceNotified = false;
+
+    // Local state to cache the maintenance data
+    let cachedMaintenanceMode = null;
+    let cachedMaintenanceEndTime = null;
+
+    // Cache for checking the maintenance status
+    let lastChecked = 0;
+
+    // Optimized check for maintenance status with debounce
+    async function checkMaintenanceStatus() {
+        const now = Date.now();
+        if (now - lastChecked < 60000) return; // Avoid checking more than once every minute
+
+        try {
+            const maintenanceRef = doc(db, 'settings', 'maintenanceMode');
+            const nextMaintenanceRef = doc(db, 'settings', 'nextMaintenance');
+
+            // Fetch both documents in parallel
+            const [maintenanceSnap, nextMaintenanceSnap] = await Promise.all([
+                getDoc(maintenanceRef),
+                getDoc(nextMaintenanceRef)
+            ]);
+
+            if (maintenanceSnap.exists() && nextMaintenanceSnap.exists()) {
+                const maintenanceData = maintenanceSnap.data();
+                const nextMaintenanceData = nextMaintenanceSnap.data();
+
+                const maintenanceStartTime = nextMaintenanceData.maintenanceStartTime.toDate();
+                const maintenanceEndTime = maintenanceData.maintenanceEndTime.toDate();
+                const manualOverride = maintenanceData.manualOverride || false;
+
+                // If the status has changed, update the UI
+                if (cachedMaintenanceMode !== maintenanceData.maintenanceMode || cachedMaintenanceEndTime !== maintenanceEndTime) {
+                    cachedMaintenanceMode = maintenanceData.maintenanceMode;
+                    cachedMaintenanceEndTime = maintenanceEndTime;
+
+                    if (!manualOverride) {
+                        const now = new Date();
+                        if (now >= maintenanceStartTime && now <= maintenanceEndTime) {
+                            if (!maintenanceNotified) {
+                                notifyMaintenanceStart(maintenanceEndTime);
+                                maintenanceNotified = true;
+                            }
+                            toggleMaintenancePopup(true, formatEndTime(maintenanceEndTime));
+                        } else {
+                            if (maintenanceNotified) {
+                                maintenanceNotified = false;
+                            }
+                            toggleMaintenancePopup(false);
+                        }
+                    }
+                }
+            } else {
+                console.log('One or both documents are missing.');
+            }
+
+            lastChecked = now;
+        } catch (error) {
+            console.error('Error checking maintenance status:', error);
+        }
+    }
+
+    function listenForMaintenanceUpdates() {
+    const maintenanceRef = doc(db, 'settings', 'maintenanceMode');
+    const nextMaintenanceRef = doc(db, 'settings', 'nextMaintenance');
+
+    let maintenanceStartTime = null;
+    let maintenanceEndTime = null;
+
+    // Fetch and cache start/end times initially
+    getDoc(nextMaintenanceRef).then((snap) => {
+        if (snap.exists()) {
+            maintenanceStartTime = snap.data().maintenanceStartTime.toDate();
+        }
+    });
+
+    // Listen for changes in maintenanceMode
+    onSnapshot(maintenanceRef, async (docSnap) => {
+        if (!docSnap.exists()) return;
+
+        const data = docSnap.data();
+        const maintenanceMode = data.maintenanceMode;
+        const autoMaintenance = data.autoMaintenance || false;
+        maintenanceEndTime = data.maintenanceEndTime?.toDate();
+
+        const now = new Date();
+
+        let shouldShowMaintenance = false;
+
+        if (autoMaintenance) {
+            // Fetch latest start time in case it changed
+            const nextMaintenanceSnap = await getDoc(nextMaintenanceRef);
+            if (nextMaintenanceSnap.exists()) {
+                maintenanceStartTime = nextMaintenanceSnap.data().maintenanceStartTime.toDate();
+            }
+
+            // If we're inside the maintenance window, enable it
+            if (maintenanceStartTime && maintenanceEndTime) {
+                if (now >= maintenanceStartTime && now <= maintenanceEndTime) {
+                    shouldShowMaintenance = true;
+                }
+            }
+
+            // If manual override is still true, force maintenance on
+            if (maintenanceMode) {
+                shouldShowMaintenance = true;
+            }
+        } else {
+            // No auto maintenance – just follow manual switch
+            shouldShowMaintenance = maintenanceMode;
+        }
+
+        // Update popup visibility
+        toggleMaintenancePopup(shouldShowMaintenance, formatEndTime(maintenanceEndTime));
+
+        // Optional: notify once
+        if (shouldShowMaintenance && !maintenanceNotified) {
+            notifyMaintenanceStart(maintenanceEndTime);
+            maintenanceNotified = true;
+        }
+
+        if (!shouldShowMaintenance && maintenanceNotified) {
+            maintenanceNotified = false;
+        }
+    });
+}
+
+
     function toggleMaintenancePopup(show, endTime) {
         const maintenancePopup = document.getElementById('maintenancePopup');
-        const blurContainer = document.querySelector('.blur-container');
-        const endTimeP = document.getElementById('maintenanceEndTime'); // New element for end time
+        const endTimeP = document.getElementById('maintenanceEndTime');
+        const overlay = document.querySelector('.overlay');
         if (maintenancePopup) {
-            console.log('Toggling maintenance popup:', show);
             maintenancePopup.style.display = show ? 'block' : 'none';
-            document.body.classList.toggle('popup-open', show);
+            overlay.style.display = show ? 'block' : 'none';
             if (show && endTime && endTimeP) {
                 endTimeP.textContent = endTime;
             }
         } else {
             console.error('maintenancePopup element not found');
         }
-
-        if (blurContainer) {
-            blurContainer.style.filter = show ? 'blur(5px)' : 'none';
-        } else {
-            console.error('blur-container element not found');
-        }
     }
 
-    async function checkInitialMaintenanceStatus() {
-        try {
-            const docRef = doc(db, 'settings', 'maintenanceMode');
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                console.log('Maintenance document data:', docSnap.data());
-                const data = docSnap.data();
-                if (data.maintenanceMode) {
-                    const formattedEndTime = formatEndTime(data.maintenanceEndTime.toDate());
-                    console.log('Redirecting to maintenance page');
-                    window.location.href = '/Resources/maintenance/popravila.html';
-                } else {
-                    console.log('Starting to listen for maintenance status changes');
-                    listenForMaintenanceStatus();
-                }
-            } else {
-                console.log('No such document!');
-            }
-        } catch (error) {
-            console.error('Error getting document:', error);
-        }
+    function formatEndTime(endTime) {
+        if (!endTime) return '';
+        return new Date(endTime).toLocaleString('sl-SI', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).replace(/\.\s?/g, '/').replace('dop', '');
     }
 
-    function listenForMaintenanceStatus() {
-        const docRef = doc(db, 'settings', 'maintenanceMode');
-        onSnapshot(docRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const maintenanceMode = data.maintenanceMode;
-                const formattedEndTime = formatEndTime(data.maintenanceEndTime.toDate());
-                console.log('Maintenance status changed:', maintenanceMode);
-                toggleMaintenancePopup(maintenanceMode, formattedEndTime);
-            } else {
-                console.log('No such document!');
-            }
-        }, (error) => {
-            console.error('Error getting document:', error);
-        });
+    function notifyMaintenanceStart(endTime) {
+        const formattedEndTime = formatEndTime(endTime);
+        console.log(`The servers are currently down for maintenance until ${formattedEndTime}. Please come back later.`);
     }
-
-   function formatEndTime(endTime) {
-    if (!endTime) return '';
-    const date = new Date(endTime);
-    const formattedDate = date.toLocaleString('sl-SI', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-    // Replace dots with slashes and remove "dop" text
-    return formattedDate.replace(/\.\s?/g, '/').replace('dop', '');
-}
 
     document.getElementById('closeMaintenancePopupBtn').addEventListener('click', function () {
         window.location.href = '/Resources/maintenance/popravila.html';
     });
 
-    checkInitialMaintenanceStatus();
+    // Initial call to check maintenance status
+    checkMaintenanceStatus();
+    listenForMaintenanceUpdates();
 });
+
 
 // Maintenance Warning
 

@@ -141,36 +141,70 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function listenForMaintenanceUpdates() {
-        const maintenanceRef = doc(db, 'settings', 'maintenanceMode');
-        const nextMaintenanceRef = doc(db, 'settings', 'nextMaintenance');
+    const maintenanceRef = doc(db, 'settings', 'maintenanceMode');
+    const nextMaintenanceRef = doc(db, 'settings', 'nextMaintenance');
 
-        // Real-time listeners for changes in both documents
-        onSnapshot(maintenanceRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const maintenanceMode = data.maintenanceMode;
-                const manualOverride = data.manualOverride || false;
-                const formattedEndTime = formatEndTime(data.maintenanceEndTime?.toDate());
+    let maintenanceStartTime = null;
+    let maintenanceEndTime = null;
 
-                // Only update the UI if the maintenance status has actually changed
-                if (maintenanceMode !== cachedMaintenanceMode) {
-                    toggleMaintenancePopup(maintenanceMode, formattedEndTime);
-                    cachedMaintenanceMode = maintenanceMode;
+    // Fetch and cache start/end times initially
+    getDoc(nextMaintenanceRef).then((snap) => {
+        if (snap.exists()) {
+            maintenanceStartTime = snap.data().maintenanceStartTime.toDate();
+        }
+    });
 
-                    if (maintenanceMode && !maintenanceNotified && !manualOverride) {
-                        notifyMaintenanceStart(data.maintenanceEndTime?.toDate());
-                        maintenanceNotified = true;
-                    }
+    // Listen for changes in maintenanceMode
+    onSnapshot(maintenanceRef, async (docSnap) => {
+        if (!docSnap.exists()) return;
+
+        const data = docSnap.data();
+        const maintenanceMode = data.maintenanceMode;
+        const autoMaintenance = data.autoMaintenance || false;
+        maintenanceEndTime = data.maintenanceEndTime?.toDate();
+
+        const now = new Date();
+
+        let shouldShowMaintenance = false;
+
+        if (autoMaintenance) {
+            // Fetch latest start time in case it changed
+            const nextMaintenanceSnap = await getDoc(nextMaintenanceRef);
+            if (nextMaintenanceSnap.exists()) {
+                maintenanceStartTime = nextMaintenanceSnap.data().maintenanceStartTime.toDate();
+            }
+
+            // If we're inside the maintenance window, enable it
+            if (maintenanceStartTime && maintenanceEndTime) {
+                if (now >= maintenanceStartTime && now <= maintenanceEndTime) {
+                    shouldShowMaintenance = true;
                 }
             }
-        });
 
-        onSnapshot(nextMaintenanceRef, async (docSnap) => {
-            if (docSnap.exists()) {
-                await checkMaintenanceStatus();
+            // If manual override is still true, force maintenance on
+            if (maintenanceMode) {
+                shouldShowMaintenance = true;
             }
-        });
-    }
+        } else {
+            // No auto maintenance – just follow manual switch
+            shouldShowMaintenance = maintenanceMode;
+        }
+
+        // Update popup visibility
+        toggleMaintenancePopup(shouldShowMaintenance, formatEndTime(maintenanceEndTime));
+
+        // Optional: notify once
+        if (shouldShowMaintenance && !maintenanceNotified) {
+            notifyMaintenanceStart(maintenanceEndTime);
+            maintenanceNotified = true;
+        }
+
+        if (!shouldShowMaintenance && maintenanceNotified) {
+            maintenanceNotified = false;
+        }
+    });
+}
+
 
     function toggleMaintenancePopup(show, endTime) {
         const maintenancePopup = document.getElementById('maintenancePopup');
