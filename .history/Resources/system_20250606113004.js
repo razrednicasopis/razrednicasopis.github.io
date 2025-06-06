@@ -1,49 +1,22 @@
 //Code for the flip clock
 
- function createFlipEffect(digitEl, newNumber) {
-    const top = digitEl.querySelector('.top');
-    const bottom = digitEl.querySelector('.bottom');
-    const topFlip = digitEl.querySelector('.top-flip');
-    const bottomFlip = digitEl.querySelector('.bottom-flip');
-
-    const currentNumber = top.textContent;
-    if (currentNumber === newNumber) return;
-
-    // Set initial states
-    topFlip.textContent = currentNumber;
-    bottomFlip.textContent = newNumber;
-    top.textContent = newNumber;
-    bottom.textContent = newNumber;
-
-    // Start animation
-    digitEl.querySelector('.card').classList.add('animate');
-
-    // Cleanup after animation
-    setTimeout(() => {
-      digitEl.querySelector('.card').classList.remove('animate');
-    }, 500);
-  }
-
   function pad(num) {
-    return num.toString().padStart(2, '0');
+    return num < 10 ? '0' + num : num;
   }
 
   function updateClock() {
     const now = new Date();
-    const h = pad(now.getHours());
-    const m = pad(now.getMinutes());
-    const s = pad(now.getSeconds());
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+    const seconds = pad(now.getSeconds());
 
-    createFlipEffect(document.getElementById('hourTens'), h[0]);
-    createFlipEffect(document.getElementById('hourOnes'), h[1]);
-    createFlipEffect(document.getElementById('minuteTens'), m[0]);
-    createFlipEffect(document.getElementById('minuteOnes'), m[1]);
-    createFlipEffect(document.getElementById('secondTens'), s[0]);
-    createFlipEffect(document.getElementById('secondOnes'), s[1]);
+    document.getElementById('hours').textContent = hours;
+    document.getElementById('minutes').textContent = minutes;
+    document.getElementById('seconds').textContent = seconds;
   }
 
   setInterval(updateClock, 1000);
-  updateClock();
+  updateClock(); // initialize immediately
 
   
 // Search Bar FEB 2024

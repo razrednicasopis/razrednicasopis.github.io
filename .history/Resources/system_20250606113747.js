@@ -1,31 +1,27 @@
 //Code for the flip clock
 
- function createFlipEffect(digitEl, newNumber) {
-    const top = digitEl.querySelector('.top');
-    const bottom = digitEl.querySelector('.bottom');
-    const topFlip = digitEl.querySelector('.top-flip');
-    const bottomFlip = digitEl.querySelector('.bottom-flip');
-
-    const currentNumber = top.textContent;
-    if (currentNumber === newNumber) return;
-
-    // Set initial states
-    topFlip.textContent = currentNumber;
-    bottomFlip.textContent = newNumber;
-    top.textContent = newNumber;
-    bottom.textContent = newNumber;
-
-    // Start animation
-    digitEl.querySelector('.card').classList.add('animate');
-
-    // Cleanup after animation
-    setTimeout(() => {
-      digitEl.querySelector('.card').classList.remove('animate');
-    }, 500);
+ function pad(num) {
+    return num.toString().padStart(2, '0');
   }
 
-  function pad(num) {
-    return num.toString().padStart(2, '0');
+  function updateDigit(id, newVal) {
+    const digit = document.getElementById(id);
+    const top = digit.querySelector('.top');
+    const bottom = digit.querySelector('.bottom');
+    const currentVal = top.textContent;
+
+    if (currentVal !== newVal) {
+      // Prepare for flip
+      top.textContent = currentVal;
+      bottom.textContent = newVal;
+      digit.classList.add('flip');
+
+      setTimeout(() => {
+        // After animation completes, set top to new value and reset
+        top.textContent = newVal;
+        digit.classList.remove('flip');
+      }, 400);
+    }
   }
 
   function updateClock() {
@@ -34,12 +30,12 @@
     const m = pad(now.getMinutes());
     const s = pad(now.getSeconds());
 
-    createFlipEffect(document.getElementById('hourTens'), h[0]);
-    createFlipEffect(document.getElementById('hourOnes'), h[1]);
-    createFlipEffect(document.getElementById('minuteTens'), m[0]);
-    createFlipEffect(document.getElementById('minuteOnes'), m[1]);
-    createFlipEffect(document.getElementById('secondTens'), s[0]);
-    createFlipEffect(document.getElementById('secondOnes'), s[1]);
+    updateDigit('hourTens', h[0]);
+    updateDigit('hourOnes', h[1]);
+    updateDigit('minuteTens', m[0]);
+    updateDigit('minuteOnes', m[1]);
+    updateDigit('secondTens', s[0]);
+    updateDigit('secondOnes', s[1]);
   }
 
   setInterval(updateClock, 1000);
