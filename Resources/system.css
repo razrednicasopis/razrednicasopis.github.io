@@ -985,106 +985,58 @@ ul.nav-right {
 
 .flip-clock {
   display: flex;
-  gap: 8px;
-  font-family: monospace;
+  gap: 12px;
   justify-content: center;
   align-items: center;
-  margin-top: 60px;
+  margin-top: 80px;
+  position: relative;
 }
 
 .colon {
-  font-size: 60px;
+  font-size: 80px;
   color: white;
-  line-height: 100px;
+  line-height: 120px;
 }
 
 .digit {
-  width: 60px;
-  height: 90px;
-  perspective: 1000px;
-  display: inline-block;
-  margin: 0 2px;
-  font-family: monospace;
-}
-
-.card {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.top,
-.bottom,
-.flip {
-  position: absolute;
-  width: 100%;
-  height: 50%;
+  width: 100px;
+  height: 140px;
   overflow: hidden;
-  font-size: 3em;
-  line-height: 45px;
+  background: #111;
+  border-radius: 10px;
+  position: relative;
+  font-size: 5em;
+  font-weight: bold;
   text-align: center;
   color: white;
-  background: #111;
-  border-radius: 4px;
-  font-weight: bold;
+  display: inline-block;
 }
 
-.top {
+.number-wrapper {
+  transition: transform 0.5s ease;
+  transform: translateY(0);
+  position: relative;
+  height: 140px; /* same as the digit height */
+  overflow: hidden;
+}
+
+.number {
+  height: 140px;
+  line-height: 140px;
+  font-size: 100px;
+  text-align: center;
+}
+
+.current {
+  position: absolute;
   top: 0;
-  border-bottom: 1px solid #333;
-  z-index: 1;
+  left: 0;
+  right: 0;
 }
 
-.bottom {
-  bottom: 0;
-  border-top: 1px solid #000;
-  z-index: 1;
-}
-
-.flip {
-  background: #111;
-  backface-visibility: hidden;
-  transform-origin: bottom;
-  z-index: 2;
-  display: none;
-}
-
-.top-flip {
-  top: 0;
-  transform-origin: bottom;
-}
-
-.bottom-flip {
-  bottom: 0;
-  transform-origin: top;
-  transform: rotateX(90deg);
-}
-
-/* Animation classes */
-.animate .top-flip {
-  display: block;
-  animation: flipTop 0.5s forwards;
-}
-
-.animate .bottom-flip {
-  display: block;
-  animation: flipBottom 0.5s forwards;
-}
-
-@keyframes flipTop {
-  0% {
-    transform: rotateX(0deg);
-  }
-  100% {
-    transform: rotateX(-90deg);
-  }
-}
-
-@keyframes flipBottom {
-  0% {
-    transform: rotateX(90deg);
-  }
-  100% {
-    transform: rotateX(0deg);
-  }
+.next {
+  position: absolute;
+  top: -140px; /* position above */
+  left: 0;
+  right: 0;
 }

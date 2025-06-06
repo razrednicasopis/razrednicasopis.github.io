@@ -1,49 +1,44 @@
-//Code for the flip clock
+function updateDigit(digitEl, newNumber) {
+  const currentEl = digitEl.querySelector('.current');
+  const nextEl = digitEl.querySelector('.next');
 
- function createFlipEffect(digitEl, newNumber) {
-    const top = digitEl.querySelector('.top');
-    const bottom = digitEl.querySelector('.bottom');
-    const topFlip = digitEl.querySelector('.top-flip');
-    const bottomFlip = digitEl.querySelector('.bottom-flip');
+  if (currentEl.textContent === newNumber) return;
 
-    const currentNumber = top.textContent;
-    if (currentNumber === newNumber) return;
+  nextEl.textContent = newNumber;
 
-    // Set initial states
-    topFlip.textContent = currentNumber;
-    bottomFlip.textContent = newNumber;
-    top.textContent = newNumber;
-    bottom.textContent = newNumber;
+  const wrapper = digitEl.querySelector('.number-wrapper');
+  wrapper.style.transition = 'transform 0.5s ease';
+  wrapper.style.transform = 'translateY(140px)'; // moves down, next comes up
 
-    // Start animation
-    digitEl.querySelector('.card').classList.add('animate');
+  setTimeout(() => {
+    currentEl.textContent = newNumber;
+    wrapper.style.transition = 'none';
+    wrapper.style.transform = 'translateY(0)';
+  }, 500);
+}
 
-    // Cleanup after animation
-    setTimeout(() => {
-      digitEl.querySelector('.card').classList.remove('animate');
-    }, 500);
-  }
 
-  function pad(num) {
-    return num.toString().padStart(2, '0');
-  }
 
-  function updateClock() {
-    const now = new Date();
-    const h = pad(now.getHours());
-    const m = pad(now.getMinutes());
-    const s = pad(now.getSeconds());
+function updateClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
 
-    createFlipEffect(document.getElementById('hourTens'), h[0]);
-    createFlipEffect(document.getElementById('hourOnes'), h[1]);
-    createFlipEffect(document.getElementById('minuteTens'), m[0]);
-    createFlipEffect(document.getElementById('minuteOnes'), m[1]);
-    createFlipEffect(document.getElementById('secondTens'), s[0]);
-    createFlipEffect(document.getElementById('secondOnes'), s[1]);
-  }
+  const timeStr = hours + minutes + seconds;
+  const ids = ['hourTens', 'hourOnes', 'minuteTens', 'minuteOnes', 'secondTens', 'secondOnes'];
 
-  setInterval(updateClock, 1000);
-  updateClock();
+  ids.forEach((id, i) => {
+    const digitEl = document.getElementById(id);
+    const newNumber = timeStr[i];
+    updateDigit(digitEl, newNumber);
+  });
+}
+
+setInterval(updateClock, 1000);
+updateClock(); // Initial call
+
+
 
   
 // Search Bar FEB 2024
