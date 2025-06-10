@@ -1045,13 +1045,15 @@ ul.nav-right {
 }
 
 
-#maintenanceWr#0  display: flex;
+#maintenanceWr#00000
+  display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 #maintenanceWarning {
-  color: #0000;
+  background-color: #00000;
+  color: #000;
   font-size: 28px;
   font-weight: bold;
   padding: 15px 25px;

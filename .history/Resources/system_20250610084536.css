@@ -1051,7 +1051,8 @@ ul.nav-right {
 }
 
 #maintenanceWarning {
-  color: #0000;
+  background-color: #0
+  color: #000;
   font-size: 28px;
   font-weight: bold;
   padding: 15px 25px;

@@ -25,9 +25,8 @@
           <li><a href="o-nas.html">O nas</a></li>
           <li><a href="vsebine.html">Vsebine </a></li>
           <li><a href="obvestila.html">Obvestila</a></li>
-          <li id="chatLink" class=""><a href="utills/klepet.html">Klepet</a></li>
-          <li><a href="/Resources/events/eventi.html">Eventi</a></li>
           <li><a href="kontakt.html">Kontakt</a></li>
+          <li><a href="Resources/events/eventi.html">Eventi</a></li>
           <li class="prijavaLink" id="loginHref"><a href="prijava.html" style="display: block;">Prijava</a></li>
           <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
           <li class="prijavaLink"><a href="registracija.html">Registracija</a></li>
@@ -36,13 +35,18 @@
     </header>
 
 
-    <div class="countdown-selector" id="hidden">
-      <a class="realtimeclock" id="selected" href="#">Trenutna ura</a>
-      <a class="nextmaintenance" href="naslednje_vzdrževanje.html">Naslednje vzdrževanje</a>
+    <div class="countdown-selector">
+      <a class="realtimeclock" href="ura.html">Trenutna ura</a>
+      <a class="nextmaintenance" id="selected" href="#">Naslednje vzdrževanje</a>
     </div>
+  
 
-
-<div class="flip-clock">
+    <div class="align1">Tu se nahajajo informacije o naslednjem načrtovanem vzdrževanju. V primeru da informacije niso dosegljive, prosimo poskusite kasneje.</div>
+    <div class="nextMaintenance" id="nextMaintenance"></div>
+  </div>
+  
+ 
+  <div class="flip-clock" style="margin-bottom:2">
   <div>
     <div class="digit" id="hourTens">
       <div class="number-wrapper">
@@ -94,8 +98,6 @@
 
 
 
- 
-
   <!--Pop-upi in ostali HTML-->
 
 
@@ -131,7 +133,7 @@
         <button id="closePopupBtn">V redu</button>
     </div>
   </div>
-
+  
   <div id="maintenance-warning">
     <p id="maintenance-message"></p>
   </div>
@@ -148,7 +150,8 @@
 
   <script type="module" src="obvestila/firebasemodmail.js"></script>
   <script src="alerts.js"></script>
-  <script type="module" src="system.js"></script>
+  <script type="module" src="settings/setting.js"></script>
+  <script src="system.js"></script>
   <script type="module" src="auth/loginStateChecker.js"></script>
 </body>
 </html>

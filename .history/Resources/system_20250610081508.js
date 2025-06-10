@@ -6,26 +6,14 @@ function updateDigit(digitEl, newNumber) {
 
   nextEl.textContent = newNumber;
 
-  // Reset positions
-  currentEl.style.transition = 'none';
-  nextEl.style.transition = 'none';
-  currentEl.style.transform = 'translateY(0)';
-  nextEl.style.transform = 'translateY(-140px)';
-
-  requestAnimationFrame(() => {
-    // Trigger animation
-    currentEl.style.transition = 'transform 0.5s ease';
-    nextEl.style.transition = 'transform 0.5s ease';
-    currentEl.style.transform = 'translateY(140px)';
-    nextEl.style.transform = 'translateY(0)';
-  });
+  const wrapper = digitEl.querySelector('.number-wrapper');
+  wrapper.style.transition = 'transform 0.5s ease';
+  wrapper.style.transform = 'translateY(-140px)'; // moves down, next comes up
 
   setTimeout(() => {
     currentEl.textContent = newNumber;
-    currentEl.style.transition = 'none';
-    nextEl.style.transition = 'none';
-    currentEl.style.transform = 'translateY(0)';
-    nextEl.style.transform = 'translateY(-140px)';
+    wrapper.style.transition = 'none';
+    wrapper.style.transform = 'translateY(0)';
   }, 500);
 }
 
