@@ -1,4 +1,4 @@
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js"; 
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 // Firebase config
@@ -23,15 +23,18 @@ function updateDigit(digitEl, newNumber) {
   const currentEl = digitEl.querySelector('.current');
   const nextEl = digitEl.querySelector('.next');
 
+  // Prevent unnecessary animation if the digit hasn’t changed
   if (currentEl.textContent === newNumber) return;
 
   nextEl.textContent = newNumber;
 
+  // Prepare next digit position
   currentEl.style.transition = 'none';
   nextEl.style.transition = 'none';
   currentEl.style.transform = 'translateY(0)';
   nextEl.style.transform = 'translateY(-140px)';
 
+  // Trigger animation
   requestAnimationFrame(() => {
     currentEl.style.transition = 'transform 0.5s ease';
     nextEl.style.transition = 'transform 0.5s ease';
@@ -39,6 +42,7 @@ function updateDigit(digitEl, newNumber) {
     nextEl.style.transform = 'translateY(0)';
   });
 
+  // After animation completes, set the new digit as current
   setTimeout(() => {
     currentEl.textContent = newNumber;
     currentEl.style.transition = 'none';
@@ -48,35 +52,44 @@ function updateDigit(digitEl, newNumber) {
   }, 500);
 }
 
+
+// Countdown update logic
+function runCountdown(targetDate, maintenanceMode) {
+  const now = new Date();
+  const diff = targetDate - now;
+
+  if (diff <= 0) {
+    if (maintenanceMode) {
+      showActiveMaintenanceMessage();
+    } else {
+      showUpcomingMaintenanceWarning();
+    }
+    return false;
+  }
+
+  const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+  const minutes = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+  const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+
+  const timeStr = hours + minutes + seconds;
+  const ids = ['hourTens', 'hourOnes', 'minuteTens', 'minuteOnes', 'secondTens', 'secondOnes'];
+
+  ids.forEach((id, i) => {
+    const digitEl = document.getElementById(id);
+    const newNumber = timeStr[i];
+    updateDigit(digitEl, newNumber);
+  });
+
+  return true;
+}
+
 // Countdown setup
 function startCountdown(targetDate, maintenanceMode) {
+  if (!runCountdown(targetDate, maintenanceMode)) return;
+
   const interval = setInterval(() => {
-    const now = new Date();
-    const diff = targetDate - now;
-
-    if (diff <= 0) {
-      clearInterval(interval);
-
-      if (maintenanceMode) {
-        showActiveMaintenanceMessage();
-      } else {
-        showUpcomingMaintenanceWarning();
-      }
-      return;
-    }
-
-    const hours = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-    const minutes = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
-    const seconds = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
-
-    const timeStr = hours + minutes + seconds;
-    const ids = ['hourTens', 'hourOnes', 'minuteTens', 'minuteOnes', 'secondTens', 'secondOnes'];
-
-    ids.forEach((id, i) => {
-      const digitEl = document.getElementById(id);
-      const newNumber = timeStr[i];
-      updateDigit(digitEl, newNumber);
-    });
+    const keepRunning = runCountdown(targetDate, maintenanceMode);
+    if (!keepRunning) clearInterval(interval);
   }, 1000);
 }
 
@@ -115,7 +128,9 @@ async function fetchMaintenanceData() {
       return;
     }
 
-    const startTime = settingsSnap.data().maintenanceStartTime?.toDate?.();
+    const settingsData = settingsSnap.data();
+    const startTime = settingsData.maintenanceStartTime?.toDate?.();
+    const expectingMaintenance = settingsData.expectingMaintenance;
     const maintenanceMode = maintenanceSnap.data().maintenanceMode;
 
     if (!startTime) {
@@ -128,8 +143,10 @@ async function fetchMaintenanceData() {
     if (startTime < now) {
       if (maintenanceMode) {
         showActiveMaintenanceMessage();
-      } else {
+      } else if (expectingMaintenance) {
         showUpcomingMaintenanceWarning();
+      } else {
+        showNoDataMessage();
       }
     } else {
       startCountdown(startTime, maintenanceMode);

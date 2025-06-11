@@ -1045,7 +1045,8 @@ ul.nav-right {
 }
 
 
-#maintenanceWr#0  display: flex;
+#maintenanceWrapper{  
+  display: flex;
   flex-direction: column;
   align-items: center;
 }
