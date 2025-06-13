@@ -16,118 +16,118 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const friendBtn = document.querySelector(".add-friend-btn");
-const iconEl = friendBtn.querySelector(".icon");
-
+const iconEl = friendBtn?.querySelector(".icon");
 const params = new URLSearchParams(window.location.search);
 const profileUID = params.get("uid");
 
-let currentUserUID = null;
+// ✅ Ensure the button has no static text
+friendBtn?.querySelectorAll(".text")?.forEach(e => e.remove());
 
-// 🧱 Helper: Update Button Appearance
 function updateButton(text, icon) {
   if (!friendBtn || !iconEl) return;
-
-  // Update icon
   iconEl.textContent = icon;
 
-  // Remove ALL spans with class 'text'
+  // Remove old text
   friendBtn.querySelectorAll(".text").forEach(el => el.remove());
 
-  // Create and append a new span with text
   const textSpan = document.createElement("span");
   textSpan.classList.add("text");
   textSpan.textContent = text;
   textSpan.style.marginLeft = "6px";
   friendBtn.appendChild(textSpan);
-
-  // Common styles
-  friendBtn.style.color = "white";
-  friendBtn.style.border = "none";
 }
 
-// 🔁 Check if friend request already sent
-async function checkRequestState() {
-  if (!currentUserUID || !profileUID) return;
+onAuthStateChanged(auth, async user => {
+  if (!friendBtn) return;
 
-  const reqRef = doc(db, "friendRequests", `${currentUserUID}_${profileUID}`);
-  const reqSnap = await getDoc(reqRef);
+  // Logged out
+  if (!user) {
+    updateButton("Dodaj prijatelja", "➕");
 
-  if (reqSnap.exists()) {
-    updateButton("Cancel Request", "❌");
-    friendBtn.style.background = "#e74c3c"; // red
-    friendBtn.dataset.state = "sent";
-  } else {
-    updateButton("Add Friend", "➕");
-    friendBtn.style.background = "linear-gradient(135deg, #4f46e5, #3b82f6)"; // purple/blue
-    friendBtn.dataset.state = "none";
+    friendBtn.onclick = () => {
+      toastr.warning("Za uporabo te funkcije se morate prijaviti.");
+    };
+    return;
   }
-}
 
-// 🔁 Handle friend button click
-async function handleFriendButtonClick() {
-  if (!currentUserUID || !profileUID) return;
-
-  const reqRef = doc(db, "friendRequests", `${currentUserUID}_${profileUID}`);
-  const currentState = friendBtn.dataset.state;
-
-  if (currentState === "sent") {
-    // Remove the friend request document from user B's request list
-    await deleteDoc(reqRef);
-
-    updateButton("Add Friend", "➕");
-    friendBtn.style.background = "linear-gradient(135deg, #4f46e5, #3b82f6)"; // purple/blue
-    friendBtn.dataset.state = "none";
-    toastr.info("Friend request cancelled.");
-  } else {
-    // Send the friend request and add to user B's friendRequests array
-    await setDoc(reqRef, {
-      from: currentUserUID,
-      to: profileUID,
-      timestamp: Date.now()
-    });
-
-    updateButton("Cancel Request", "❌");
-    friendBtn.style.background = "#e74c3c"; // red
-    friendBtn.dataset.state = "sent";
-    toastr.success("Friend request sent.");
+  if (user.uid === profileUID) {
+    // Viewing own profile – already handled in profile.js
+    friendBtn.remove();
+    return;
   }
-}
 
-// 🚀 Accept Friend Request
-async function acceptFriendRequest() {
-  if (!currentUserUID || !profileUID) return;
+  const [currentSnap, targetSnap] = await Promise.all([
+    getDoc(doc(db, "users", user.uid)),
+    getDoc(doc(db, "users", profileUID))
+  ]);
 
-  // Remove the friend request from both user A and B's friendRequests arrays
-  const reqRef = doc(db, "friendRequests", `${currentUserUID}_${profileUID}`);
-  await deleteDoc(reqRef);
-  const reverseReqRef = doc(db, "friendRequests", `${profileUID}_${currentUserUID}`);
-  await deleteDoc(reverseReqRef);
+  if (!currentSnap.exists() || !targetSnap.exists()) {
+    friendBtn.remove();
+    return;
+  }
 
-  // Add each user to the other's friends list
-  const currentUserRef = doc(db, "users", currentUserUID);
-  const profileUserRef = doc(db, "users", profileUID);
+  const currentData = currentSnap.data();
+  const targetData = targetSnap.data();
+  const myFriends = currentData.friends || [];
+  const theirFriends = targetData.friends || [];
 
-  await updateDoc(currentUserRef, {
-    friendsList: arrayUnion(profileUID)
-  });
-  await updateDoc(profileUserRef, {
-    friendsList: arrayUnion(currentUserUID)
-  });
+  const isMutual = myFriends.includes(profileUID) && theirFriends.includes(user.uid);
 
-  toastr.success("Friend request accepted.");
-  updateButton("Prijatelja", "✅");
-  friendBtn.style.background = "#2ecc71"; // green (friend status)
-}
+  if (isMutual) {
+    // ✅ Already friends
+    updateButton("Odstrani prijatelja", "❌");
 
-// 🚀 Init after auth
-onAuthStateChanged(auth, (user) => {
-  if (!user) return;
-  currentUserUID = user.uid;
+    friendBtn.onclick = async () => {
+      if (confirm("Si prepričan, da želiš odstraniti tega prijatelja?")) {
+        await Promise.all([
+          updateDoc(doc(db, "users", user.uid), {
+            friends: arrayRemove(profileUID)
+          }),
+          updateDoc(doc(db, "users", profileUID), {
+            friends: arrayRemove(user.uid)
+          })
+        ]);
 
-  if (currentUserUID === profileUID) {
-    friendBtn?.remove(); // Hide button on own profile
+        toastr.success("Prijatelj uspešno odstranjen.");
+        updateButton("Dodaj prijatelja", "➕"); // fallback state
+        friendBtn.onclick = addFriendLogic; // re-bind logic
+      }
+    };
+
   } else {
-    checkRequestState();
-    friendBtn?.addEventListener("click", handleFriendButtonClick);
+    // ✅ Not friends, allow adding
+    updateButton("Dodaj prijatelja", "➕");
+
+    friendBtn.onclick = addFriendLogic;
+
+    async function addFriendLogic() {
+      await Promise.all([
+        updateDoc(doc(db, "users", user.uid), {
+          friends: arrayUnion(profileUID)
+        }),
+        updateDoc(doc(db, "users", profileUID), {
+          friends: arrayUnion(user.uid)
+        })
+      ]);
+
+      toastr.success("Prijatelj uspešno dodan!");
+      updateButton("Odstrani prijatelja", "❌");
+
+      friendBtn.onclick = async () => {
+        if (confirm("Si prepričan, da želiš odstraniti tega prijatelja?")) {
+          await Promise.all([
+            updateDoc(doc(db, "users", user.uid), {
+              friends: arrayRemove(profileUID)
+            }),
+            updateDoc(doc(db, "users", profileUID), {
+              friends: arrayRemove(user.uid)
+            })
+          ]);
+          toastr.success("Prijatelj uspešno odstranjen.");
+          updateButton("Dodaj prijatelja", "➕");
+          friendBtn.onclick = addFriendLogic;
+        }
+      };
+    }
   }
 });
