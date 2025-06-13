@@ -13,7 +13,7 @@
     <script type="module" src="../auth/firebaseauth.js"></script>
     <script type="module" src="/Resources/js/christmas/christmasLights.js"></script>
     <link rel="stylesheet" href="/Resources/css/christmas/decorations.css">
-    <link rel="stylesheet" href=""
+    <link rel="stylesheet" href="../css/profiles/profile.css">
 </head>
 <body>
 
@@ -23,8 +23,35 @@
 
 
 
+<div class="profile-container">
+    <img id="avatar" class="avatar" src="../profiles/avatarPFP.png" alt="Avatar">
+    <div id="username" class="username">@username</div>
+    <div id="bio" class="bio">err_bioArea</div>
+    <button class="add-friend-btn">
+      <span class="icon">➕</span>Dodaj Prijatelja</button>
+  </div>
+
+
+<div id="postsSection">
+    <button id="newPostBtn">📢 Naredi novo objavo</button>
+    <div id="postsContainer">
+        <!-- Posts will load here -->
+    </div>
+</div>
+
+
 
 <!-- Pop-ups -->
+
+<div id="newPostPopup">
+    <h3>Nova objava</h3>
+    <textarea id="postContent" placeholder="Vnesi objavo tukaj..."></textarea>
+    <div class="popup-buttons">
+        <button id="submitPost">Objavi</button>
+        <button id="cancelPost">Prekliči</button>
+    </div>
+</div>
+
 
 <div id="mailWindow" class="mail-window" style="display:none;">
     <div id="mailMessagesContainer">
@@ -74,7 +101,9 @@
 
 
 
+
 <script type="module" src="../js/profiles/profile.js"></script>
+<script type="module" src="../js/profiles/friendBtnLogic.js"></script>
 <script type="module" src="../obvestila/firebasemodmail.js"></script>
 <script src="../alerts.js"></script>
 <script type="module" src="../settings/settings.js"></script>

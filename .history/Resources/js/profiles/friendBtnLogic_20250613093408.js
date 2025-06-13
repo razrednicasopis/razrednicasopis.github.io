@@ -115,7 +115,7 @@ async function acceptFriendRequest() {
   });
 
   toastr.success("Friend request accepted.");
-  updateButton("Prijatelja", "✅");
+  updateButton("Prijatelja", "✅ ");
   friendBtn.style.background = "#2ecc71"; // green (friend status)
 }
 
