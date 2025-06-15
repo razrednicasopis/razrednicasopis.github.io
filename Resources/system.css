@@ -810,7 +810,6 @@ display: inline-block
 /* Mail Style */
 
 /* Mail Icon Style */
-/* Mail Icon Style */
 
 .mail-icon {
   position: absolute;
@@ -886,6 +885,25 @@ display: inline-block
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
   z-index: 50; /* Lower z-index than the popup */
+}
+
+#mailMessagesContainer {
+  max-height: 320px; /* Adjust this to fit inside the mail window nicely */
+  overflow-y: auto;
+  padding-right: 10px; /* Optional: space for scrollbar */
+}
+
+#mailMessagesContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+#mailMessagesContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+#mailMessagesContainer::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
 
