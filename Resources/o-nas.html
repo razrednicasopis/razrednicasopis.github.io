@@ -27,10 +27,25 @@
       <li><a href="obvestila.html">Obvestila</a></li>
       <li id="chatLink" class=""><a href="utills/klepet.html">Klepet</a></li>
       <li><a href="Resources/events/eventi.html">Eventi</a></li>
+      <li><a href="utills/iskanjeprofilov.html">Iskanje profilov</a></li>
       <li><a href="kontakt.html">Kontakt</a></li>
-      <li class="prijavaLink" id="loginHref"><a href="prijava.html" style="display: block;">Prijava</a></li>
-      <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
-      <li class="prijavaLink"><a href="registracija.html">Registracija</a></li>
+<ul class="auth-nav">
+  <li class="registracijaLink">
+    <a href="registracija.html">Registracija</a>
+  </li>
+  <li class="prijavaLink" id="loginHref">
+    <a href="prijava.html">Prijava</a>
+  </li>
+  <!-- Dropdown for logged-in users -->
+  <li class="dropdown" id="userMenu" style="display: none; position: relative;">
+  <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni<span style="display:inline-block; transform: scaleX(1) scaleY(0.5);">▼</span></a>
+      <div class="dropdown-content" id="userDropdown">
+      <div class="dropdown-username" id="currentUsername">Prijavljen kot: uporabnik</div>
+      <a href="utills/nastavitve.html">⚙️ Nastavitve</a>
+      <a href="#" id="logoutLink">🚪 Odjava</a>
+    </div>
+  </li>
+</ul>
     </ul>
   </nav>
 </header>

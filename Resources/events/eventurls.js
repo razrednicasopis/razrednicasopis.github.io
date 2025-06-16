@@ -10,6 +10,14 @@ export const eventUrls = {
     "https://razrednicasopis.github.io/Resources/events/festival_iger/igre/slitherio.html",
     "http://127.0.0.1:5500/Resources/events/festival_iger/domov.html", 
     "http://127.0.0.1:5500/Resources/events/festival_iger/igre/slytherio.html"
-  ], // Add your specific URLs for guessingGame event
+  ],
+    "Hitro Tipkanje": [
+    "https://razrednicasopis.github.io/Resources/events/hitrotipkanje/domov.html",
+    "https://razrednicasopis.github.io/Resources/events/hitrotipkanje/igra.html",
+    "https://razrednicasopis.github.io/Resources/events/hitrotipkanje/leaderboards/ai_leaderboards.html",
+    "http://127.0.0.1:5500/Resources/events/hitrotipkanje/domov.html",    
+    "http://127.0.0.1:5500/Resources/events/hitrotipkanje/offlineigra.html", 
+    "http://127.0.0.1:5500/Resources/events/hitrotipkanje/leaderboards/ai_leaderboards.html"
+  ],
   // Add other events and their corresponding URLs here
 };

@@ -30,10 +30,25 @@
                           <li><a href="#">Obvestila</a></li>
                           <li id="chatLink" class=""><a href="utills/klepet.html">Klepet</a></li>
                           <li><a href="/Resources/events/eventi.html">Eventi</a></li>
+                          <li><a href="utills/iskanjeprofilov.html">Iskanje profilov</a></li>
                           <li><a href="kontakt.html">Kontakt</a></li>
-                          <li class="prijavaLink" id="loginHref"><a href="prijava.html" style="display: block;">Prijava</a></li>
-                          <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
-                          <li class="prijavaLink"><a href="registracija.html">Registracija</a></li>
+<ul class="auth-nav">
+  <li class="registracijaLink">
+    <a href="registracija.html">Registracija</a>
+  </li>
+  <li class="prijavaLink" id="loginHref">
+    <a href="prijava.html">Prijava</a>
+  </li>
+  <!-- Dropdown for logged-in users -->
+  <li class="dropdown" id="userMenu" style="display: none; position: relative;">
+  <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni<span style="display:inline-block; transform: scaleX(1) scaleY(0.5);">▼</span></a>
+      <div class="dropdown-content" id="userDropdown">
+      <div class="dropdown-username" id="currentUsername">Prijavljen kot: uporabnik</div>
+      <a href="utills/nastavitve.html">⚙️ Nastavitve</a>
+      <a href="#" id="logoutLink">🚪 Odjava</a>
+    </div>
+  </li>
+</ul>
                         </ul>
                       </nav>
                     </header>
@@ -45,7 +60,13 @@
           <section class="obvestilnatabla">
             <h1>OBVESTILA RAZVIJALCEV STRANI</h1><br>
             <article>
-              <h2>Verzija 3.1 - Novo!</h2>
+              <h2>Verzija 4.0 - Novo!</h2>
+              <small>Objavljeno: Ponedeljek, 16.6.2025, ob 20:00</small>
+              <p>Novo dodane vsebine v verziji 4.0</p>
+              <a href="obvestila/obvestilo10.html">Preberi več</a>
+            </article>
+            <article>
+              <h2>Verzija 3.1</h2>
               <small>Objavljeno: Četrtek, 6.3.2025, ob 20:00</small>
               <p>Novo dodane vsebine v verziji 3.1</p>
               <a href="obvestila/obvestilo9.html">Preberi več</a>

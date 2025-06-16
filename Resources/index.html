@@ -36,10 +36,25 @@
       <li><a href="obvestila.html">Obvestila</a></li>
       <li id="chatLink" class=""><a href="utills/klepet.html">Klepet</a></li>
       <li><a href="/Resources/events/eventi.html">Eventi</a></li>
+      <li><a href="utills/iskanjeprofilov.html">Iskanje profilov</a></li>
       <li><a href="kontakt.html">Kontakt</a></li>
-        <li class="prijavaLink" id="loginHref"><a href="prijava.html" style="display: block;">Prijava</a></li>
-      <li class="prijavaLink"><a id="logoutBtn" href="#" style="display: none;">Odjava</a></li>
-      <li class="prijavaLink"><a href="registracija.html">Registracija</a></li>
+<ul class="auth-nav">
+  <li class="registracijaLink">
+    <a href="registracija.html">Registracija</a>
+  </li>
+  <li class="prijavaLink" id="loginHref">
+    <a href="prijava.html">Prijava</a>
+  </li>
+  <!-- Dropdown for logged-in users -->
+  <li class="dropdown" id="userMenu" style="display: none; position: relative;">
+  <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni<span style="display:inline-block; transform: scaleX(1) scaleY(0.5);">▼</span></a>
+      <div class="dropdown-content" id="userDropdown">
+      <div class="dropdown-username" id="currentUsername">Prijavljen kot: uporabnik</div>
+      <a href="utills/nastavitve.html">⚙️ Nastavitve</a>
+      <a href="#" id="logoutLink">🚪 Odjava</a>
+    </div>
+  </li>
+</ul>
   </nav>
 </header>
 
@@ -78,13 +93,13 @@
   <div id="mailMessagesContainer">
     <!-- Dynamically Loaded Mail Messages -->
   </div>
-  <button id="closeMailWindow">Close</button>
+  <button id="closeMailWindow">Zapri</button>
 </div>
 
 
 <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 30px; z-index: 100; width: 300px; height: 500px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
   <div id="popupContent"></div>
-  <button id="popupClose" style="display: none;">Close</button>
+  <button id="popupClose" style="display: none;">Zapri</button>
 </div>
 
 

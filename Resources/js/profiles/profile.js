@@ -51,6 +51,7 @@ async function loadUserProfile(uid) {
       bioEl.textContent = "Uporabnik s tem UID-jem ne obstaja.";
       addFriendBtn?.remove();
       avatarEl?.remove();
+      newPostBtn?.remove();
       return;
     }
 
@@ -115,6 +116,7 @@ onAuthStateChanged(auth, async (user) => {
       const [mySnap, theirSnap] = await Promise.all([
         getDoc(myRef),
         getDoc(theirRef),
+        newPostBtn?.remove()
       ]);
 
       if (!mySnap.exists() || !theirSnap.exists()) {
@@ -131,14 +133,6 @@ onAuthStateChanged(auth, async (user) => {
 
       const areMutualFriends = myFriends.includes(uid) && theirFriends.includes(user.uid);
       console.log("Are mutual friends:", areMutualFriends);
-
-      if (areMutualFriends && addFriendBtn) {
-        addFriendBtn.disabled = true;
-        addFriendBtn.innerHTML = '✅ Prijatelja';
-        addFriendBtn.style.backgroundColor = '#28a745';
-        addFriendBtn.style.cursor = 'default';
-      }
-
     } catch (err) {
       console.error("Error checking friendship:", err);
     }

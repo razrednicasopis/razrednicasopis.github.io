@@ -1,50 +1,93 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
-
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
-    authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
-    projectId: "razrednicasopisdatabase-29bad",
-    storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
-    messagingSenderId: "294018128318",
-    appId: "1:294018128318:web:31df9ea055eec5798e81ef"
-  };
-  
+  apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
+  authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
+  projectId: "razrednicasopisdatabase-29bad",
+  storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
+  messagingSenderId: "294018128318",
+  appId: "1:294018128318:web:31df9ea055eec5798e81ef"
+};
 
-  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-  const auth = getAuth();
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 function updateButtonVisibility() {
-    const prijavaLinkBtn = document.getElementById('loginHref');
-    const logoutBtn = document.getElementById('logoutBtn');
+  const prijavaLinkBtn = document.getElementById('loginHref');
+  const registracijaLink = document.querySelector('.registracijaLink');
+  const userMenu = document.getElementById('userMenu');
+  const currentUsername = document.getElementById('currentUsername');
+  const logoutLink = document.getElementById('logoutLink');
+  const menuToggle = document.getElementById('menuToggle');
+  const userDropdown = document.getElementById('userDropdown');
 
-    if (!prijavaLinkBtn || !logoutBtn) {
-      console.error("Login/Logout buttons not found in the DOM.");
-      return;
+  // Toggle dropdown visibility when “Meni ⌄” is clicked
+  menuToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    userDropdown.style.display = (userDropdown.style.display === 'block') ? 'none' : 'block';
+  });
+
+  // Close dropdown if clicking outside
+  document.addEventListener('click', (e) => {
+    if (!userMenu.contains(e.target)) {
+      userDropdown.style.display = 'none';
     }
-  
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        logoutBtn.style.display = 'block';
-        prijavaLinkBtn.style.display = 'none';
-      } else {
-        logoutBtn.style.display = 'none';
-        prijavaLinkBtn.style.display = 'block';
+  });
+
+  // Show/hide links based on auth state
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // Hide “Prijava” only
+      if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'none';
+
+      // Show “Meni” dropdown
+      if (userMenu) userMenu.style.display = 'inline-block';
+
+      // Keep “Registracija” visible
+
+      // Fetch username from Firestore
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const username = userDocSnap.data().Username || user.email;
+          if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${username}`;
+        } else {
+          // Fallback if no user doc found
+          if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${user.email}`;
+        }
+      } catch (error) {
+        console.error("Napaka pri pridobivanju uporabniškega imena:", error);
+        if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${user.email}`;
       }
-    });
-  }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    updateButtonVisibility();
-  })
+    } else {
+      // Show “Prijava” + “Registracija”
+      if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'inline-block';
+      if (registracijaLink) registracijaLink.style.display = 'inline-block';
 
-  logoutBtn.addEventListener('click', async () => {
+      // Hide “Meni” dropdown and its content
+      if (userMenu) userMenu.style.display = 'none';
+      if (userDropdown) userDropdown.style.display = 'none';
+    }
+  });
+
+  // Handle logout click inside dropdown
+  logoutLink.addEventListener('click', async (e) => {
+    e.preventDefault();
     try {
       await signOut(auth);
       localStorage.setItem('toast', 'logout-success');
+      window.location.reload();
     } catch (error) {
-      console.error('Error logging out:', error);
-      toastr.error('Napaka pri odjavi:', error);
+      console.error('Napaka pri odjavi:', error);
+      toastr.error('Napaka pri odjavi.');
     }
   });
+}
+
+// Call it once on load
+document.addEventListener('DOMContentLoaded', updateButtonVisibility);

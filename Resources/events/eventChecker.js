@@ -58,14 +58,17 @@ async function checkEventEndTime() {
 // Function to show the event ended popup
 function showEventEndedPopup(eventTitle) {
     const popupContainer = document.getElementById('eventEndedPopupContainer');
-    const overlay = document.getElementById('matchmakingOverlay'); // Select the overlay
+    const overlay = document.getElementById('matchmakingOverlay'); 
     const eventNameElement = document.getElementById('endedEventName');
 
-    // Set the event title in the popup
-    eventNameElement.textContent = eventTitle; 
+    if (!popupContainer || !overlay || !eventNameElement) {
+        console.warn('Popup elements not found in DOM!');
+        return;
+    }
 
-    popupContainer.style.display = 'block'; // Show the popup
-    overlay.style.display = 'block'; // Show the overlay
+    eventNameElement.textContent = eventTitle; 
+    popupContainer.style.display = 'block'; 
+    overlay.style.display = 'block'; 
 }
 
 // Add onclick function for closing the popup
