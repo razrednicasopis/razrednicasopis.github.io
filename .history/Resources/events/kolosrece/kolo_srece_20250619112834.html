@@ -24,28 +24,57 @@
 <div id="matchmakingOverlay" class="overlay"></div>
 <div id="eventEndedOverlay" class="overlay"></div>
 
-
+<div class="lbEventHeader">
+    <a class="lbEventHome" href="/Resources/index.html">Domov</a>
+    <a class="lbEventsPageRedirect" href="../eventi.html">Nazaj</a>
+    <a class="lbSeasonalLeaderboard" href="sezonske_stopnicke.html">Sezonske lestvice</a>
+</div>
 
 <!-- Lucky Wheel Section -->
 
 <div class="wheel-container">
+    <div class="indicator"></div>
     <div id="wheel">
-        <div class="wheel-segment">10</div>
-        <div class="wheel-segment">20</div>
-        <div class="wheel-segment">50</div>
-        <div class="wheel-segment">100</div>
-        <div class="wheel-segment">200</div>
+        <div class="wheel-segment" id="segment-10">
+            <div class="wheel-segment-content">10</div>
+        </div>
+        <div class="wheel-segment" id="segment-20">
+            <div class="wheel-segment-content">80</div>
+        </div>
+        <div class="wheel-segment" id="segment-30">
+            <div class="wheel-segment-content">70</div>
+        </div>
+        <div class="wheel-segment" id="segment-40">
+            <div class="wheel-segment-content">60</div>
+        </div>
+        <div class="wheel-segment" id="segment-50">
+            <div class="wheel-segment-content">50</div>
+        </div>
+        <div class="wheel-segment" id="segment-60">
+            <div class="wheel-segment-content">40</div>
+        </div>
+        <div class="wheel-segment" id="segment-70">
+            <div class="wheel-segment-content">30</div>
+        </div>
+        <div class="wheel-segment" id="segment-80">
+            <div class="wheel-segment-content">20</div>
+        </div>        
+    </div>
+    <!-- Spin Count Display -->
+<div id="spinCountSection">
+    <span id="userSpins"></span> <!-- Set initial spins here -->
+</div>
+    <div class="spinInfoSection">
+    <button id="spinButton">Zavrti kolo</button>
+    <div id="spinMessage"></div>
     </div>
 </div>
-<button id="spinButton">Spin the Wheel</button>
-<p id="spinMessage"></p>
-
 
 
 <!-- Popup codes -->
 
 <!-- Event Has Ended Popup -->
-<div id="eventEndedPopupContainer" style="display: none;" class="popup"><
+<div id="eventEndedPopupContainer" style="display: none;" class="popup">
     <div class="popup-content">
         <h2>Dogodek je končan!</h2><br>
         <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>
@@ -80,6 +109,6 @@
 <script type="module" src="../eventsmain.js"></script>
 <script type="module" src="/Resources/settings/settings.js"></script>
 <script type="module" src="../../auth/loginStateChecker.js"></script>
-<script type="module" src=""
+<script type="module" src="luckyWheelLogic.js"></script>
 </body>
 </html>

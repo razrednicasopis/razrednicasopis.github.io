@@ -82,6 +82,4 @@ if (closeButton) {
 }
 
 // Set an interval to check the end time every second
-window.addEventListener("load", () => {
-    const checkInterval = setInterval(checkEventEndTime, 1000);
-});
+const checkInterval = setInterval(checkEventEndTime, 1000);
