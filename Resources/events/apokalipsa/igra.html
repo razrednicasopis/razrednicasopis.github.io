@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="/Resources/styless.css">
   <link rel="stylesheet" href="/Resources/system.css">
   <link rel="stylesheet" href="./assets/css/main.css">
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
   <title>Igra Preživetev Apokalipse - Razredni Časopis</title>
 </head>
 <body>
@@ -14,11 +15,10 @@
 
 
 
-<canvas id="gameCanvas"></canvas>
+<div id="gameCanvas"></div>
 
 
 
-<img id="character" src="assets/resources/playerChar.png" alt="Character" />
 
 
 
@@ -54,13 +54,9 @@
     </div>  
 </div>
 
-<script type="module" src="./assets/js/gameMain.js"></script>
-<script type="module" src="./assets/js/enemy.js"></script>
 
 
-
-
-
+<script type="module" src="./assets/js/phaserGame.js"></script>
 <script src="/Resources/alerts.js"></script>
 <script type="module" src="/Resources/settings/settings.js"></script>
 <script type="module" src="/Resources/auth/firebaseauth.js"></script>

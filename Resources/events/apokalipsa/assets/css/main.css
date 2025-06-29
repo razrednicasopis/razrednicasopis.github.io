@@ -13,19 +13,13 @@ body {
     overflow: hidden; /* Prevent scrollbars */
 }
 
-canvas {
-    display: block; /* Prevents extra space below the canvas */
-    background-color: #111; /* Ensure canvas has a dark background */
-    position: absolute; /* Make the canvas fill the viewport */
-    top: 0;
-    left: 0;
-    z-index: 1; /* Set the z-index for the canvas */
+#gameCanvas {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #111;
+  z-index: 1;
 }
 
-#character {
-    position: absolute;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    z-index: 2; /* Ensure the character is above the canvas */
-    width: 100px; /* Set width as needed */
-}
+
+
