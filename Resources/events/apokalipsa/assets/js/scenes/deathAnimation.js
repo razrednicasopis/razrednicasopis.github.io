@@ -8,6 +8,7 @@ export default class DeathHandler {
 
   triggerDeath() {
     const { scene, player } = this;
+    console.log('You have died trying to escape the invasion. May you rest in eternal peace.');
 
     // Freeze game
     scene.physics.pause();
@@ -27,31 +28,32 @@ export default class DeathHandler {
     player.setTintFill(0xffffff); // white glow
   }
 
-  _disintegrate() {
-    const { scene, player } = this;
+ _disintegrate() {
+  const { scene, player } = this;
 
-    const particles = scene.add.particles(player.texture.key);
+  const particles = scene.add.particles('particle');
 
-    particles.createEmitter({
-      x: player.x,
-      y: player.y,
-      lifespan: 800,
-      speed: { min: -100, max: 100 },
-      scale: { start: 1, end: 0 },
-      alpha: { start: 1, end: 0 },
-      quantity: 40,
-      blendMode: 'ADD',
-      tint: [0xffcccc, 0xffffff]
-    });
+  particles.createEmitter({
+    x: player.x,
+    y: player.y,
+    lifespan: 800,
+    speed: { min: -100, max: 100 },
+    scale: { start: 1, end: 0 },
+    alpha: { start: 1, end: 0 },
+    quantity: 40,
+    blendMode: 'ADD',
+    tint: [0xffcccc, 0xffffff]
+  });
 
-    player.setAlpha(0); // hide player
+  player.setAlpha(0); // hide player
 
-    scene.time.delayedCall(1000, () => {
-      particles.destroy();
-    });
+  scene.time.delayedCall(1000, () => {
+    particles.destroy();
+  });
 
-    this._darkenScreen();
-  }
+  this._darkenScreen();
+}
+
 
   _darkenScreen() {
     const { scene } = this;

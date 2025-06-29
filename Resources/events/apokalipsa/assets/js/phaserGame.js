@@ -1,6 +1,8 @@
 // IMPORTS
 import PlayerStats from "./player/playerStats.js";
 import EnemyStats from "./enemy/enemyStats01.js";  // <-- Added this line
+import DeathHandler from './scenes/deathAnimation.js';
+
 
 class MainScene extends Phaser.Scene {
   constructor() {
@@ -27,6 +29,15 @@ class MainScene extends Phaser.Scene {
     this.hexRenderTexture = this.add.renderTexture(0, 0, this.worldWidth, this.worldHeight).setOrigin(0);
     this.drawHexGridToRenderTexture();
 
+    // Create a simple white circle texture for particles
+    const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+    graphics.fillStyle(0xffffff, 1);
+    graphics.fillCircle(4, 4, 4);
+    graphics.generateTexture('particle', 8, 8);
+    graphics.destroy();
+
+
+
     // Player starts at world center
     const centerX = this.worldWidth / 2;
     const centerY = this.worldHeight / 2;
@@ -34,6 +45,23 @@ class MainScene extends Phaser.Scene {
     this.player = this.physics.add.sprite(centerX, centerY, 'player');
     this.player.setDisplaySize(64, 64);
     this.player.setCollideWorldBounds(true);
+    this.deathHandler = new DeathHandler(this, this.player);
+    // Bullets
+    this.bullets = this.physics.add.group(); // pool of bullets
+    this.isShooting = false;
+    this.shootCooldown = 50; // ms between shots
+    this.lastShotTime = 0;
+
+    
+    this.input.on('pointerdown', (pointer) => {
+    const now = this.time.now;
+    if (now - this.lastShotTime >= this.shootCooldown) {
+     this.shootLaser(pointer.worldX, pointer.worldY);
+      this.lastShotTime = now;
+    }
+  });
+
+
 
     // Set camera bounds and follow player
     this.cameras.main.setBounds(-Infinity, -Infinity, Infinity, Infinity);
@@ -43,7 +71,9 @@ class MainScene extends Phaser.Scene {
 
     // Creating Stats
     this.playerStats = new PlayerStats();
+    this.fireRate = this.playerStats.fireRate;
     this.enemyStats = new EnemyStats();
+    this.playerSpeed = this.playerStats.speed;
     this.lastPlayerHP = this.playerStats.currentHP;
 
     // Create health bar background (gray bar)
@@ -136,50 +166,126 @@ class MainScene extends Phaser.Scene {
     this.damageOverlayDrainDelayTimer = null;
   }
 
-  spawnEnemy() {
-    const cam = this.cameras.main;
-    const spawnMargin = 200; // Distance outside viewport to spawn enemies
 
-    // Get camera view rectangle
-    const camRect = new Phaser.Geom.Rectangle(cam.worldView.x, cam.worldView.y, cam.worldView.width, cam.worldView.height);
+  // PLAYER BULLETS SYSTEM
 
-    const sides = ['top', 'bottom', 'left', 'right'];
-    const side = Phaser.Utils.Array.GetRandom(sides);
+shootLaser(targetX, targetY) {
+  const bullet = this.bullets.create(this.player.x, this.player.y, null);
+  
 
-    let x, y;
+  // Draw laser (a thin white rectangle)
+  const graphics = this.make.graphics({ add: false });
+  graphics.fillStyle(0x00aaff, 1); // blue color, full opacity
+  graphics.fillRect(0, 0, 8, 2);
+  graphics.generateTexture('laser', 8, 2);
+  graphics.destroy();
+  bullet.setTexture('laser');
 
-    switch (side) {
-      case 'top':
-        x = Phaser.Math.Between(camRect.x, camRect.right);
-        y = camRect.top - spawnMargin;
-        break;
-      case 'bottom':
-        x = Phaser.Math.Between(camRect.x, camRect.right);
-        y = camRect.bottom + spawnMargin;
-        break;
-      case 'left':
-        x = camRect.left - spawnMargin;
-        y = Phaser.Math.Between(camRect.y, camRect.bottom);
-        break;
-      case 'right':
-        x = camRect.right + spawnMargin;
-        y = Phaser.Math.Between(camRect.y, camRect.bottom);
-        break;
-    }
+  bullet.setDisplaySize(20, 4);
+  bullet.setRotation(Phaser.Math.Angle.Between(this.player.x, this.player.y, targetX, targetY));
 
-    x = Phaser.Math.Clamp(x, 0, this.worldWidth);
-    y = Phaser.Math.Clamp(y, 0, this.worldHeight);
+  const angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, targetX, targetY);
+  const speed = 1200;
+  bullet.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+  bullet.lifespan = 1200;
 
-    const enemy = this.enemies.create(x, y, 'enemy');
-    enemy.setDisplaySize(40, 40);
-    enemy.speed = 120;
-    enemy.setCollideWorldBounds(false);
+  this.time.delayedCall(bullet.lifespan, () => {
+    if (bullet && bullet.active) bullet.destroy();
+  });
 
-    enemy.setTint(0xff0000);
+  this.physics.add.overlap(bullet, this.enemies, this.handleBulletHit, null, this);
+}
 
-    // FIX: Added backticks for template literal in console.log
-    console.log(`Enemy spawned at (${x.toFixed(1)}, ${y.toFixed(1)})`);
+
+handleBulletHit(bullet, enemy) {
+  bullet.destroy();
+
+  if (!enemy.stats) return;
+
+  // Sample damage calc:
+  const playerATK = this.playerStats.atk || 20;
+  const critChance = this.playerStats.critRate || 0.2;
+  const critDmg = this.playerStats.critDmg || 1.5;
+
+  let isCrit = Math.random() < critChance;
+  let baseDmg = playerATK;
+  if (isCrit) baseDmg *= critDmg;
+
+  const hpLeft = enemy.stats.takeDamage(baseDmg);
+
+  if (enemy.stats.isDead()) {
+    this.fadeOutAndDestroy(enemy);
   }
+}
+
+
+fadeOutAndDestroy(enemy) {
+  this.tweens.add({
+    targets: enemy,
+    alpha: 0,
+    duration: 500,
+    onComplete: () => {
+      enemy.destroy();
+    }
+  });
+}
+
+
+
+// ENEMY SPAWNING LOGIC
+
+ spawnEnemy() {
+  const cam = this.cameras.main;
+  const spawnMargin = 200;
+
+  const camRect = new Phaser.Geom.Rectangle(
+    cam.worldView.x,
+    cam.worldView.y,
+    cam.worldView.width,
+    cam.worldView.height
+  );
+
+  const sides = ['top', 'bottom', 'left', 'right'];
+  const side = Phaser.Utils.Array.GetRandom(sides);
+
+  let x, y;
+
+  switch (side) {
+    case 'top':
+      x = Phaser.Math.Between(camRect.x, camRect.right);
+      y = camRect.top - spawnMargin;
+      break;
+    case 'bottom':
+      x = Phaser.Math.Between(camRect.x, camRect.right);
+      y = camRect.bottom + spawnMargin;
+      break;
+    case 'left':
+      x = camRect.left - spawnMargin;
+      y = Phaser.Math.Between(camRect.y, camRect.bottom);
+      break;
+    case 'right':
+      x = camRect.right + spawnMargin;
+      y = Phaser.Math.Between(camRect.y, camRect.bottom);
+      break;
+  }
+
+  // ✅ Clamp AFTER x and y are assigned
+  x = Phaser.Math.Clamp(x, 0, this.worldWidth);
+  y = Phaser.Math.Clamp(y, 0, this.worldHeight);
+
+  
+  const newEnemy = this.enemies.create(x, y, 'enemy');
+  newEnemy.stats = new EnemyStats();
+  newEnemy.setDisplaySize(40, 40);
+  newEnemy.speed = newEnemy.stats.speed; // <-- Use stat-defined speed
+  newEnemy.setCollideWorldBounds(false);
+  newEnemy.setTint(0xff0000);
+
+  // Attach stats (if needed)
+  newEnemy.stats = new EnemyStats();
+
+  console.log(`Enemy spawned at (${x.toFixed(1)}, ${y.toFixed(1)})`);
+}
 
   updateHealthBar() {
     const { currentHP, maxHP } = this.playerStats;
@@ -226,6 +332,12 @@ class MainScene extends Phaser.Scene {
     // Now update the green bar visually
     this.updateHealthBar();
 
+
+    // Death Sequence
+     if (newHP <= 0) {
+    this.deathHandler.triggerDeath();
+  }
+
     // Clear any old animations
     if (this.damageOverlayDrainTween) {
       this.damageOverlayDrainTween.stop();
@@ -264,6 +376,16 @@ class MainScene extends Phaser.Scene {
 
     this.cameras.main.scrollX = Math.round(this.cameras.main.scrollX);
     this.cameras.main.scrollY = Math.round(this.cameras.main.scrollY);
+
+    
+    if (this.isShooting) {
+  const now = this.time.now;
+  if (now - this.lastShotTime > this.fireRate) {
+    this.shootBullet();
+    this.lastShotTime = now;
+  }
+}
+
 
     const stopDistance = 50;
     this.enemies.children.iterate(enemy => {

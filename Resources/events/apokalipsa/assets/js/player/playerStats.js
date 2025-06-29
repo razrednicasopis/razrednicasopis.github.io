@@ -2,11 +2,13 @@
 export default class PlayerStats {
   constructor() {
     this.maxHP = 100;
-    this.currentHP = 100;
+    this.currentHP = this.maxHP;
     this.atk = 10;
-    this.critRate = 0.1;  // 10%
-    this.critDmg = 1.5;   // 150%
-    this.defense = 5;     // New defense stat
+    this.critRate = 0.1;  // 10% Critical Rate
+    this.critDmg = 1.5;   // 150% Critical Damage
+    this.defense = 5;     // Defense stat
+    this.speed = 100;     // Speed Stat
+    this.fireRate = 50;   // Can fire every 50 milliseconds     
   }
 
   // A method to apply damage considering defense
