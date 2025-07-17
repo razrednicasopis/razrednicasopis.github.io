@@ -11,7 +11,6 @@ const firebaseConfig = {
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
 
-
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore();
 
@@ -56,7 +55,7 @@ function formatTime(timeLeft) {
 
 // Function to update the countdown color
 function updateCountdownColor(countdownElement, timeLeft) {
-    countdownElement.style.color = timeLeft <= 3600000 ? 'red' : ''; // Red if less than 1 hour
+    countdownElement.style.color = timeLeft <= 3600000 ? 'red' : '';
 }
 
 // Function to update the event status
@@ -72,49 +71,51 @@ async function updateEventStatus() {
         const eventName = eventData.eventName;
         const startTime = eventData.startTime.toMillis();
         const endTime = eventData.endTime.toMillis();
+        const isPermanent = eventData.isPermanent === true;
 
         const availableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].available`);
         const unavailableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].unavailable`);
 
         if (availableEventBox && unavailableEventBox) {
-            if (now >= startTime && now <= endTime) {
-                // Event is ongoing
+            if (isPermanent || (now >= startTime && now <= endTime)) {
                 availableEventBox.style.display = "block";
                 unavailableEventBox.style.display = "none";
 
-                // Countdown display logic
                 const countdownElement = availableEventBox.querySelector(".event-countdown");
-                const timeLeft = endTime - now;
-                countdownElement.innerHTML = `Event bo potekel čez: ${formatTime(timeLeft)}`;
-                updateCountdownColor(countdownElement, timeLeft);
+
+                if (isPermanent) {
+                    countdownElement.innerHTML = "Dogodek je <strong>stalen</strong> 🎉";
+                    countdownElement.style.color = "green";
+                } else {
+                    const timeLeft = endTime - now;
+                    countdownElement.innerHTML = `Event bo potekel čez: ${formatTime(timeLeft)}`;
+                    updateCountdownColor(countdownElement, timeLeft);
+
+                    const interval = setInterval(() => {
+                        const updatedTimeLeft = endTime - new Date().getTime();
+                        if (updatedTimeLeft <= 0) {
+                            clearInterval(interval);
+                            countdownElement.innerHTML = "Event je končan.";
+                            availableEventBox.querySelector(".join-event-btn").style.display = "none";
+
+                            setTimeout(() => {
+                                availableEventBox.style.display = "none";
+                                unavailableEventBox.style.display = "block";
+                                if (!unavailableEventBox.querySelector(".unavailable-overlay")) {
+                                    const overlay = createUnavailableOverlay();
+                                    unavailableEventBox.appendChild(overlay);
+                                }
+                            }, 60000);
+                        } else {
+                            countdownElement.innerHTML = `Event bo potekel čez: ${formatTime(updatedTimeLeft)}`;
+                            updateCountdownColor(countdownElement, updatedTimeLeft);
+                        }
+                    }, 1000);
+                }
+
                 anyAvailableEvents = true;
 
-                // Update countdown every second
-                const interval = setInterval(() => {
-                    const updatedTimeLeft = endTime - new Date().getTime();
-                    if (updatedTimeLeft <= 0) {
-                        clearInterval(interval);
-                        countdownElement.innerHTML = "Event je končan.";
-                        availableEventBox.querySelector(".join-event-btn").style.display = "none";
-
-                        // Wait for 1 minute before hiding the event and moving it to unavailable section
-                        setTimeout(() => {
-                            availableEventBox.style.display = "none";
-                            unavailableEventBox.style.display = "block";
-                            if (!unavailableEventBox.querySelector(".unavailable-overlay")) {
-                                const overlay = createUnavailableOverlay();
-                                unavailableEventBox.appendChild(overlay);
-                            }
-                        }, 60000);  // Wait 1 minute (60,000 milliseconds)
-
-                    } else {
-                        countdownElement.innerHTML = `Event bo potekel čez: ${formatTime(updatedTimeLeft)}`;
-                        updateCountdownColor(countdownElement, updatedTimeLeft);
-                    }
-                }, 1000);
-
             } else {
-                // Event is not ongoing
                 availableEventBox.style.display = "none";
                 unavailableEventBox.style.display = "block";
 
@@ -126,7 +127,6 @@ async function updateEventStatus() {
         }
     });
 
-    // If no available events, display message
     noAvailableEventsMsg.style.display = anyAvailableEvents ? "none" : "block";
 }
 
@@ -142,12 +142,14 @@ function listenForEventChanges() {
             const eventName = eventData.eventName;
             const startTime = eventData.startTime.toMillis();
             const endTime = eventData.endTime.toMillis();
+            const isPermanent = eventData.isPermanent === true;
+            const now = new Date().getTime();
 
             const availableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].available`);
             const unavailableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].unavailable`);
 
             if (availableEventBox && unavailableEventBox) {
-                if (new Date().getTime() >= startTime && new Date().getTime() <= endTime) {
+                if (isPermanent || (now >= startTime && now <= endTime)) {
                     availableEventBox.style.display = "block";
                     unavailableEventBox.style.display = "none";
                     anyAvailableEvents = true;
@@ -162,7 +164,6 @@ function listenForEventChanges() {
             }
         });
 
-        // If no available events, show the notification
         noAvailableEventsMsg.style.display = anyAvailableEvents ? "none" : "block";
     });
 }
