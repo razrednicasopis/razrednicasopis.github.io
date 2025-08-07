@@ -1,9 +1,8 @@
-// Import Firebase modules
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, increment, collection, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
 
-// Firebase configuration
+// Firebase config
 const firebaseConfig = {
     apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
     authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
@@ -13,134 +12,122 @@ const firebaseConfig = {
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
 
-// Initialize Firebase
+// Firebase init
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Real-time Listener for User Spins
+// Sectors
+const sectors = [
+    { color: "#f82", label: "10" },
+    { color: "#0bf", label: "20" },
+    { color: "#fb0", label: "30" },
+    { color: "#0fb", label: "40" },
+    { color: "#b0f", label: "50" },
+    { color: "#f0b", label: "60" },
+    { color: "#bf0", label: "70" },
+    { color: "#0f0", label: "80" }
+];
+
+let isSpinning = false;
+
+// On user auth
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userId = user.uid;
         const userEventRef = doc(db, "lbEventData", userId);
 
-        // Set up real-time listener
         onSnapshot(userEventRef, async (userSnapshot) => {
             if (!userSnapshot.exists()) {
-                // Initialize data if doesn't exist
-                await setDoc(userEventRef, { free_spins: 1, tokens: 0, lastSpinDate: null, hasSpunToday: false });
+                await setDoc(userEventRef, {
+                    free_spins: 1,
+                    tokens: 0,
+                    lastSpinDate: null,
+                    hasSpunToday: false
+                });
             }
 
             const userData = userSnapshot.data();
             const userSpinsElement = document.getElementById("userSpins");
-
-            // Check for lastSpinDate and hasSpunToday
             const today = new Date();
             const lastSpinDate = userData.lastSpinDate ? userData.lastSpinDate.toDate() : null;
-            const isSameDay = lastSpinDate && lastSpinDate.getDate() === today.getDate() &&
-                              lastSpinDate.getMonth() === today.getMonth() &&
-                              lastSpinDate.getFullYear() === today.getFullYear();
 
-            // Reset spins if the user has not spun today
+            const isSameDay =
+                lastSpinDate &&
+                lastSpinDate.getDate() === today.getDate() &&
+                lastSpinDate.getMonth() === today.getMonth() &&
+                lastSpinDate.getFullYear() === today.getFullYear();
+
             if (!isSameDay) {
                 await updateDoc(userEventRef, {
                     free_spins: 1,
                     hasSpunToday: false,
-                    lastSpinDate: new Date() // Set to current date
+                    lastSpinDate: new Date()
                 });
             }
 
-            // Update UI based on free spins
             if (userData.free_spins > 0) {
                 userSpinsElement.style.display = "block";
                 userSpinsElement.textContent = `Preostali vrtljaji: ${userData.free_spins}`;
+                document.getElementById("spinButton").style.display = "block";
             } else {
                 userSpinsElement.style.display = "none";
-            }
-
-            // Update other UI elements based on spin availability
-            if (userData.free_spins <= 0) {
                 displayCountdownUntilNextSpin();
-            } else {
-                document.getElementById("spinButton").style.display = "block"; // Show button if spins are available
-                document.querySelector('.countdown-message').style.display = "none";
             }
         });
     }
 });
 
-// Handle Spin Button Click
+// Spin button handler
 document.getElementById("spinButton").addEventListener("click", async () => {
     const user = auth.currentUser;
-
     if (!user) {
         alert("Prosimo, prijavite se za uporabo funkcije vrtenja kolesa!");
         return;
     }
 
-    const userId = user.uid;
-    const userEventRef = doc(db, "lbEventData", userId);
+    const userEventRef = doc(db, "lbEventData", user.uid);
     const userSnapshot = await getDoc(userEventRef);
-
-    if (!userSnapshot.exists()) {
-        await setDoc(userEventRef, { free_spins: 1, tokens: 0, lastSpinDate: null, hasSpunToday: false });
-    }
+    if (!userSnapshot.exists()) return;
 
     const userData = userSnapshot.data();
-
-    if (userData.free_spins > 0) {
-        startSpinAnimation(userEventRef);
+    if (userData.free_spins > 0 && !isSpinning) {
+        isSpinning = true;
+        disableNavigationDuringSpin(6000);
+        startSpin(userEventRef);
     } else {
         displayCountdownUntilNextSpin();
     }
 });
 
-// Start Spin Animation
-async function startSpinAnimation(userEventRef) {
+// Main spin logic
+async function startSpin(userEventRef) {
     const wheel = document.getElementById("wheel");
-    const sectors = [
-        { color: "#f82", label: "10" },
-        { color: "#0bf", label: "20" },
-        { color: "#fb0", label: "30" },
-        { color: "#0fb", label: "40" },
-        { color: "#b0f", label: "50" },
-        { color: "#f0b", label: "60" },
-        { color: "#bf0", label: "70" },
-        { color: "#0f0", label: "80" }
-    ]; // Rewards: 10, 20, 30, 40, 50, 60, 70, 80
-
     const totalSectors = sectors.length;
     const sectorAngle = 360 / totalSectors;
 
-    // Generate a random sector index
     const randomIndex = Math.floor(Math.random() * totalSectors);
-
-    // Calculate the angle to land in the center of the chosen sector
+    const reward = parseInt(sectors[randomIndex].label, 10);
     const stopAngle = (randomIndex * sectorAngle) + (sectorAngle / 2);
+    const spinDegrees = 360 * 5 + stopAngle;
 
-    // Calculate the total spin degrees, including extra full rotations for visual effect
-    const spinDegrees = 360 * 5 + stopAngle; // 5 full rotations + the stop angle
+    // Immediately store the result
+    await updateDoc(userEventRef, {
+        tokens: increment(reward),
+        free_spins: increment(-1),
+        hasSpunToday: true,
+        lastSpinDate: new Date(),
+        lastSpinResult: { value: reward, timestamp: Date.now() }
+    });
 
-    // Apply the CSS transformation to the wheel to make it spin
+    // Animate the wheel
     wheel.style.transition = "transform 6s cubic-bezier(0.25, 0.1, 0.25, 1)";
     wheel.style.transform = `rotate(${spinDegrees}deg)`;
-
-    // Disable the spin button during the spin
     document.getElementById("spinButton").disabled = true;
 
-    setTimeout(async () => {
-        // Determine the reward based on the final position (randomIndex)
-        const reward = parseInt(sectors[randomIndex].label, 10);
+    setTimeout(() => {
+        isSpinning = false;
 
-        // Update Firestore with the reward, decrement free spins, and update last spin data
-        await updateDoc(userEventRef, {
-            tokens: increment(reward),
-            free_spins: increment(-1),
-            hasSpunToday: true, // Set to true as user has spun
-            lastSpinDate: new Date() // Update last spin date
-        });
-
-        // Display the reward message
         document.getElementById("spinMessage").innerHTML = `
             <div class="reward-message">
                 <p>Čestitke! 🎉 Zmagali ste <span class="reward-amount">${reward} kovancev</span>.</p>
@@ -148,36 +135,55 @@ async function startSpinAnimation(userEventRef) {
             </div>
         `;
 
-        // Add event listener to "Potrdi" button to refresh the page
-        document.getElementById("confirmButton").addEventListener("click", () => {
-            location.reload();
-        });
-
-        // Hide the spin button
+        document.getElementById("confirmButton").addEventListener("click", () => location.reload());
         document.getElementById("spinButton").style.display = "none";
-    }, 6000); // Match the animation duration
+    }, 6000);
 }
 
+// Disable nav buttons during spin
+function disableNavigationDuringSpin(duration) {
+    const links = document.querySelectorAll('.lbEventHeader a');
+    links.forEach(link => {
+        link.dataset.href = link.href;
+        link.removeAttribute('href');
+        link.style.pointerEvents = 'none';
+        link.style.opacity = 0.5;
+    });
+
+    setTimeout(() => {
+        links.forEach(link => {
+            link.setAttribute('href', link.dataset.href);
+            link.style.pointerEvents = 'auto';
+            link.style.opacity = 1;
+        });
+    }, duration);
+}
+
+// Page refresh protection
+window.addEventListener('beforeunload', (e) => {
+    if (isSpinning) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+
+// Show countdown
 function displayCountdownUntilNextSpin() {
     const spinMessage = document.getElementById("spinMessage");
-
-    // Display the formatted countdown message
     spinMessage.innerHTML = `
         <div class="countdown-message">
-            <p>Ponovno lahko zavrtite čez <span id="nextSpinCountdown" class="countdown-timer"></span> </p>
+            <p>Ponovno lahko zavrtite čez <span id="nextSpinCountdown" class="countdown-timer"></span></p>
         </div>
     `;
-
-    startCountdownTimer(); // Start the countdown
-    document.getElementById("spinButton").style.display = "none"; // Hide the spin button
+    startCountdownTimer();
+    document.getElementById("spinButton").style.display = "none";
 }
 
-
-// Start Countdown Timer Function from Old Code
+// Countdown logic
 function startCountdownTimer() {
     const countdownElement = document.getElementById("nextSpinCountdown");
     const resetTime = new Date();
-    resetTime.setHours(24, 0, 0, 0); // Reset time set to midnight
+    resetTime.setHours(24, 0, 0, 0);
 
     const interval = setInterval(() => {
         const now = new Date();
@@ -186,50 +192,34 @@ function startCountdownTimer() {
         if (diff <= 0) {
             clearInterval(interval);
             countdownElement.textContent = "0s";
-            document.getElementById("spinButton").style.display = "block"; // Show button when countdown ends
+            document.getElementById("spinButton").style.display = "block";
         } else {
             const hours = Math.floor(diff / 3600000);
             const minutes = Math.floor((diff % 3600000) / 60000);
             const seconds = Math.floor((diff % 60000) / 1000);
-
-            if (hours > 0) {
-                countdownElement.textContent = `${hours}h ${minutes}m`;
-            } else if (minutes > 0) {
-                countdownElement.textContent = `${minutes}m ${seconds}s`;
-            } else {
-                countdownElement.textContent = `${seconds}s`;
-            }
+            countdownElement.textContent =
+                hours > 0 ? `${hours}h ${minutes}m` :
+                minutes > 0 ? `${minutes}m ${seconds}s` :
+                `${seconds}s`;
         }
     }, 1000);
 }
 
-
-// Reset Free Spins at Midnight
+// Reset spins at midnight
 async function resetFreeSpins() {
     const now = new Date();
     const midnight = new Date(now);
-    midnight.setHours(23, 59, 59, 999); // Set to next midnight
-
+    midnight.setHours(23, 59, 59, 999);
     const timeUntilMidnight = midnight - now;
 
-    // Set the timeout to run reset at midnight
     setTimeout(async () => {
-        console.log("Resetting free spins for all users at: ", new Date());
-
-        // Query all users and set their free spins to 1 and reset hasSpunToday to false
         const usersSnapshot = await getDocs(collection(db, "lbEventData"));
-        const updatePromises = usersSnapshot.docs.map(userDoc => {
-            const userRef = userDoc.ref;
-            return updateDoc(userRef, { free_spins: 1, hasSpunToday: false });
-        });
-
-        // Wait for all updates to finish
-        await Promise.all(updatePromises);
-
-        // Reinitialize the midnight reset to ensure it runs every day
-        resetFreeSpins(); // Call again after midnight for next day
-    }, timeUntilMidnight > 0 ? timeUntilMidnight : 86400000); // Use 1 day if it's already past midnight
+        const updates = usersSnapshot.docs.map(userDoc =>
+            updateDoc(userDoc.ref, { free_spins: 1, hasSpunToday: false })
+        );
+        await Promise.all(updates);
+        resetFreeSpins(); // Schedule again for next day
+    }, timeUntilMidnight > 0 ? timeUntilMidnight : 86400000);
 }
 
-// Start the reset process immediately on page load
 resetFreeSpins();
