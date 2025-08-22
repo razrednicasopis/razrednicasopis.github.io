@@ -19,5 +19,13 @@ export const eventUrls = {
     "http://127.0.0.1:5500/Resources/events/hitrotipkanje/offlineigra.html", 
     "http://127.0.0.1:5500/Resources/events/hitrotipkanje/leaderboards/ai_leaderboards.html"
   ],
+      "Razredna Loterija": [
+    "https://razrednicasopis.github.io/Resources/events/loterija/domov.html",
+    "https://razrednicasopis.github.io/Resources/events/loterija/mojesrecke.html",
+    "https://razrednicasopis.github.io/Resources/events/loterija/trgovinasreck.html",
+    "http://127.0.0.1:5500/Resources/events/loterija/domov.html",    
+    "http://127.0.0.1:5500/Resources/events/loterija/mojesrecke.html", 
+    "http://127.0.0.1:5500/Resources/events/loterija/trgovinasreck.html"
+  ],
   // Add other events and their corresponding URLs here
 };

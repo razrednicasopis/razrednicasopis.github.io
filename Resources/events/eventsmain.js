@@ -6,7 +6,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyC_Fw12d6WR9GFVt7TVKrFMkp4EFW8gijk",
     authDomain: "razrednicasopisdatabase-29bad.firebaseapp.com",
     projectId: "razrednicasopisdatabase-29bad",
-    storageBucket: "razrednicasopisdatabase-29bad",
+    storageBucket: "razrednicasopisdatabase-29bad.appspot.com",
     messagingSenderId: "294018128318",
     appId: "1:294018128318:web:31df9ea055eec5798e81ef"
 };
@@ -44,13 +44,9 @@ function formatTime(timeLeft) {
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    if (days > 0) {
-        return `${days}d ${hours}h`;
-    } else if (hours > 0) {
-        return `${hours}h ${minutes}m`;
-    } else {
-        return `${minutes}m ${seconds}s`;
-    }
+    if (days > 0) return `${days}d ${hours}h`;
+    else if (hours > 0) return `${hours}h ${minutes}m`;
+    else return `${minutes}m ${seconds}s`;
 }
 
 // Function to update the countdown color
@@ -72,11 +68,21 @@ async function updateEventStatus() {
         const startTime = eventData.startTime.toMillis();
         const endTime = eventData.endTime.toMillis();
         const isPermanent = eventData.isPermanent === true;
+        const isReleased = eventData.isReleased === true;
 
         const availableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].available`);
         const unavailableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].unavailable`);
 
         if (availableEventBox && unavailableEventBox) {
+
+            // === NEW: Check isReleased first ===
+            if (!isReleased) {
+                availableEventBox.style.display = "none";
+                unavailableEventBox.style.display = "none";
+                return; // skip further logic for this event
+            }
+
+            // === Normal system ===
             if (isPermanent || (now >= startTime && now <= endTime)) {
                 availableEventBox.style.display = "block";
                 unavailableEventBox.style.display = "none";
@@ -114,7 +120,6 @@ async function updateEventStatus() {
                 }
 
                 anyAvailableEvents = true;
-
             } else {
                 availableEventBox.style.display = "none";
                 unavailableEventBox.style.display = "block";
@@ -134,7 +139,7 @@ async function updateEventStatus() {
 function listenForEventChanges() {
     const eventsRef = collection(db, "eventSettings");
 
-    onSnapshot(eventsRef, async (snapshot) => {
+    onSnapshot(eventsRef, (snapshot) => {
         let anyAvailableEvents = false;
 
         snapshot.forEach((doc) => {
@@ -143,12 +148,19 @@ function listenForEventChanges() {
             const startTime = eventData.startTime.toMillis();
             const endTime = eventData.endTime.toMillis();
             const isPermanent = eventData.isPermanent === true;
+            const isReleased = eventData.isReleased === true;
             const now = new Date().getTime();
 
             const availableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].available`);
             const unavailableEventBox = document.querySelector(`.event-box[data-event-name="${eventName}"].unavailable`);
 
             if (availableEventBox && unavailableEventBox) {
+                if (!isReleased) {
+                    availableEventBox.style.display = "none";
+                    unavailableEventBox.style.display = "none";
+                    return;
+                }
+
                 if (isPermanent || (now >= startTime && now <= endTime)) {
                     availableEventBox.style.display = "block";
                     unavailableEventBox.style.display = "none";
@@ -168,8 +180,6 @@ function listenForEventChanges() {
     });
 }
 
-// Call the function on page load to check event statuses
+// Initial page load
 updateEventStatus();
-
-// Start listening for event changes in real-time
 listenForEventChanges();

@@ -1,0 +1,178 @@
+/* General Titles */
+.lottery-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.lottery-subtitle {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+/* Jackpot */
+.jackpot-display {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.jackpot-display h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.jackpot-amount {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #e0b100;
+}
+
+/* Prize Box */
+.prize-box {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.prize-box h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.prize-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  margin: 0.3rem 0;
+}
+
+/* Ticket Shop */
+.ticket-options {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; /* ensures equal height cards */
+  gap: 2rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.ticket-card {
+  flex: 1 1 250px; /* flexible, minimum width 250px */
+  max-width: 280px;
+  padding: 1.5rem;
+  background: #fff;
+  border: 2px solid #ccc;   /* added border */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;   /* stack items inside */
+  justify-content: space-between; /* button stays at bottom */
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.ticket-card:hover {
+  transform: translateY(-5px);
+  border-color: #0077ff; /* border highlights on hover */
+}
+
+.ticket-card h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.ticket-card p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #666;
+}
+
+.btn {
+  background: #0077ff;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #005fcc;
+}
+
+#countdown {
+  text-align: center;
+  font-size: 3rem;          /* Much bigger font */
+  font-weight: 900;         /* Extra bold */
+  color: #e74c3c;           /* Bright red */
+  background-color: #fff3f3; /* Light highlight background */
+  border: 2px solid #e74c3c;
+  border-radius: 15px;
+  padding: 20px;
+  width: fit-content;
+  margin: 20px auto;
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.6);
+}
+
+
+
+.past-rounds {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.past-rounds h3 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.past-round {
+    border: 2px solid #ccc;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: inline-block;
+    min-width: 300px;
+    text-align: center;
+    background: #f9f9f9;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+}
+
+.past-round-title {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+.past-round-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+    flex-wrap: wrap;
+}
+
+.past-round-jackpot {
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.past-round-status {
+    font-size: 1em;
+    font-weight: bold;
+    color: green;
+}
+
+.past-round-status.not-won {
+    color: red;
+}
