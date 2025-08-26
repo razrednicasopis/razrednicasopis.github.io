@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/Resources/styless.css">
+  <link rel="stylesheet" href="/Resources/system.css">
+  <link rel="stylesheet" href="../kolosrece/general.css">
+  <link rel="stylesheet" href="../eventsmain.css">
+  <link rel="stylesheet" href="../hitrotipkanje/typingRace.css">
+  <link rel="stylesheet" href="../../css/christmas/decorations.css">
+  <script type="module" href="../../js/christmas/christmasLights.js"></script>
+  <script type="module" href="../../js/christmas/snowstorm.js"></script>
+  <link rel="stylesheet" href="css/singleplayerbj.css">
+  <title>Enoigralski Blackjack - Razredni Časopis</title>
+</head>
+<body>
+
+
+<div class="overlay"></div>
+<div id="matchmakingOverlay" class="overlay"></div>
+<div id="eventEndedOverlay" class="overlay"></div>
+
+
+
+
+<section class="blackjack-game">
+  <h1>Blackjack</h1>
+  <div class="chips-display">
+    Vaši žetoni: <span id="playerChips">--</span>
+  </div>
+
+  <div class="bet-container">
+    <label for="betAmount">Vnesi stavo:</label>
+    <input type="number" id="betAmount" value="1" min="1">
+    <button id="placeBetBtn">Postavi stavo</button>
+  </div>
+
+  <div class="dealer-area">
+    <h2>Dealer</h2>
+    <div id="dealerCards" class="cards-container"></div>
+    <div>Score: <span id="dealerScore">0</span></div>
+  </div>
+
+  <div class="player-area">
+    <h2>Igralec</h2>
+    <div id="playerCards" class="cards-container"></div>
+    <div>Score: <span id="playerScore">0</span></div>
+  </div>
+
+  <div class="game-controls">
+    <button id="hitBtn" disabled>Hit</button>
+    <button id="standBtn" disabled>Stand</button>
+  </div>
+</section>
+
+
+
+<!-- No Chips Popup -->
+<div id="noChipsPopup" class="popup" style="display: none;">
+  <div class="popup-content">
+    <h2>Žetoni so prazni!</h2>
+    <p>Trenutno nimate več žetonov za igranje Blackjacka.</p>
+    <button id="backToMainBtn">Nazaj na glavno stran</button>
+  </div>
+</div>
+
+
+
+<!-- Popup codes -->
+
+<!-- Event Has Ended Popup -->
+<div id="eventEndedPopupContainer" style="display: none;" class="popup">
+    <div class="popup-content">
+        <h2>Dogodek je končan!</h2><br>
+        <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>
+        <button id="closeEventEndedPopup">Zapri</button>
+    </div>
+</div>
+
+<div id="popupContainer">
+    <div id="popupContent">
+        <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
+        <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+        <button id="closePopupBtn">V redu</button>
+    </div>
+</div>
+
+<div id="maintenance-warning">
+    <p id="maintenance-message"></p>
+</div>
+
+<div id="maintenancePopup">
+    <div id="maintenancePopupContent">
+        <h1>POVEZAVA IZGUBLJENA</h1>
+        <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+        <button id="closeMaintenancePopupBtn">Osveži</button>
+    </div>  
+</div>
+
+
+<script type="module" src="js/singleplayerbj.js"></script>
+<script src="/Resources/alerts.js"></script>
+<script type="module" src="../eventServer.js"></script>
+<script type="module" src="../eventChecker.js"></script>
+<script type="module" src="../eventsmain.js"></script>
+<script type="module" src="/Resources/settings/settings.js"></script>
+<script type="module" src="../../auth/loginStateChecker.js"></script>
+</body>
+</html>

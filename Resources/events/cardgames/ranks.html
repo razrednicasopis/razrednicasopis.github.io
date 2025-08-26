@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/Resources/styless.css">
+  <link rel="stylesheet" href="/Resources/system.css">
+  <link rel="stylesheet" href="../kolosrece/general.css">
+  <link rel="stylesheet" href="../eventsmain.css">
+  <link rel="stylesheet" href="../hitrotipkanje/typingRace.css">
+  <link rel="stylesheet" href="../../css/christmas/decorations.css">
+  <script type="module" href="../../js/christmas/christmasLights.js"></script>
+  <script type="module" href="../../js/christmas/snowstorm.js"></script>
+  <script type="module" src="js/ranksSystem.js"></script>
+  <title>Igre Kart Ranki - Razredni Časopis</title>
+</head>
+<body>
+
+
+<div class="overlay"></div>
+<div id="matchmakingOverlay" class="overlay"></div>
+<div id="eventEndedOverlay" class="overlay"></div>
+
+
+<div class="lbEventHeader">
+  <a class="lbEventHome" href="/Resources/events/eventi.html">Eventi</a>
+  <a class="lbEventsPageRedirect" href="domov.html">Domov</a>
+  <a class="lbSeasonalLeaderboard" href="leaderboards.html">Lestvice</a>
+  <a class="lbEventsPageRedirect selected" href="#">Ranki</a>
+</div>
+
+
+
+
+
+
+<!-- Popup codes -->
+
+<!-- Event Has Ended Popup -->
+<div id="eventEndedPopupContainer" style="display: none;" class="popup">
+    <div class="popup-content">
+        <h2>Dogodek je končan!</h2><br>
+        <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>
+        <button id="closeEventEndedPopup">Zapri</button>
+    </div>
+</div>
+
+<div id="popupContainer">
+    <div id="popupContent">
+        <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
+        <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+        <button id="closePopupBtn">V redu</button>
+    </div>
+</div>
+
+<div id="maintenance-warning">
+    <p id="maintenance-message"></p>
+</div>
+
+<div id="maintenancePopup">
+    <div id="maintenancePopupContent">
+        <h1>POVEZAVA IZGUBLJENA</h1>
+        <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+        <button id="closeMaintenancePopupBtn">Osveži</button>
+    </div>  
+</div>
+
+
+<script type="module" src="js/singleplayerbjleaderboards.js"></script>
+<script src="/Resources/alerts.js"></script>
+<script type="module" src="../eventServer.js"></script>
+<script type="module" src="../eventChecker.js"></script>
+<script type="module" src="../eventsmain.js"></script>
+<script type="module" src="/Resources/settings/settings.js"></script>
+<script type="module" src="../../auth/loginStateChecker.js"></script>
+</body>
+</html>

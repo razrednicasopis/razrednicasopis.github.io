@@ -1,0 +1,188 @@
+/* --- General Body --- */
+body {
+  background-color: #121212; /* Dark background */
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: flex-start; /* Top aligned initially */
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+/* --- Blackjack Game Container --- */
+.blackjack-game {
+  background-color: #1e1e2f; /* Dark box */
+  padding: 30px 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* --- Header --- */
+.blackjack-game h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+/* --- Chips Display --- */
+.chips-display {
+  font-size: 1.2em;
+  margin-bottom: 15px;
+}
+
+/* --- Betting --- */
+.bet-container {
+  margin-bottom: 20px;
+}
+
+.bet-container input {
+  width: 60px;
+  padding: 5px;
+  border-radius: 6px;
+  border: none;
+  text-align: center;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.bet-container button {
+  padding: 7px 15px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ffc107;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bet-container button:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}
+
+/* --- Cards Styling --- */
+.cards-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.card {
+  width: 80px;
+  height: 120px;
+  border-radius: 10px;
+  perspective: 1000px;
+  position: relative;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.card.show .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  position: absolute;
+  backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 22px;
+  color: #000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.card-front {
+  background-color: #fff;
+}
+
+.card-back {
+  background-color: #444;
+  color: #fff;
+  transform: rotateY(180deg);
+}
+
+.red { color: red; }
+.black { color: black; }
+
+/* --- Game Controls --- */
+.game-controls {
+  margin-top: 25px;
+}
+
+.game-controls button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #28a745;
+  color: #fff;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.game-controls button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.game-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Popups --- */
+.popup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+}
+
+.popup-content {
+  background-color: #1e1e2f;
+  color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  animation: popupIn 0.3s ease forwards;
+}
+
+@keyframes popupIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* --- Animate Card Dealing --- */
+.card.animate {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+
+.card.animate.show {
+  transform: translateY(0);
+  opacity: 1;
+  transition: all 0.5s ease;
+}
