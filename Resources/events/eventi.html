@@ -1,277 +1,299 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="module" src="/Resources/auth/firebaseauth.js"></script>
-    <link rel="stylesheet" href="/Resources/styless.css">
-    <link rel="stylesheet" href="/Resources/system.css">
-    <link rel="stylesheet" href="./eventsmain.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="../css/christmas/decorations.css">
-    <script type="module" src="../js/christmas/christmasLights.js"></script>
-    <script type="module" src="../js/christmas/snowstorm.js"></script>
-    <script type="module" src="../auth/loginStateChecker.js"></script>
-    <title>Eventi - Razredni Časopis</title>
-</head>
-<body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="module" src="/Resources/auth/firebaseauth.js"></script>
+        <link rel="stylesheet" href="/Resources/styless.css">
+        <link rel="stylesheet" href="/Resources/system.css">
+        <link rel="stylesheet" href="./eventsmain.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="../css/christmas/decorations.css">
+        <script type="module" src="../js/christmas/christmasLights.js"></script>
+        <script type="module" src="../js/christmas/snowstorm.js"></script>
+        <script type="module" src="../auth/loginStateChecker.js"></script>
+        <title>Eventi - Razredni Časopis</title>
+    </head>
+    <body>
 
-<div class="overlay"></div>
-<div class="overlay" id="mailOverlay" style="display: none;"></div>
-<div id="matchmakingOverlay" class="overlay"></div>
-
-
-<header>
-    <h1>Eventi - Razredni Časopis</h1>
-    <nav>
-        <ul>
-            <button id="mailIcon" class="mail-icon">📧</button>
-            <li><a href="/Resources/index.html">Domov</a></li>
-            <li><a href="/Resources/ura.html" id="Ura">Točna Ura</a></li>
-            <li><a href="/Resources/o-nas.html" id="oNas">O nas</a></li>
-            <li><a href="/Resources/vsebine.html" id="Vsebine">Vsebine </a></li>
-            <li><a href="/Resources/obvestila.html" id="Obvestila">Obvestila</a></li>
-            <li><a href="/Resources/utills/klepet.html" id="Klepet">Klepet</a></li>
-            <li><a href="#" id="Eventi">Eventi</a></li>
-            <li><a href="../utills/iskanjeprofilov.html">Iskanje profilov</a></li>
-            <li><a href="/Resources/kontakt.html" id="Kontakt">Kontakt</a></li>
-<ul class="auth-nav">
-  <li class="registracijaLink">
-    <a href="../registracija.html">Registracija</a>
-  </li>
-  <li class="prijavaLink" id="loginHref">
-    <a href="../prijava.html">Prijava</a>
-  </li>
-  <!-- Dropdown for logged-in users -->
-  <li class="dropdown" id="userMenu" style="display: none; position: relative;">
-  <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni<span style="display:inline-block; transform: scaleX(1) scaleY(0.5);">▼</span></a>
-      <div class="dropdown-content" id="userDropdown">
-      <div class="dropdown-username" id="currentUsername">Prijavljen kot: uporabnik</div>
-      <a href="utills/nastavitve.html">⚙️ Nastavitve</a>
-      <a href="#" id="logoutLink">🚪 Odjava</a>
-    </div>
-  </li>
-</ul>
-        </ul>
-    </nav>
-</header>
+    <div class="overlay"></div>
+    <div class="overlay" id="mailOverlay" style="display: none;"></div>
+    <div id="matchmakingOverlay" class="overlay"></div>
 
 
-<div id="available-events">
-    <h2>Dosegljivi Eventi</h2>
-    <div id="noEventsNotif" style="display:none">Ni trenutno dosegljivih eventov.</div>
-    <div id="available-container" class="events-container">
-        <!-- Event box for gamesFestival -->
-        <div class="event-box available" data-event-name="gamesFestival">
-            <div class="event-header">
-                <div class="event-title">Festival iger</div>
-                <div class="event-countdown"></div>
-                <div class="event-description">Igrajte razne spletne igre!</div>
-            </div>
-            <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/festival_iger/domov.html">Igraj Igre</button>
+    <header>
+        <h1>Eventi - Razredni Časopis</h1>
+        <nav>
+            <ul>
+                <button id="mailIcon" class="mail-icon">📧</button>
+                <li><a href="/Resources/index.html">Domov</a></li>
+                <li><a href="/Resources/ura.html" id="Ura">Točna Ura</a></li>
+                <li><a href="/Resources/o-nas.html" id="oNas">O nas</a></li>
+                <li><a href="/Resources/vsebine.html" id="Vsebine">Vsebine </a></li>
+                <li><a href="/Resources/obvestila.html" id="Obvestila">Obvestila</a></li>
+                <li><a href="/Resources/utills/klepet.html" id="Klepet">Klepet</a></li>
+                <li><a href="#" id="Eventi">Eventi</a></li>
+                <li><a href="../utills/iskanjeprofilov.html">Iskanje profilov</a></li>
+                <li><a href="/Resources/kontakt.html" id="Kontakt">Kontakt</a></li>
+    <ul class="auth-nav">
+    <li class="registracijaLink">
+        <a href="../registracija.html">Registracija</a>
+    </li>
+    <li class="prijavaLink" id="loginHref">
+        <a href="../prijava.html">Prijava</a>
+    </li>
+    <!-- Dropdown for logged-in users -->
+    <li class="dropdown" id="userMenu" style="display: none; position: relative;">
+    <a href="#" class="dropbtn" id="menuToggle" style="font-weight: bold;">Meni<span style="display:inline-block; transform: scaleX(1) scaleY(0.5);">▼</span></a>
+        <div class="dropdown-content" id="userDropdown">
+        <div class="dropdown-username" id="currentUsername">Prijavljen kot: uporabnik</div>
+        <a href="../utills/nastavitve.html">⚙️ Nastavitve</a>
+        <a href="#" id="logoutLink">🚪 Odjava</a>
         </div>
+    </li>
+    </ul>
+            </ul>
+        </nav>
+    </header>
 
 
-        <div class="event-box available" data-event-name="luckyWheelEvent">
-            <div class="event-header">
-                <div class="event-title">Kolo Sreče</div>
-                <div class="event-countdown"></div>
-                <div class="event-description">Zavrti kolo in preizkusi svojo srečo!</div>
+    <div id="available-events">
+        <h2>Dosegljivi Eventi</h2>
+        <div id="noEventsNotif" style="display:none">Ni trenutno dosegljivih eventov.</div>
+        <div id="available-container" class="events-container">
+            <!-- Event box for gamesFestival -->
+            <div class="event-box available" data-event-name="gamesFestival">
+                <div class="event-header">
+                    <div class="event-title">Festival iger</div>
+                    <div class="event-countdown"></div>
+                    <div class="event-description">Igrajte razne spletne igre!</div>
+                </div>
+                <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/festival_iger/domov.html">Igraj Igre</button>
             </div>
-            <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/kolosrece/kolo_srece.html">Igraj Event</button>
-        </div>
 
 
-        <div class="event-box available" data-event-name="typingRace">
-            <div class="event-header">
-                <div class="event-title">Hitro Tipkanje</div>
-                <div class="event-countdown"></div>
-                <div class="event-description">Tekmujte v hitrem tipkanju proti robotu!</div>
+            <div class="event-box available" data-event-name="luckyWheelEvent">
+                <div class="event-header">
+                    <div class="event-title">Kolo Sreče</div>
+                    <div class="event-countdown"></div>
+                    <div class="event-description">Zavrti kolo in preizkusi svojo srečo!</div>
+                </div>
+                <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/kolosrece/kolo_srece.html">Igraj Event</button>
             </div>
-            <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/hitrotipkanje/domov.html">Igraj Event</button>
-        </div>
 
 
-    <!--    <div class="event-box available" data-event-name="cardGames">
-            <div class="event-header">
-                <div class="event-title">Igre Kart</div>
-                <div class="event-countdown"></div>
-                <div class="event-description">Igrajte različne igre z kartami!</div>
+            <div class="event-box available" data-event-name="typingRace">
+                <div class="event-header">
+                    <div class="event-title">Hitro Tipkanje</div>
+                    <div class="event-countdown"></div>
+                    <div class="event-description">Tekmujte v hitrem tipkanju proti robotu!</div>
+                </div>
+                <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/hitrotipkanje/domov.html">Igraj Event</button>
             </div>
-            <button class="join-event-btn checkServerStatus" data-href="/Resources/events/cardgames/domov.html">Igraj Event</button> -->
 
 
-      <!--  <div class="event-box available" data-event-name="classLottery">
-            <div class="event-header">
-                <div class="event-title">Razredna Loterija</div>
-                <div class="event-countdown"></div>
-                <div class="event-description">Igrajte loterijo iz povečajte vaše bogastvo!</div>
-            </div>
-            <button class="join-event-btn checkServerStatus" data-href="/Resources/events/loterija/domov.html">Preizkusi svojo srečo</button>
-        </div>     -->  
-
-
-
-
-             <div class="event-box available" data-event-name="upcomingEvent">
-            <div class="event-header">
-                <div class="event-title">???</div>
-                <div class="event-countdown"></div>
-                <div class="event-description">err_eventDescription</div>
-            </div>
-            <button class="join-event-btn checkServerStatus">eventBtn</button>
+    <!--      <div class="event-box available" data-event-name="cardGames">
+                <div class="event-header">
+                    <div class="event-title">Igre Kart</div>
+                    <div class="event-countdown"></div>
+                    <div class="event-description">Igrajte različne igre z kartami!</div>
+                </div>
+                <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/cardgames/domov.html">Igraj Event</button>
         </div>   
 
 
-    </div>
-</div>
 
-<div id="unavailable-events">
-    <h2>Nedosegljivi Eventi</h2>
-    <div id="unavailable-container" class="events-container">
-        <!-- Event box for gamesFestival -->
-        <div class="event-box unavailable" data-event-name="gamesFestival">
-            <div class="event-header">
-                <div class="event-title">Festival Iger</div>
-                <div class="eventUnavailableContent">
-                    <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+        <div class="event-box available" data-event-name="classLottery">
+                <div class="event-header">
+                    <div class="event-title">Razredna Loterija</div>
+                    <div class="event-countdown"></div>
+                    <div class="event-description">Igrajte loterijo iz povečajte vaše bogastvo!</div>
                 </div>
+                <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/loterija/domov.html">Preizkusi svojo srečo</button>
+            </div> 
+        -->
+
+
+
+    <!--             <div class="event-box available" data-event-name="suddenPresents">
+                <div class="event-header">
+                    <div class="event-title">Nenadna Darila</div>
+                    <div class="event-countdown"></div>
+                    <div class="event-description">Obiščite event vsak dan za brezplačne diamante!</div>
+                </div>
+                <button class="join-event-btn checkEventServerStatus" data-href="/Resources/events/dailyrewardevent/domov.html">Prejemi Nagrade</button>
             </div>
+        -->
+
+                <div class="event-box available" data-event-name="upcomingEvent">
+                <div class="event-header">
+                    <div class="event-title">???</div>
+                    <div class="event-countdown"></div>
+                    <div class="event-description">err_eventDescription</div>
+                </div>
+                <button class="join-event-btn checkServerStatus">eventBtn</button>
+            </div>   
+
+
         </div>
+    </div>
 
-
-        <div class="event-box unavailable" data-event-name="luckyWheelEvent">
-            <div class="event-header">
-                <div class="event-title">Kolo Sreče</div>
-                <div class="eventUnavailableContent">
-                    <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+    <div id="unavailable-events">
+        <h2>Nedosegljivi Eventi</h2>
+        <div id="unavailable-container" class="events-container">
+            <!-- Event box for gamesFestival -->
+            <div class="event-box unavailable" data-event-name="gamesFestival">
+                <div class="event-header">
+                    <div class="event-title">Festival Iger</div>
+                    <div class="eventUnavailableContent">
+                        <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+                    </div>
                 </div>
             </div>
+
+
+            <div class="event-box unavailable" data-event-name="luckyWheelEvent">
+                <div class="event-header">
+                    <div class="event-title">Kolo Sreče</div>
+                    <div class="eventUnavailableContent">
+                        <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="event-box unavailable" data-event-name="typingRace">
+                <div class="event-header">
+                    <div class="event-title">Hitro Tipkanje</div>
+                    <div class="eventUnavailableContent">
+                        <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+    <!--      <div class="event-box unavailable" data-event-name="suddenPresents">
+                <div class="event-header">
+                    <div class="event-title">Nenadna Darila</div>
+                    <div class="eventUnavailableContent">
+                        <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
+                    </div>
+                </div>
+            </div>
+        -->
+
+        
+    <!--   <div class="event-box unavailable" data-event-name="cardGames">
+                <div class="event-header">
+                    <div class="event-title">Igre Kart</div>
+                    <div class="eventUnavailableContent">
+                        <div class="eventUnavailableTitle">Trenutno v izdelavi!</div>
+                    </div>
+                </div>
+            </div> 
+
+
+                    <div class="event-box unavailable" data-event-name="classLottery">
+                <div class="event-header">
+                    <div class="event-title">Razredna Loterija</div>
+                    <div class="eventUnavailableContent">
+                        <div class="eventUnavailableTitle">Trenutno v izdelavi!</div>
+                    </div>
+                </div>
+            </div>
+        -->
+
+
+
+            <div class="event-box unavailable" data-event-name="upcomingEvent">
+                <div class="event-header">
+                    <div class="event-title">???</div>
+                    <div class="eventUnavailableContent">
+                        <div class="eventUnavailableTitle">Trenutno v izdelavi!</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
         </div>
+    </div>
 
 
-        <div class="event-box unavailable" data-event-name="typingRace">
-            <div class="event-header">
-                <div class="event-title">Hitro Tipkanje</div>
-                <div class="eventUnavailableContent">
-                    <div class="eventUnavailableTitle">Ta event je trenutno nedosegljiv.</div>
-                </div>
-            </div>
+    <!-- Popup codes -->
+
+    <div id="mailWindow" class="mail-window" style="display:none;">
+        <div id="mailMessagesContainer">
+        <!-- Dynamically Loaded Mail Messages -->
         </div>
-
-
-
-       <!--                 <div class="event-box unavailable" data-event-name="cardGames">
-            <div class="event-header">
-                <div class="event-title">Igre Kart</div>
-                <div class="eventUnavailableContent">
-                    <div class="eventUnavailableTitle">Trenutno v izdelavi!</div>
-                </div>
-            </div>
-        </div>  -->
-
-
-      <!--          <div class="event-box unavailable" data-event-name="classLottery">
-            <div class="event-header">
-                <div class="event-title">Razredna Loterija</div>
-                <div class="eventUnavailableContent">
-                    <div class="eventUnavailableTitle">Trenutno v izdelavi!</div>
-                </div>
-            </div>
-        </div> -->
-
-
-
-
-
-        <div class="event-box unavailable" data-event-name="upcomingEvent">
-            <div class="event-header">
-                <div class="event-title">???</div>
-                <div class="eventUnavailableContent">
-                    <div class="eventUnavailableTitle">Trenutno v izdelavi!</div>
-                </div>
-            </div>
+        <button id="closeMailWindow">Zapri</button>
+    </div>
+    
+    
+    <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 30px; z-index: 100; width: 300px; height: 500px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+        <div id="popupContent"></div>
+        <button id="popupClose" style="display: none;">Zapri</button>
+    </div>
+    
+    
+    <div id="fullMessagePopup" class="popup" style="display: none;">
+        <div class="popup-content">
+            <h3 id="fullMessageTitle"></h3>
+            <p id="fullMessageBody"></p>
+            <button id="claimReward" class="hidden">Prevzemi nagrado</button>
+            <button id="closeFullMessage">Zapri</button>
         </div>
-
-
-
-
-
     </div>
-</div>
 
 
-<!-- Popup codes -->
-
-<div id="mailWindow" class="mail-window" style="display:none;">
-    <div id="mailMessagesContainer">
-      <!-- Dynamically Loaded Mail Messages -->
+    <div id="popupContainer">
+        <div id="popupContent">
+            <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
+            <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+            <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+            <button id="closePopupBtn">V redu</button>
+        </div>
     </div>
-    <button id="closeMailWindow">Zapri</button>
-  </div>
-  
-  
-  <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 1px solid #ccc; padding: 30px; z-index: 100; width: 300px; height: 500px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-    <div id="popupContent"></div>
-    <button id="popupClose" style="display: none;">Zapri</button>
-  </div>
-  
-  
-  <div id="fullMessagePopup" class="popup" style="display: none;">
-    <div class="popup-content">
-        <h3 id="fullMessageTitle"></h3>
-        <p id="fullMessageBody"></p>
-        <button id="claimReward" class="hidden">Prevzemi nagrado</button>
-        <button id="closeFullMessage">Zapri</button>
+
+    <div id="maintenance-warning">
+        <p id="maintenance-message"></p>
     </div>
-  </div>
 
-
-<div id="popupContainer">
-    <div id="popupContent">
-        <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
-        <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
-        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
-        <button id="closePopupBtn">V redu</button>
+    <div id="maintenancePopup">
+        <div id="maintenancePopupContent">
+            <h1>POVEZAVA IZGUBLJENA</h1>
+            <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+            <button id="closeMaintenancePopupBtn">Osveži</button>
+        </div>  
     </div>
-</div>
-
-<div id="maintenance-warning">
-    <p id="maintenance-message"></p>
-</div>
-
-<div id="maintenancePopup">
-    <div id="maintenancePopupContent">
-        <h1>POVEZAVA IZGUBLJENA</h1>
-        <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
-        <button id="closeMaintenancePopupBtn">Osveži</button>
-    </div>  
-</div>
 
 
-<!-- Page Specific Access Popup -->
-<div id="noAccessPagePopup" style="display: none; position: fixed; top: 0; left: 0; 
-    width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: white; 
-    justify-content: center; align-items: center; z-index: 9999;">
-  <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center;">
-    <h2 id="popupTitle">Stran je trenutno v vzdrževanju</h2>
-    <p id="popupMessage">Ta stran ni na voljo. Poskusite kasneje.</p>
-    <button onclick="history.back()" style="margin-top: 15px; padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer;">V redu</button>
-  </div>
-</div>
+    <!-- Page Specific Access Popup -->
+    <div id="noAccessPagePopup" style="display: none; position: fixed; top: 0; left: 0; 
+        width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: white; 
+        justify-content: center; align-items: center; z-index: 9999;">
+    <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center;">
+        <h2 id="popupTitle">Stran je trenutno v vzdrževanju</h2>
+        <p id="popupMessage">Ta stran ni na voljo. Poskusite kasneje.</p>
+        <button onclick="history.back()" style="margin-top: 15px; padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer;">V redu</button>
+    </div>
+    </div>
 
 
 
 
 
-<script type="module" src="../js/sys/contentLocker.js"></script>
-<script type="module" src="../obvestila/firebasemodmail.js"></script>
-<script src="/Resources/alerts.js"></script>
-<script type="module" src="eventServer.js"></script>
-<script type="module" src="/Resources/settings/settings.js"></script>
-<script type="module" src="./eventsmain.js"></script>
-</body>
-</html>
+    <script type="module" src="../js/sys/contentLocker.js"></script>
+    <script type="module" src="../obvestila/firebasemodmail.js"></script>
+    <script src="/Resources/alerts.js"></script>
+    <script type="module" src="eventServer.js"></script>
+    <script type="module" src="/Resources/settings/settings.js"></script>
+    <script type="module" src="./eventsmain.js"></script>
+    </body>
+    </html>

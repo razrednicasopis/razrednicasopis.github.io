@@ -233,5 +233,3 @@ window.addEventListener("DOMContentLoaded", async () => {
     console.warn("postsContainer not found in DOM.");
   }
 });
-
-

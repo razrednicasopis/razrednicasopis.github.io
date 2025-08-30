@@ -9,10 +9,10 @@
   <link rel="stylesheet" href="../eventsmain.css">
   <link rel="stylesheet" href="../hitrotipkanje/typingRace.css">
   <link rel="stylesheet" href="../../css/christmas/decorations.css">
-  <script type="module" href="../../js/christmas/christmasLights.js"></script>
-  <script type="module" href="../../js/christmas/snowstorm.js"></script>
-  <link rel="stylesheet" href="css/cardgames.css">
-  <title>Igre Kart - Razredni Časopis</title>
+  <link rel="stylesheet" href="css/drCSS.css">
+  <script type="module" src="../../js/christmas/christmasLights.js"></script>
+  <script type="module" src="../../js/christmas/snowstorm.js"></script>
+  <title>Nenadna Darila - Razredni Časopis</title>
 </head>
 <body>
 
@@ -22,39 +22,24 @@
 <div id="eventEndedOverlay" class="overlay"></div>
 
 
-<div class="lbEventHeader">
-  <a class="lbEventHome" href="/Resources/events/eventi.html">Eventi</a>
-  <a class="lbEventsPageRedirect selected" href="#">Domov</a>
-  <a class="lbSeasonalLeaderboard" href="leaderboards.html">Lestvice</a>
-  <a class="lbEventsPageRedirect" href="ranks.html">Ranki</a>
-  <button id="dailyRewardsBtn" class="daily-rewards-btn">🎁</button>
+<div class="dr-header">
+  <a href="/Resources/events/eventi.html">Eventi</a>
+  <a href="../../index.html">Domov</a>
 </div>
 
 
 
-<section class="event-lobby">
-  <!-- Blackjack Box -->
-  <div class="game-box">
-    <div class="game-icon">
-      <!-- You can replace this with an actual card icon or image -->
-      🂡🂱
-    </div>
-    <div class="game-info">
-      <div class="game-title">Blackjack
-        <span class="info-icon" id="blackjackInfo">i</span>
-</div>
-      <div class="game-description">Igrajte klasiko proti računalniku in osvajajte točke ter napredujte po lestvici!</div>
-    </div>
-    <div class="game-action">
-      <button class="play-button">Igraj</button>
-    </div>
+
+
+  <div id="dailyRewardsContainer" class="dr-rewards-container">
+    <h2>Nenadna Darila</h2>
+    <div id="drCountdown" class="dr-countdown"></div>
+    <div id="drRewardsGrid" class="dr-rewards-grid"></div>
+    <div id="drClaimArea" class="dr-claim-area"></div>
   </div>
 
-  <!-- Coming Soon Notice -->
-  <div class="coming-soon">
-    Več iger bo na voljo kmalu!
-  </div>
-</section>
+
+
 
 
 <!-- Popup codes -->
@@ -67,11 +52,6 @@
         <button id="closeEventEndedPopup">Zapri</button>
     </div>
 </div>
-
-
-<div id="dailyRewardsPopupContainer" style="display:none;"></div>
-
-
 
 <div id="popupContainer">
     <div id="popupContent">
@@ -95,9 +75,7 @@
 </div>
 
 
-
-<script type="module" src="js/dailyRewards.js"></script>
-<script type="module" src="js/eventLobby.js"></script>
+<script type="module" src="js/drJS.js"></script>
 <script src="/Resources/alerts.js"></script>
 <script type="module" src="../eventServer.js"></script>
 <script type="module" src="../eventChecker.js"></script>

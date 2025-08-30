@@ -27,13 +27,17 @@ export const eventUrls = {
     "http://127.0.0.1:5500/Resources/events/loterija/mojesrecke.html", 
     "http://127.0.0.1:5500/Resources/events/loterija/trgovinasreck.html"
   ],
-      "Igre Kart": [
+    "Igre Kart": [
     "https://razrednicasopis.github.io/Resources/events/cardgames/domov.html",
     "https://razrednicasopis.github.io/Resources/events/cardgames/leaderboards.html",
     "https://razrednicasopis.github.io/Resources/events/cardgames/ranki.html",
     "http://127.0.0.1:5500/Resources/events/cardgames/domov.html",    
     "http://127.0.0.1:5500/Resources/events/cardgames/leaderboards.html", 
     "http://127.0.0.1:5500/Resources/events/cardgames/ranki.html"
+  ],
+    "Nenadna Darila": [
+    "https://razrednicasopis.github.io/Resources/events/dailyrewardevent/domov.html",
+    "http://127.0.0.1:5500/Resources/events/dailyrewardevent/domov.html",    
   ],
   // Add other events and their corresponding URLs here
 };

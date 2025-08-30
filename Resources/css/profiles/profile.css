@@ -293,3 +293,49 @@
   color: white;
 }
 
+
+
+/* INTERACTIVE SYSTEMS CSS */
+
+/* Post interaction buttons */
+.post-interactions button {
+  padding: 8px 16px;           /* Bigger click area */
+  font-size: 16px;              /* Larger text */
+  font-weight: 600;
+  border-radius: 8px;           /* Rounded edges */
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Like button style */
+.post-interactions .like-btn {
+  background-color: #e0245e;    /* Pink/red like button */
+  color: white;
+}
+
+.post-interactions .like-btn:hover {
+  background-color: #c81e50;
+  transform: scale(1.05);
+}
+
+/* Comment button style */
+.post-interactions .comment-btn {
+  background-color: #1da1f2;    /* Blue comment button */
+  color: white;
+}
+
+.post-interactions .comment-btn:hover {
+  background-color: #0d95e8;
+  transform: scale(1.05);
+}
+
+/* Like count styling */
+.post-interactions .like-count {
+  font-weight: bold;
+}
+
+
