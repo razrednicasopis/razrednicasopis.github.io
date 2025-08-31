@@ -1,0 +1,162 @@
+/* ===== Announcement Styling (Verzija 5.0) ===== */
+.announcement-container {
+  max-width: 950px;
+  margin: 60px auto;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 50px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  font-family: "Segoe UI", Roboto, sans-serif;
+  color: #2c3e50;
+  animation: fadeIn 0.9s ease-in-out;
+}
+
+.announcement-container h1 {
+  text-align: center;
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 25px;
+  color: #0d47a1;
+}
+
+.announcement-container .intro {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  color: #444;
+  line-height: 1.8;
+}
+
+.announcement-container h2 {
+  font-size: 1.6rem;
+  margin: 40px 0 20px;
+  font-weight: 700;
+  text-align: center;
+  color: #1565c0;
+  border-bottom: 2px solid #90caf9;
+  display: inline-block;
+  padding-bottom: 6px;
+}
+
+.announcement-container p {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.announcement-container ul {
+  list-style: none;
+  padding: 0;
+  max-width: 700px;
+  margin: 0 auto 20px;
+}
+
+.announcement-container ul li {
+  background: #f4f7ff;
+  margin: 10px 0;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  transition: all 0.25s ease;
+  border-left: 4px solid #64b5f6;
+}
+
+.announcement-container ul li:hover {
+  transform: translateX(5px);
+  background: #e3f2fd;
+  border-left: 4px solid #1e88e5;
+}
+
+/* ===== Photo & Graph Spaces ===== */
+.photo-space,
+.graph-space {
+  border: 2px dashed #b0bec5;
+  border-radius: 14px;
+  text-align: center;
+  color: #78909c;
+  font-style: italic;
+  padding: 25px;
+  margin: 25px auto;
+  transition: 0.3s ease-in-out;
+  max-width: 700px;
+  overflow: hidden;
+}
+
+.photo-space:hover,
+.graph-space:hover {
+  background: #f5fafd;
+  color: #455a64;
+}
+
+.photo-space img,
+.graph-space img {
+  max-width: 100%;
+  height: auto;
+  cursor: pointer;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.photo-space img:hover,
+.graph-space img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+}
+
+/* ===== Image Overlay for Lightbox ===== */
+.image-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.image-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.image-overlay img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  object-fit: contain;
+  cursor: pointer;
+}
+
+/* ===== Thank You Section ===== */
+.thank-you {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #37474f;
+  line-height: 1.9;
+  border-top: 1px dashed #ccc;
+  padding-top: 30px;
+}
+
+.thank-you strong {
+  display: block;
+  margin-top: 12px;
+  font-size: 1.4rem;
+  color: #0d47a1;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(15px);}
+  to {opacity: 1; transform: translateY(0);}
+}
