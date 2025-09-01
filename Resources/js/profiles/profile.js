@@ -1,5 +1,8 @@
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-import { getFirestore, getDoc, getDocs, doc, addDoc, arrayUnion, arrayRemove, updateDoc, collection,onSnapshot, query, where, deleteDoc} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+import { 
+  getFirestore, getDoc, getDocs, doc, addDoc, arrayUnion, arrayRemove, 
+  updateDoc, collection,onSnapshot, query, where, deleteDoc, orderBy 
+} from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 import { initializeInteractions } from "./profilesSocial.js";
 
@@ -150,14 +153,22 @@ document.getElementById("cancelPost")?.addEventListener("click", () => {
 function startListeningForPosts() {
   if (!postsContainer) return;
 
-  const q = query(collection(db, "profilePosts"), where("uid", "==", uid));
+  // ✅ enforce newest first
+  const q = query(
+    collection(db, "profilePosts"),
+    where("uid", "==", uid),
+    orderBy("postDate", "desc")
+  );
+
   onSnapshot(q, async (querySnapshot) => {
     postsContainer.innerHTML = "";
     for (const postDoc of querySnapshot.docs) {
       const post = { id: postDoc.id, ...postDoc.data() };
 
       // Count comments
-      const commentsQuerySnapshot = await getDocs(query(collection(db, "profileCommentsRef"), where("postId", "==", post.id)));
+      const commentsQuerySnapshot = await getDocs(
+        query(collection(db, "profileCommentsRef"), where("postId", "==", post.id))
+      );
       const commentsCount = commentsQuerySnapshot.size;
 
       const postEl = document.createElement("div");
