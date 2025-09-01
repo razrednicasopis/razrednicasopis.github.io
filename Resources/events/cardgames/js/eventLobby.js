@@ -52,7 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
       5. Če igralec preseže 21 → izgubi (bust).<br>
       6. Dealer razkrije svoje karte in mora <strong>vzeti nove karte, dokler ne doseže vsaj 17</strong>.<br>
       7. Če dealer preseže 21 → igralec zmaga.<br>
-      8. Če ne preseže 21, zmaga tista stran, ki je bližje 21.
+      8. Če ne preseže 21, zmaga tista stran, ki je bližje 21. <br>
+      9. Vsaka zmaga vam prisluži 10 točk, izguba pa vam odstrani 15 točk. Te točke določijo vašo pozicijo na lestvicah.
     </p>
     <div style="text-align:right; margin-top:20px;">
       <button id="closeBlackjackPopup" style="background:#28a745; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer;">Zapri</button>

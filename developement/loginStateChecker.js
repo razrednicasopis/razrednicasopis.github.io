@@ -15,79 +15,108 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-function updateButtonVisibility() {
-  const prijavaLinkBtn = document.getElementById('loginHref');
-  const registracijaLink = document.querySelector('.registracijaLink');
-  const userMenu = document.getElementById('userMenu');
-  const currentUsername = document.getElementById('currentUsername');
-  const logoutLink = document.getElementById('logoutLink');
-  const menuToggle = document.getElementById('menuToggle');
-  const userDropdown = document.getElementById('userDropdown');
+document.addEventListener("DOMContentLoaded", () => {
+  const loginLink = document.getElementById("loginHref");
+  const registerLink = document.querySelector(".registracijaLink");
+  const userMenu = document.getElementById("userMenu");
+  const menuToggle = document.getElementById("menuToggle");
+  const userDropdown = document.getElementById("userDropdown");
+  const logoutLink = document.getElementById("logoutLink");
+  const currentUsername = document.getElementById("currentUsername");
 
-  // Toggle dropdown visibility when “Meni ⌄” is clicked
-  menuToggle.addEventListener('click', (e) => {
-    e.preventDefault();
-    userDropdown.style.display = (userDropdown.style.display === 'block') ? 'none' : 'block';
-  });
+  let usernameInitialized = false;
 
-  // Close dropdown if clicking outside
-  document.addEventListener('click', (e) => {
-    if (!userMenu.contains(e.target)) {
-      userDropdown.style.display = 'none';
-    }
-  });
+  async function setupUsername() {
+    if (!auth.currentUser || !currentUsername || usernameInitialized) return;
+    usernameInitialized = true;
 
-  // Show/hide links based on auth state
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      // Hide “Prijava” only
-      if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'none';
-
-      // Show “Meni” dropdown
-      if (userMenu) userMenu.style.display = 'inline-block';
-
-      // Keep “Registracija” visible
-
-      // Fetch username from Firestore
-      try {
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (userDocSnap.exists()) {
-          const username = userDocSnap.data().Username || user.email;
-          if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${username}`;
-        } else {
-          // Fallback if no user doc found
-          if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${user.email}`;
-        }
-      } catch (error) {
-        console.error("Napaka pri pridobivanju uporabniškega imena:", error);
-        if (currentUsername) currentUsername.textContent = `Prijavljen kot: ${user.email}`;
-      }
-
-    } else {
-      // Show “Prijava” + “Registracija”
-      if (prijavaLinkBtn) prijavaLinkBtn.style.display = 'inline-block';
-      if (registracijaLink) registracijaLink.style.display = 'inline-block';
-
-      // Hide “Meni” dropdown and its content
-      if (userMenu) userMenu.style.display = 'none';
-      if (userDropdown) userDropdown.style.display = 'none';
-    }
-  });
-
-  // Handle logout click inside dropdown
-  logoutLink.addEventListener('click', async (e) => {
-    e.preventDefault();
     try {
-      await signOut(auth);
-      localStorage.setItem('toast', 'logout-success');
-      window.location.reload();
-    } catch (error) {
-      console.error('Napaka pri odjavi:', error);
-      toastr.error('Napaka pri odjavi.');
+      const userDocSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
+      const username = userDocSnap.exists() ? userDocSnap.data().Username || auth.currentUser.email : auth.currentUser.email;
+      currentUsername.textContent = `Prijavljen kot: ${username}`;
+
+      // Make sure the element is interactable
+      Object.assign(currentUsername.style, {
+        cursor: "pointer",
+        padding: "5px 10px",
+        borderRadius: "4px",
+        transition: "background 0.2s",
+        display: "block",
+        position: "relative",
+        zIndex: "1000",
+        pointerEvents: "auto" // critical
+      });
+
+      // Hover effect
+      // Hover effect - darker grey
+currentUsername.addEventListener("mouseenter", () => currentUsername.style.backgroundColor = "#a0a0a0");
+currentUsername.addEventListener("mouseleave", () => currentUsername.style.backgroundColor = "transparent");
+
+      // Click redirect
+      currentUsername.addEventListener("click", (e) => {
+        e.stopPropagation();
+        window.location.href = `https://razrednicasopis.github.io/Resources/profiles/profile.html?uid=${auth.currentUser.uid}`;
+      });
+
+    } catch (err) {
+      console.error(err);
+      currentUsername.textContent = `Prijavljen kot: ${auth.currentUser.email}`;
+    }
+  }
+
+  // Dropdown toggle
+  if (menuToggle && userDropdown) {
+    menuToggle.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Ensure dropdown is fully visible and interactable
+      Object.assign(userDropdown.style, {
+        position: "absolute",
+        display: userDropdown.style.display === "block" ? "none" : "block",
+        zIndex: "9999",
+        pointerEvents: "auto",
+      });
+
+      // Initialize username
+      if (userDropdown.style.display === "block") {
+        await setupUsername();
+      }
+    });
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener("click", (e) => {
+    if (userMenu && userDropdown && !userMenu.contains(e.target)) {
+      userDropdown.style.display = "none";
     }
   });
-}
 
-// Call it once on load
-document.addEventListener('DOMContentLoaded', updateButtonVisibility);
+  // Firebase auth listener
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      if (loginLink) loginLink.style.display = "none";
+      if (userMenu) userMenu.style.display = "inline-block";
+    } else {
+      if (loginLink) loginLink.style.display = "inline-block";
+      if (registerLink) registerLink.style.display = "inline-block";
+      if (userMenu) userMenu.style.display = "none";
+      if (userDropdown) userDropdown.style.display = "none";
+    }
+  });
+
+  // Logout
+  if (logoutLink) {
+    logoutLink.addEventListener("click", async (e) => {
+      e.preventDefault();
+      try {
+        await signOut(auth);
+        localStorage.setItem("toast", "logout-success");
+        window.location.reload();
+      } catch (err) {
+        console.error(err);
+        if (typeof toastr !== "undefined") toastr.error("Napaka pri odjavi.");
+      }
+    });
+  }
+});

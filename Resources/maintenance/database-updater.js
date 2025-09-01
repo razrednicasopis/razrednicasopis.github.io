@@ -44,6 +44,14 @@ async function updateUserDocsWithUIDAndCreationDate() {
             console.log(`premiumBalance added for user: ${userId}`);
         }
 
+        
+                // If premiumBalance is not set, add it with value 0
+        if (!userData.cardEventChips) {
+            updateData.cardEventChips = 1000;
+            console.log(`premiumBalance added for user: ${userId}`);
+        }
+
+
         // If there are any fields to update, perform the update
         if (Object.keys(updateData).length > 0) {
             await updateDoc(doc(db, "users", userId), updateData);
@@ -51,7 +59,7 @@ async function updateUserDocsWithUIDAndCreationDate() {
         }
     });
 
-    alert("All user documents have been updated with UID, creation date, and premiumBalance (if missing).");
+    alert("All user documents have been updated with UID, creation date, premiumBalance and cardEventChips (if missing).");
 }
 
 document.addEventListener('DOMContentLoaded', () => {

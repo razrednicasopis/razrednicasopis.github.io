@@ -62,7 +62,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const countdownElement = document.getElementById('nextMaintenance');
 
     if (!nextMaintenanceDate) {
-        countdownElement.innerHTML = "Ni podatkov o naslednjem vzdrževanju.";
     } else {
         const now = new Date().getTime();
         if (nextMaintenanceDate.getTime() <= now) {
@@ -213,6 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (maintenancePopup) {
             maintenancePopup.style.display = show ? 'block' : 'none';
             overlay.style.display = show ? 'block' : 'none';
+            document.body.style.overflow = show ? 'hidden' : '';
             if (show && endTime && endTimeP) {
                 endTimeP.textContent = endTime;
             }
