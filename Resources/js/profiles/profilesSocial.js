@@ -62,6 +62,7 @@ async function toggleLike(postId, uid, btn) {
 
 async function openCommentPopup(postId, userUid, commentBtn = null) {
   overlay.style.display = "block";
+  document.body.style.overflow = "hidden"; // 🚫 Disable scrolling
   let popup = document.getElementById('commentPopup');
   if (!popup) {
     popup = document.createElement('div');
@@ -88,6 +89,7 @@ async function openCommentPopup(postId, userUid, commentBtn = null) {
   document.getElementById('closeCommentPopup').onclick = () => {
     overlay.style.display = 'none';
     popup.style.display = 'none';
+    document.body.style.overflow = ""; // ✅ Re-enable scrolling
   };
 
   const commentList = document.getElementById('commentList');
