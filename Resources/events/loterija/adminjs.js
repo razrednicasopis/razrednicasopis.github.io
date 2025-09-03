@@ -185,7 +185,7 @@ randomBtn.addEventListener("click", async () => {
     const roundRef = doc(db, "lotteryData", latestRoundDoc.id);
 
     const winningNumbers = generateUniqueRandomNumbers(5, 1, 50);
-    const winningStars = generateUniqueRandomNumbers(2, 1, 12);
+    const winningStars = generateUniqueRandomNumbers(2, 1, 10);
 
     await setDoc(roundRef, {
       ...latestRoundDoc.data(),
