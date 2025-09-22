@@ -1,20 +1,20 @@
-<!DOCTYPE html>
-<html lang="sl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/Resources/styless.css">
-  <link rel="stylesheet" href="/Resources/system.css">
-  <link rel="stylesheet" href="../kolosrece/general.css">
-  <link rel="stylesheet" href="../eventsmain.css">
-  <link rel="stylesheet" href="../hitrotipkanje/typingRace.css">
-  <link rel="stylesheet" href="../../css/christmas/decorations.css">
-  <link rel="stylesheet" href="css/drCSS.css">
-  <script type="module" src="../../js/christmas/christmasLights.js"></script>
-  <script type="module" src="../../js/christmas/snowstorm.js"></script>
-  <title>Nenadna Darila - Razredni Časopis</title>
-</head>
-<body>
+  <!DOCTYPE html>
+  <html lang="sl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/Resources/styless.css">
+    <link rel="stylesheet" href="/Resources/system.css">
+    <link rel="stylesheet" href="../kolosrece/general.css">
+    <link rel="stylesheet" href="../eventsmain.css">
+    <link rel="stylesheet" href="../hitrotipkanje/typingRace.css">
+    <link rel="stylesheet" href="../../css/christmas/decorations.css">
+    <link rel="stylesheet" href="css/drCSS.css">
+    <script type="module" src="../../js/christmas/christmasLights.js"></script>
+    <script type="module" src="../../js/christmas/snowstorm.js"></script>
+    <title>Nenadna Darila - Razredni Časopis</title>
+  </head>
+  <body>
 
 
 <div class="overlay"></div>
@@ -22,65 +22,65 @@
 <div id="eventEndedOverlay" class="overlay"></div>
 
 
-<div class="dr-header">
-  <a href="/Resources/events/eventi.html">Eventi</a>
-  <a href="../../index.html">Domov</a>
-</div>
 
-
-
-
-
-  <div id="dailyRewardsContainer" class="dr-rewards-container">
-    <h2>Nenadna Darila</h2>
-    <div id="drCountdown" class="dr-countdown"></div>
-    <div id="drRewardsGrid" class="dr-rewards-grid"></div>
-    <div id="drClaimArea" class="dr-claim-area"></div>
+  <div class="dr-header">
+    <a href="/Resources/events/eventi.html">Eventi</a>
+    <a href="../../index.html">Domov</a>
   </div>
 
 
 
 
 
-<!-- Popup codes -->
-
-<!-- Event Has Ended Popup -->
-<div id="eventEndedPopupContainer" style="display: none;" class="popup">
-    <div class="popup-content">
-        <h2>Dogodek je končan!</h2><br>
-        <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>
-        <button id="closeEventEndedPopup">Zapri</button>
+    <div id="dailyRewardsContainer" class="dr-rewards-container">
+      <h2>Nenadna Darila</h2>
+      <div id="drCountdown" class="dr-countdown"></div>
+      <div id="drRewardsGrid" class="dr-rewards-grid"></div>
+      <div id="drClaimArea" class="dr-claim-area"></div>
     </div>
-</div>
-
-<div id="popupContainer">
-    <div id="popupContent">
-        <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
-        <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
-        <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
-        <button id="closePopupBtn">V redu</button>
-    </div>
-</div>
-
-<div id="maintenance-warning">
-    <p id="maintenance-message"></p>
-</div>
-
-<div id="maintenancePopup">
-    <div id="maintenancePopupContent">
-        <h1>POVEZAVA IZGUBLJENA</h1>
-        <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
-        <button id="closeMaintenancePopupBtn">Osveži</button>
-    </div>  
-</div>
 
 
-<script type="module" src="js/drJS.js"></script>
+
+
+
+  <!-- Popup codes -->
+
+  <!-- Event Has Ended Popup -->
+  <div id="eventEndedPopupContainer" style="display: none;" class="popup">
+      <div class="popup-content">
+          <h2>Dogodek je končan!</h2><br>
+          <p>Event <strong id="endedEventName"></strong> se je končal.</p><br>
+          <button id="closeEventEndedPopup">Zapri</button>
+      </div>
+  </div>
+
+  <div id="popupContainer">
+      <div id="popupContent">
+          <h1><b>NEDOSEGLJIVE VSEBINE</b></h1>
+          <p>Te vsebine bodo na voljo v naslednjih verzijah strani. 
+          <p>Obiščite <a href="obvestila.html">obvestila</a> za več novic.<p><br>
+          <button id="closePopupBtn">V redu</button>
+      </div>
+  </div>
+
+  <div id="maintenance-warning">
+      <p id="maintenance-message"></p>
+  </div>
+
+  <div id="maintenancePopup">
+      <div id="maintenancePopupContent">
+          <h1>POVEZAVA IZGUBLJENA</h1>
+          <p>Razredni Časopis je trenutno v vzdrževanju do <br><span id="maintenanceEndTime"></span>. Hvala za razumevanje.</p>
+          <button id="closeMaintenancePopupBtn">Osveži</button>
+      </div>  
+  </div>
+
+
+  <script type="module" src="js/drJS.js"></script>
 <script src="/Resources/alerts.js"></script>
 <script type="module" src="../eventServer.js"></script>
 <script type="module" src="../eventChecker.js"></script>
 <script type="module" src="../eventsmain.js"></script>
 <script type="module" src="/Resources/settings/settings.js"></script>
 <script type="module" src="../../auth/loginStateChecker.js"></script>
-</body>
 </html>
