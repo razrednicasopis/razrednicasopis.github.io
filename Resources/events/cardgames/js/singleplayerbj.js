@@ -182,13 +182,6 @@ onAuthStateChanged(auth, async (user) => {
     playerHand.push(currentDeck.pop());
     dealerHand.push(currentDeck.pop());
     renderHands(true);
-
-    const playerScore=calculateScore(playerHand);
-    const dealerScore=calculateScore(dealerHand);
-
-    if(playerScore===21 && dealerScore!==21) showResultPopup("Blackjack! Zmagali ste!", 1);
-    else if(playerScore===21 && dealerScore===21) showResultPopup("Tie! Ni spremembe.", 0);
-    else if(dealerScore===21 && playerScore!==21) showResultPopup("Dealer ima Blackjack! Izgubili ste.", -1);
   }
 
   hitBtn.addEventListener("click", ()=>{
@@ -203,10 +196,22 @@ onAuthStateChanged(auth, async (user) => {
     dealerPlay();
     const playerScore=calculateScore(playerHand);
     const dealerScore=calculateScore(dealerHand);
-    if(playerScore>21) showResultPopup("Busted! Izgubili ste.", -1);
-    else if(dealerScore>21 || playerScore>dealerScore) showResultPopup("Zmagali ste!", 1);
-    else if(playerScore===dealerScore) showResultPopup("Tie! Ni spremembe.", 0);
-    else showResultPopup("Izgubili ste!", -1);
+
+    if(playerScore===21 && dealerScore===21){
+      showResultPopup("Tie! Ni spremembe.", 0);
+    } else if(playerScore===21){
+      showResultPopup("Blackjack! Zmagali ste!", 1);
+    } else if(dealerScore===21){
+      showResultPopup("Dealer ima Blackjack! Izgubili ste.", -1);
+    } else if(playerScore>21){
+      showResultPopup("Busted! Izgubili ste.", -1);
+    } else if(dealerScore>21 || playerScore>dealerScore){
+      showResultPopup("Zmagali ste!", 1);
+    } else if(playerScore===dealerScore){
+      showResultPopup("Tie! Ni spremembe.", 0);
+    } else {
+      showResultPopup("Izgubili ste!", -1);
+    }
   });
 
   placeBetBtn.addEventListener("click", dealInitial);
