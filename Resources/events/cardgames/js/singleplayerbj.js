@@ -125,7 +125,7 @@ onAuthStateChanged(auth, async (user) => {
     const content = document.createElement("div");
     content.style.background="#1e1e2f"; content.style.color="#fff"; content.style.padding="30px";
     content.style.borderRadius="12px"; content.style.textAlign="center"; content.style.maxWidth="400px"; content.style.width="90%";
-    content.innerHTML=`<h2>Žetoni so prazni!</h2><p>Trenutno nimate več žetonov za igranje Blackjacka.</p><button>Nazaj na glavno stran</button>`;
+    content.innerHTML=`<h2>Žetoni so prazni!</h2><p>Trenutno nimate več žetonov za igranje Blackjacka.</p><br><button>Nazaj na glavno stran</button>`;
     popup.appendChild(content);
     document.body.appendChild(popup);
 
